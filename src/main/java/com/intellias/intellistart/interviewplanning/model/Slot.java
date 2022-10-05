@@ -1,10 +1,21 @@
 package com.intellias.intellistart.interviewplanning.model;
 
 import java.time.LocalDateTime;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import lombok.Data;
 
-public abstract class Slot {
+@Entity
+@Data
+@Table(name = "slots")
+public class Slot {
+  @Id @GeneratedValue(strategy = GenerationType.AUTO)
   protected Long id;
   protected Long ownerId;
-  protected LocalDateTime from;
-  protected LocalDateTime to;
+  protected LocalDateTime fromTime;
+  protected LocalDateTime toTime;
 }
