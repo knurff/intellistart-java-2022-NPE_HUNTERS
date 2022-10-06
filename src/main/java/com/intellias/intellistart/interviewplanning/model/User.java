@@ -8,6 +8,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.Data;
 
+/**
+ * User entity
+ */
 @Entity
 @Data
 @Table(name = "users")
