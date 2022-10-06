@@ -9,7 +9,7 @@ import javax.persistence.Table;
 import lombok.Data;
 
 /**
- * User entity
+ * User entity.
  */
 @Entity
 @Data

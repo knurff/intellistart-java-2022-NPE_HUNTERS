@@ -1,7 +1,7 @@
 package com.intellias.intellistart.interviewplanning.role;
 
 /**
- * UserRole enum
+ * UserRole enum.
  */
 public enum UserRole {
   INTERVIEWER,
