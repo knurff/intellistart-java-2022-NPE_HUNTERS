@@ -5,7 +5,7 @@ import java.time.DayOfWeek;
 /**
  * InterviewerSlot dto.
  */
-public class InterviewerSlot extends Slot {
+public class InterviewerSlotDTO extends Slot {
   private DayOfWeek dayOfWeek;
   private int weekOfYear;
 }

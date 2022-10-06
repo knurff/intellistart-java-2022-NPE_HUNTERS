@@ -3,9 +3,9 @@ package com.intellias.intellistart.interviewplanning.controller;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * UserController controller.
+ * CandidateController controller.
  */
 @RestController
-public class UserController {
+public class CandidateController {
 
 }
