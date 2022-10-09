@@ -1,21 +1,20 @@
 package com.intellias.intellistart.interviewplanning.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.intellias.intellistart.interviewplanning.model.Booking;
 import com.intellias.intellistart.interviewplanning.model.User;
 import java.util.List;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
+@SpringBootTest
 class CoordinatorServiceTest {
 
-  private static CoordinatorService service;
-
-  @BeforeAll
-  static void init() {
-    service = new CoordinatorService();
-  }
+  @Autowired
+  private CoordinatorService service;
 
   @Test
   void createBooking() {

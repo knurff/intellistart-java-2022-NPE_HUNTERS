@@ -1,10 +1,11 @@
 package com.intellias.intellistart.interviewplanning.model.dto;
 
-import java.time.DayOfWeek;
+import lombok.Data;
 
 /**
  * InterviewerSlot dto.
  */
+@Data
 public class InterviewerSlotDto {
 
 }

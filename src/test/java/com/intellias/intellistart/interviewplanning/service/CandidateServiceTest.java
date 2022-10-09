@@ -1,20 +1,19 @@
 package com.intellias.intellistart.interviewplanning.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.intellias.intellistart.interviewplanning.model.CandidateSlot;
 import java.util.List;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
+@SpringBootTest
 class CandidateServiceTest {
 
-  private static CandidateService service;
-
-  @BeforeAll
-  static void init() {
-    service = new CandidateService();
-  }
+  @Autowired
+  private CandidateService service;
 
   @Test
   void createSlot() {
