@@ -1,7 +1,8 @@
 package com.intellias.intellistart.interviewplanning.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.intellias.intellistart.interviewplanning.role.UserRole;
+import com.intellias.intellistart.interviewplanning.model.role.UserRole;
+import java.util.Objects;
 import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -11,16 +12,24 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.ToString.Exclude;
+import org.hibernate.Hibernate;
 
 /**
  * User entity.
  */
 
 @Entity
-@Data
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 @NoArgsConstructor
 @Table(name = "users")
 public class User {
@@ -37,5 +46,23 @@ public class User {
 
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "interviewerId")
   @JsonIgnore
+  @Exclude
   private Set<InterviewerSlot> interviewerSlot;
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
+      return false;
+    }
+    User user = (User) o;
+    return email != null && Objects.equals(email, user.email);
+  }
+
+  @Override
+  public int hashCode() {
+    return getClass().hashCode();
+  }
 }

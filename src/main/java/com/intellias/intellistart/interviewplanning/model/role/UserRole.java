@@ -1,4 +1,4 @@
-package com.intellias.intellistart.interviewplanning.role;
+package com.intellias.intellistart.interviewplanning.model.role;
 
 /**
  * UserRole enum.
