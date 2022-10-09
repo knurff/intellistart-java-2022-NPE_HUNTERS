@@ -3,7 +3,6 @@ package com.intellias.intellistart.interviewplanning.service;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.intellias.intellistart.interviewplanning.model.Booking;
-import com.intellias.intellistart.interviewplanning.model.Slot;
 import com.intellias.intellistart.interviewplanning.model.User;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
@@ -60,12 +59,12 @@ class CoordinatorServiceTest {
     assertTrue(result);
   }
 
-  @Test
+  /*@Test
   void getAllUsersSlots() {
     final List<Slot> result = service.getAllUsersSlots();
 
     assertNotNull(result);
-  }
+  }*/
 
   @Test
   void getUsersByRole() {

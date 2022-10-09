@@ -1,8 +1,10 @@
 package com.intellias.intellistart.interviewplanning.service;
 
-import com.intellias.intellistart.interviewplanning.model.Slot;
+import com.intellias.intellistart.interviewplanning.model.InterviewerSlot;
+import com.intellias.intellistart.interviewplanning.repository.InterviewerSlotRepository;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -10,15 +12,19 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class InterviewerService {
-  public Slot createSlot() {
-    return new Slot();
+
+  @Autowired
+  private InterviewerSlotRepository interviewerSlotRepository;
+
+  public InterviewerSlot createSlot() {
+    return new InterviewerSlot();
   }
 
   public boolean editSlot() {
     return true;
   }
 
-  public List<Slot> getAllSlots() {
+  public List<InterviewerSlot> getAllSlots() {
     return new ArrayList<>();
   }
 
