@@ -2,7 +2,7 @@ package com.intellias.intellistart.interviewplanning.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.intellias.intellistart.interviewplanning.model.Slot;
+import com.intellias.intellistart.interviewplanning.model.CandidateSlot;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,7 @@ class CandidateServiceTest {
 
   @Test
   void createSlot() {
-    final Slot newSlot = service.createSlot();
+    final CandidateSlot newSlot = service.createSlot();
 
     assertNotNull(newSlot);
   }
@@ -32,7 +32,7 @@ class CandidateServiceTest {
 
   @Test
   void getAllSlots() {
-    final List<Slot> result = service.getAllSlots();
+    final List<CandidateSlot> result = service.getAllSlots();
 
     assertNotNull(result);
   }
