@@ -1,0 +1,12 @@
+version: '3.8'
+services:
+  db:
+    image: 'postgres:latest'
+    container_name: db
+    environment:
+      - POSTGRES_DB=localdb
+      - POSTGRES_PASSWORD=localdb
+      - POSTGRES_USER=localdb
+    restart: always
+    ports:
+      - '5432:5432'
