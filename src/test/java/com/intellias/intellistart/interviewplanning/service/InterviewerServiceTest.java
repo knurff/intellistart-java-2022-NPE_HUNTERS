@@ -9,11 +9,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
 class InterviewerServiceTest {
 
   @Autowired
-  private InterviewerService service;
+  private InterviewerService service = new InterviewerService();
 
   @Test
   void createSlot() {

@@ -10,11 +10,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
 class CoordinatorServiceTest {
 
   @Autowired
-  private CoordinatorService service;
+  private CoordinatorService service = new CoordinatorService();
 
   @Test
   void createBooking() {
