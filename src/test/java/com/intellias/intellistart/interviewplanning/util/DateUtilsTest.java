@@ -77,6 +77,17 @@ class DateUtilsTest {
   }
 
   @Test
+  void testGetWeekFromWhenDatesAreInDifferentYears() {
+    final LocalDate from = LocalDate.of(2022, 1, 1);
+    final LocalDate current = LocalDate.of(2023, 10, 13);
+    final int expected = 94;
+
+    final int actual = DateUtils.getWeekFrom(from, current);
+
+    assertEquals(expected, actual);
+  }
+
+  @Test
   void testGetNextWeekFromOnOneOfOctoberDate() {
     final LocalDate from = LocalDate.of(2022, 1, 1);
     final LocalDate current = LocalDate.of(2022, 10, 13);
