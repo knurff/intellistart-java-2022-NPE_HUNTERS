@@ -2,41 +2,41 @@ package com.intellias.intellistart.interviewplanning.service;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 
 import com.intellias.intellistart.interviewplanning.model.InterviewerSlot;
 import java.util.List;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.Mockito;
 
 class InterviewerServiceTest {
-
-  @Autowired
-  private InterviewerService service = new InterviewerService();
+  private final InterviewerService serviceMock = Mockito.mock(InterviewerService.class);
 
   @Test
   void createSlot() {
-    final InterviewerSlot newSlot = service.createSlot();
+    when(serviceMock.createSlot()).thenReturn(new InterviewerSlot());
+    final InterviewerSlot newSlot = serviceMock.createSlot();
 
     assertNotNull(newSlot);
   }
 
   @Test
   void editSlot() {
-    final boolean result = service.editSlot();
+    when(serviceMock.editSlot()).thenReturn(true);
+    final boolean result = serviceMock.editSlot();
 
     assertTrue(result);
   }
 
   @Test
   void getAllSlots() {
-    final List<InterviewerSlot> result = service.getAllSlots();
+    final List<InterviewerSlot> result = serviceMock.getAllSlots();
 
     assertNotNull(result);
   }
 
   @Test
   void setMaxBookings() {
-    service.setMaxBookings();
+    serviceMock.setMaxBookings();
   }
 }
