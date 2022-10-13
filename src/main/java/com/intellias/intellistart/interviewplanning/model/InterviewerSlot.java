@@ -1,10 +1,13 @@
 package com.intellias.intellistart.interviewplanning.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
 import java.util.Objects;
 import java.util.Set;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -39,10 +42,12 @@ public class InterviewerSlot {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @NonNull
   private int week;
 
   @NonNull
-  private String dayOfWeek;
+  @Enumerated(EnumType.STRING)
+  private DayOfWeek dayOfWeek;
 
   @Embedded
   @NonNull
