@@ -1,10 +1,9 @@
 package com.intellias.intellistart.interviewplanning.util;
 
-import com.intellias.intellistart.interviewplanning.exception.InvalidDayOfWeekException;
 import com.intellias.intellistart.interviewplanning.model.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.model.TimePeriod;
 import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
-import com.intellias.intellistart.interviewplanning.model.dto.InterviewerSlotDto;
+import com.intellias.intellistart.interviewplanning.controller.dto.InterviewerSlotDto;
 
 /**
  * Util class, which contains methods for converting Dto to entity and entity to Dto.

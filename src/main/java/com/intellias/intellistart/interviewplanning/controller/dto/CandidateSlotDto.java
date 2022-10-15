@@ -1,4 +1,4 @@
-package com.intellias.intellistart.interviewplanning.model.dto;
+package com.intellias.intellistart.interviewplanning.controller.dto;
 
 import lombok.Data;
 
