@@ -35,9 +35,4 @@ public class CandidateSlotFactory {
     return new CandidateSlot(TEST_EMAIL, LocalDate.now().plusDays(1),
         new TimePeriod(LocalTime.of(10, 30), LocalTime.of(15, 30)));
   }
-
-  public static CandidateSlot createCandidateSlotWithAnonymousEmail() {
-    return new CandidateSlot("anonymous", LocalDate.now().plusDays(1),
-        new TimePeriod(LocalTime.of(10, 30), LocalTime.of(15, 30)));
-  }
 }
