@@ -1,16 +1,13 @@
 package com.intellias.intellistart.interviewplanning.controller;
 
-import com.intellias.intellistart.interviewplanning.model.InterviewerSlot;
-import com.intellias.intellistart.interviewplanning.model.User;
 import com.intellias.intellistart.interviewplanning.controller.dto.InterviewerSlotDto;
 import com.intellias.intellistart.interviewplanning.controller.dto.creator.InterviewerSlotsDtoCreator;
+import com.intellias.intellistart.interviewplanning.model.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.service.InterviewerService;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 

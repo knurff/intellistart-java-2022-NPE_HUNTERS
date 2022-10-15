@@ -38,8 +38,15 @@ public class InterviewerService {
 
   }
 
-  public List<InterviewerSlot> getAllInterviewerSlotsByInterviewerId(Long id) {
-    var interviewer = getInterviewerOrThrowException(id);
+  /**
+   * Returns all interviewer's slots.
+   *
+   * @param interviewerId long id of interviewer
+   * @return list of interviewers slots.
+   * @throws InterviewerNotFoundException if {@code interviewerId} is not id of interviewer.
+   */
+  public List<InterviewerSlot> getAllInterviewerSlotsByInterviewerId(Long interviewerId) {
+    var interviewer = getInterviewerOrThrowException(interviewerId);
 
     return interviewerSlotRepository.getAllByInterviewerId(interviewer);
   }

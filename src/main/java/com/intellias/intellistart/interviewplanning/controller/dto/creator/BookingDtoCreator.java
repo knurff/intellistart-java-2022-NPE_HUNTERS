@@ -1,7 +1,7 @@
 package com.intellias.intellistart.interviewplanning.controller.dto.creator;
 
-import com.intellias.intellistart.interviewplanning.model.Booking;
 import com.intellias.intellistart.interviewplanning.controller.dto.BookingDto;
+import com.intellias.intellistart.interviewplanning.model.Booking;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
