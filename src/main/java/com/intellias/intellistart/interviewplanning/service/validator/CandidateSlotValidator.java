@@ -75,8 +75,7 @@ public class CandidateSlotValidator {
       List<CandidateSlot> anotherCandidateSlots, Long id) {
     return anotherCandidateSlots.stream()
         .filter(anotherSlot -> checkThatDatesAreEqualAndIdAreNot(candidateSlot, anotherSlot, id))
-        .anyMatch(
-            anotherSlot -> isOverlapping(candidateSlot.getPeriod(), anotherSlot.getPeriod()));
+        .anyMatch(anotherSlot -> isOverlapping(candidateSlot.getPeriod(), anotherSlot.getPeriod()));
   }
 
   private static boolean checkThatDatesAreEqualAndIdAreNot(CandidateSlot candidateSlot,
@@ -85,7 +84,8 @@ public class CandidateSlotValidator {
         && checkThatIdIsNullOrNotEqualWithAnotherSlotId(id, anotherCandidateSlot);
   }
 
-  private static boolean checkThatIdIsNullOrNotEqualWithAnotherSlotId(Long id, CandidateSlot anotherCandidateSlot) {
+  private static boolean checkThatIdIsNullOrNotEqualWithAnotherSlotId(Long id,
+      CandidateSlot anotherCandidateSlot) {
     if (id == null) {
       return true;
     } else {
