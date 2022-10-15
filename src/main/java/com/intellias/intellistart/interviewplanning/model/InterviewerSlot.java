@@ -1,6 +1,5 @@
 package com.intellias.intellistart.interviewplanning.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
 import java.util.Objects;
 import java.util.Set;
@@ -42,7 +41,6 @@ public class InterviewerSlot {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @NonNull
   private int week;
 
   @NonNull
@@ -59,7 +57,6 @@ public class InterviewerSlot {
 
 
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "interviewerSlot")
-  @JsonIgnore
   @Exclude
   private Set<Booking> bookings;
 
