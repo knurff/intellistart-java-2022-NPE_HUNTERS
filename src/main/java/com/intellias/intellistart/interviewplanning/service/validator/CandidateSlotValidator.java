@@ -39,10 +39,10 @@ public class CandidateSlotValidator {
 
   private static void checkThatSlotTimeAndDateAreInFuture(CandidateSlot candidateSlot) {
     TimePeriod timePeriod = candidateSlot.getPeriod();
+    boolean slotDateEqualsCurrentDate = candidateSlot.getDate().isEqual(LocalDate.now());
     if (slotDateIsInThePastCondition(candidateSlot)) {
       throw new InvalidCandidateSlotDateException("Candidate slot date must be in future");
-    } else if (candidateSlot.getDate().isEqual(LocalDate.now()) && slotTimeIsInThePastCondition(
-        timePeriod)) {
+    } else if (slotDateEqualsCurrentDate && slotTimeIsInThePastCondition(timePeriod)) {
       throw new InvalidTimeSlotBoundariesException("Candidate slot time period must be in future");
     }
   }
@@ -80,16 +80,12 @@ public class CandidateSlotValidator {
 
   private static boolean checkThatDatesAreEqualAndIdAreNot(CandidateSlot candidateSlot,
       CandidateSlot anotherCandidateSlot, Long id) {
-    return candidateSlot.getDate().equals(anotherCandidateSlot.getDate())
-        && checkThatIdIsNullOrNotEqualWithAnotherSlotId(id, anotherCandidateSlot);
+    boolean datesAreEqual = candidateSlot.getDate().equals(anotherCandidateSlot.getDate());
+    return datesAreEqual && checkThatIdIsNullOrNotEqualWithAnotherSlotId(id, anotherCandidateSlot);
   }
 
   private static boolean checkThatIdIsNullOrNotEqualWithAnotherSlotId(Long id,
       CandidateSlot anotherCandidateSlot) {
-    if (id == null) {
-      return true;
-    } else {
-      return !id.equals(anotherCandidateSlot.getId());
-    }
+    return id == null || !id.equals(anotherCandidateSlot.getId());
   }
 }

@@ -6,11 +6,10 @@ import com.intellias.intellistart.interviewplanning.model.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.dto.CandidateSlotDto;
 import com.intellias.intellistart.interviewplanning.service.CandidateService;
 import com.intellias.intellistart.interviewplanning.util.CandidateSlotMapper;
+import com.intellias.intellistart.interviewplanning.util.RequestParser;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,28 +33,36 @@ public class CandidateController {
     this.candidateService = candidateService;
   }
 
+  /**
+   * Handles GET request and returns a list of CandidateSlots of the particular user.
+   */
+
   @GetMapping
   public List<CandidateSlotDto> getAllSlots() {
-    List<CandidateSlot> candidateSlotList = candidateService.getAllSlots(getUserEmailFromToken());
+    List<CandidateSlot> candidateSlotList = candidateService.getAllSlots(
+        RequestParser.getUserEmailFromToken());
     return CandidateSlotMapper.convertCandidateSlotListToDtoList(candidateSlotList);
   }
+
+  /**
+   * Handles POST request and creates new CandidateSlot.
+   */
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   public CandidateSlot addSlot(@RequestBody CandidateSlotDto candidateSlotDto) {
-    candidateSlotDto.setEmail(getUserEmailFromToken());
+    candidateSlotDto.setEmail(RequestParser.getUserEmailFromToken());
     return candidateService.createSlot(mapDtoToEntity(candidateSlotDto));
   }
+
+  /**
+   * Handles PUT request and updates existing CandidateSlot.
+   */
 
   @PutMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void editSlot(@PathVariable Long id, @RequestBody CandidateSlotDto candidateSlotDto) {
-    candidateSlotDto.setEmail(getUserEmailFromToken());
+    candidateSlotDto.setEmail(RequestParser.getUserEmailFromToken());
     candidateService.editSlot(mapDtoToEntity(candidateSlotDto), id);
-  }
-
-  private String getUserEmailFromToken() {
-    Authentication loggedInUser = SecurityContextHolder.getContext().getAuthentication();
-    return loggedInUser.getName();
   }
 }
