@@ -2,6 +2,7 @@ package com.intellias.intellistart.interviewplanning.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import javax.persistence.Column;
@@ -53,7 +54,7 @@ public class CandidateSlot {
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "candidateSlot")
   @JsonIgnore
   @Exclude
-  private Set<Booking> bookings;
+  private Set<Booking> bookings = new HashSet<>();
 
   @Override
   public boolean equals(Object o) {

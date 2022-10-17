@@ -5,6 +5,7 @@ import java.time.LocalTime;
 import javax.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * TimePeriod structure.
@@ -13,6 +14,7 @@ import lombok.Data;
 @Embeddable
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class TimePeriod implements Serializable {
 
   private LocalTime startTime;
