@@ -2,8 +2,8 @@ package com.intellias.intellistart.interviewplanning.controller;
 
 import static com.intellias.intellistart.interviewplanning.util.CandidateSlotMapper.mapDtoToEntity;
 
+import com.intellias.intellistart.interviewplanning.controller.dto.CandidateSlotDto;
 import com.intellias.intellistart.interviewplanning.model.CandidateSlot;
-import com.intellias.intellistart.interviewplanning.model.dto.CandidateSlotDto;
 import com.intellias.intellistart.interviewplanning.service.CandidateService;
 import com.intellias.intellistart.interviewplanning.util.CandidateSlotMapper;
 import com.intellias.intellistart.interviewplanning.util.RequestParser;
