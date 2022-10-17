@@ -1,7 +1,10 @@
-package com.intellias.intellistart.interviewplanning.model.dto;
+package com.intellias.intellistart.interviewplanning.controller.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalTime;
+import java.util.Set;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,6 +12,8 @@ import lombok.NoArgsConstructor;
  * InterviewerSlot dto.
  */
 @Data
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 public class InterviewerSlotDto {
 
@@ -23,4 +28,6 @@ public class InterviewerSlotDto {
 
   @JsonFormat(pattern = "HH:mm")
   private LocalTime to;
+
+  private Set<BookingDto> bookings;
 }
