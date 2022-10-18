@@ -1,9 +1,7 @@
 package com.intellias.intellistart.interviewplanning.controller;
 
 import com.intellias.intellistart.interviewplanning.model.User;
-import com.intellias.intellistart.interviewplanning.repository.UserRepository;
 import com.intellias.intellistart.interviewplanning.service.CoordinatorService;
-import java.util.ArrayList;
 import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
