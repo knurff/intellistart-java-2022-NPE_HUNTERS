@@ -1,6 +1,6 @@
-insert into users values(1, 'test@gmail.com','COORDINATOR');
-insert into users values(2, 'user1@gmail.com','INTERVIEWER');
-insert into users values(3 ,'user2@gmail.com','INTERVIEWER');
+insert into users values(1, 'test@gmail.com',4,'COORDINATOR');
+insert into users values(2, 'user1@gmail.com',6,'INTERVIEWER');
+insert into users values(3 ,'user2@gmail.com',5,'INTERVIEWER');
 
 insert into interviewer_slots values(1,'MONDAY','11:30','9:00', 12,2);
 insert into interviewer_slots values(2,'TUESDAY','18:00','14:30', 40,2);

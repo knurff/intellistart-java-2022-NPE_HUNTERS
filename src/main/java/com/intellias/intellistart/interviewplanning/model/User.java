@@ -46,7 +46,6 @@ public class User {
   @Enumerated(EnumType.STRING)
   private UserRole role;
 
-  @Transient
   private int maxBookingsPerWeek;
 
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "interviewerId")
