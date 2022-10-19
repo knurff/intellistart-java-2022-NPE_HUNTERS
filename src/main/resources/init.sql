@@ -2,15 +2,15 @@ insert into users values(1, 'test@gmail.com','COORDINATOR');
 insert into users values(2, 'user1@gmail.com','INTERVIEWER');
 insert into users values(3 ,'user2@gmail.com','INTERVIEWER');
 
-insert into interviewer_slots values(1,'MONDAY','11:30','9:00', 12,'user1@gmail.com');
-insert into interviewer_slots values(2,'TUESDAY','18:00','14:30', 40,'user1@gmail.com');
-insert into interviewer_slots values(3,'THURSDAY','19:30','10:30', 41,'user1@gmail.com');
-insert into interviewer_slots values(4,'MONDAY','15:00','8:00', 41,'user1@gmail.com');
+insert into interviewer_slots values(1,'MONDAY','11:30','9:00', 12,2);
+insert into interviewer_slots values(2,'TUESDAY','18:00','14:30', 40,2);
+insert into interviewer_slots values(3,'THURSDAY','19:30','10:30', 41,2);
+insert into interviewer_slots values(4,'MONDAY','15:00','8:00', 41,2);
 
-insert into interviewer_slots values(5,'TUESDAY','16:30','11:00',40,'user2@gmail.com');
-insert into interviewer_slots values(6,'FRIDAY','17:30','14:30', 40,'user2@gmail.com');
-insert into interviewer_slots values(7,'WEDNESDAY','19:30','16:30',41,'user2@gmail.com');
-insert into interviewer_slots values(8,'WEDNESDAY','15:00','8:00',41,'user2@gmail.com');
+insert into interviewer_slots values(5,'TUESDAY','16:30','11:00',40,3);
+insert into interviewer_slots values(6,'FRIDAY','17:30','14:30', 40,3);
+insert into interviewer_slots values(7,'WEDNESDAY','19:30','16:30',41,3);
+insert into interviewer_slots values(8,'WEDNESDAY','15:00','8:00',41,3);
 
 
 insert into candidate_slots values(1,'2022-10-13','candidate3@gmail.com','11:30','9:00');

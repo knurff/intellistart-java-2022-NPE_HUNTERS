@@ -1,7 +1,7 @@
 package com.intellias.intellistart.interviewplanning.util;
 
+import com.intellias.intellistart.interviewplanning.controller.dto.CandidateSlotDto;
 import com.intellias.intellistart.interviewplanning.model.CandidateSlot;
-import com.intellias.intellistart.interviewplanning.model.dto.CandidateSlotDto;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
