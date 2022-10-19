@@ -10,7 +10,7 @@ import com.intellias.intellistart.interviewplanning.exception.InvalidTimeSlotBou
 import com.intellias.intellistart.interviewplanning.exception.SlotIsOverlappingException;
 import com.intellias.intellistart.interviewplanning.model.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.repository.CandidateSlotRepository;
-import com.intellias.intellistart.interviewplanning.util.CandidateSlotFactory;
+import com.intellias.intellistart.interviewplanning.service.factory.CandidateSlotFactory;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
@@ -31,7 +31,6 @@ class CandidateServiceTest {
 
   @Mock
   private CandidateSlotRepository candidateSlotRepository;
-
   private CandidateService service;
 
   @BeforeEach

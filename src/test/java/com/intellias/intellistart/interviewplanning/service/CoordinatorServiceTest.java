@@ -4,79 +4,105 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
+import com.intellias.intellistart.interviewplanning.exception.BookingNotFoundException;
 import com.intellias.intellistart.interviewplanning.model.Booking;
+import com.intellias.intellistart.interviewplanning.model.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.User;
 import com.intellias.intellistart.interviewplanning.model.role.UserRole;
+import com.intellias.intellistart.interviewplanning.repository.BookingRepository;
+import com.intellias.intellistart.interviewplanning.repository.UserRepository;
+import com.intellias.intellistart.interviewplanning.service.factory.BookingFactory;
 import java.util.List;
-import org.aspectj.weaver.patterns.ConcreteCflowPointcut.Slot;
+import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 class CoordinatorServiceTest {
-  private final CoordinatorService serviceMock = Mockito.mock(CoordinatorService.class);
+
+  @Mock
+  private BookingRepository bookingRepository;
+  @Mock
+  private UserRepository userRepository;
+  private CoordinatorService coordinatorService;
+
+  @BeforeEach
+  void setup() {
+    coordinatorService = new CoordinatorService(userRepository, bookingRepository);
+  }
 
   @Test
   void createBooking() {
-    when(serviceMock.createBooking()).thenReturn(new Booking());
-    final Booking newBooking = serviceMock.createBooking();
+
+    final Booking newBooking = coordinatorService.createBooking();
 
     assertNotNull(newBooking);
   }
 
   @Test
   void editSlot() {
-    when(serviceMock.editSlot()).thenReturn(true);
-    final boolean result = serviceMock.editSlot();
+
+    final boolean result = coordinatorService.editSlot();
 
     assertTrue(result);
   }
 
   @Test
   void editBooking() {
-    when(serviceMock.editBooking()).thenReturn(true);
-    final boolean result = serviceMock.editBooking();
+
+    final boolean result = coordinatorService.editBooking();
 
     assertTrue(result);
   }
 
   @Test
-  void deleteBooking() {
-    when(serviceMock.deleteBooking()).thenReturn(true);
-    final boolean result = serviceMock.deleteBooking();
+  void deleteBookingWorkingProperly() {
+    Booking booking = BookingFactory.createBookingWithId();
 
-    assertTrue(result);
+    when(bookingRepository.findById(1L)).thenReturn(Optional.of(booking));
+
+    assertTrue(coordinatorService.deleteBooking(1L));
+  }
+
+  @Test
+  void deleteBookingThrowsAnExceptionIfBookingNotExists() {
+
+    assertThrows(BookingNotFoundException.class, () ->
+        coordinatorService.deleteBooking(1L));
   }
 
   @Test
   void grantRoleForUser() {
-    when(serviceMock.grantRoleForUser()).thenReturn(true);
-    final boolean result = serviceMock.grantRoleForUser();
+
+    final boolean result = coordinatorService.grantRoleForUser();
 
     assertTrue(result);
   }
 
   @Test
   void removeRoleFromUser() {
-    when(serviceMock.removeRoleFromUser()).thenReturn(true);
-    final boolean result = serviceMock.removeRoleFromUser();
+    final boolean result = coordinatorService.removeRoleFromUser();
 
     assertTrue(result);
   }
 
   @Test
   void getAllUsersSlots() {
-    when(serviceMock.getAllUsersSlots()).thenReturn(List.of());
-    final List<Slot> result = serviceMock.getAllUsersSlots();
+    final List<CandidateSlot> result = coordinatorService.getAllUsersSlots();
 
     assertNotNull(result);
   }
 
   @Test
   void getUsersByRole() {
-    final List<User> result = serviceMock.getUsersByRole();
+    final List<User> result = coordinatorService.getUsersByRole();
 
     assertNotNull(result);
   }
@@ -84,28 +110,25 @@ class CoordinatorServiceTest {
   @Test
   void getAllInterviewers() {
     final List<User> expectedInterviewers = List.of(new User(UserRole.INTERVIEWER));
-    when(serviceMock.getAllInterviewers()).thenReturn(expectedInterviewers);
-
-    final List<User> actualInterviewers = serviceMock.getAllInterviewers();
+    when(userRepository.getAllByRole(UserRole.INTERVIEWER)).thenReturn(expectedInterviewers);
+    final List<User> actualInterviewers = coordinatorService.getAllInterviewers();
 
     assertNotNull(actualInterviewers);
     assertEquals(expectedInterviewers.size(), actualInterviewers.size());
-    assertEquals(actualInterviewers.get(0).getRole(), UserRole.INTERVIEWER);
+    assertEquals(UserRole.INTERVIEWER, actualInterviewers.get(0).getRole());
     assertSame(expectedInterviewers, actualInterviewers);
   }
 
   @Test
   void getAllCoordinators() {
     final List<User> expectedCoordinators = List.of(new User(UserRole.COORDINATOR));
-
-    when(serviceMock.getAllInterviewers()).thenReturn(expectedCoordinators);
-
-    final List<User> actualCoordinators = serviceMock.getAllInterviewers();
+    when(userRepository.getAllByRole(UserRole.COORDINATOR)).thenReturn(expectedCoordinators);
+    final List<User> actualCoordinators = coordinatorService.getAllCoordinators();
 
     assertNotNull(actualCoordinators);
     assertFalse(actualCoordinators.isEmpty());
     assertEquals(expectedCoordinators.size(), actualCoordinators.size());
-    assertEquals(actualCoordinators.get(0).getRole(), UserRole.COORDINATOR);
+    assertEquals(UserRole.COORDINATOR, actualCoordinators.get(0).getRole());
     assertSame(expectedCoordinators, actualCoordinators);
   }
 }
