@@ -20,7 +20,10 @@ public class ApplicationExceptionHandler {
   private static final String INVALID_DAY_OF_WEEK = "invalid_day_of_week";
   private static final String SLOT_NOT_FOUND = "slot_not_found";
   private static final String SLOT_ALREADY_HAS_BOOKINGS = "slot_already_has_bookings";
-  private static final String INVALID_SLOT_DATE_EXCEPTION = "invalid_slot_date";
+
+  private static final String INVALID_SLOT_DATE = "invalid_slot_date";
+
+  private static final String BOOKING_NOT_FOUND = "booking_not_found";
 
   /**
    * Exception handler for InterviewerNotFoundException.
@@ -85,8 +88,19 @@ public class ApplicationExceptionHandler {
   @ExceptionHandler
   public ResponseEntity<ExceptionResponse> handleInvalidCandidateSlotDateException(
       InvalidCandidateSlotDateException e) {
-    return new ResponseEntity<>(new ExceptionResponse(INVALID_SLOT_DATE_EXCEPTION, e.getMessage()),
+    return new ResponseEntity<>(new ExceptionResponse(INVALID_SLOT_DATE, e.getMessage()),
         HttpStatus.BAD_REQUEST);
+  }
+
+  /**
+   * Exception handler for BookingNotFoundException.
+   */
+
+  @ExceptionHandler
+  public ResponseEntity<ExceptionResponse> handleBookingNotFoundException(
+      BookingNotFoundException e) {
+    return new ResponseEntity<>(new ExceptionResponse(BOOKING_NOT_FOUND, e.getMessage()),
+        HttpStatus.NOT_FOUND);
   }
 
   /**
