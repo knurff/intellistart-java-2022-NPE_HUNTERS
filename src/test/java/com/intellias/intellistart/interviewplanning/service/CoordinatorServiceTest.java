@@ -4,20 +4,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
-import com.intellias.intellistart.interviewplanning.exception.BookingNotFoundException;
 import com.intellias.intellistart.interviewplanning.model.Booking;
 import com.intellias.intellistart.interviewplanning.model.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.User;
 import com.intellias.intellistart.interviewplanning.model.role.UserRole;
-import com.intellias.intellistart.interviewplanning.repository.BookingRepository;
 import com.intellias.intellistart.interviewplanning.repository.UserRepository;
-import com.intellias.intellistart.interviewplanning.service.factory.BookingFactory;
 import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,14 +23,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class CoordinatorServiceTest {
 
   @Mock
-  private BookingRepository bookingRepository;
-  @Mock
   private UserRepository userRepository;
   private CoordinatorService coordinatorService;
 
   @BeforeEach
   void setup() {
-    coordinatorService = new CoordinatorService(userRepository, bookingRepository);
+    coordinatorService = new CoordinatorService(userRepository);
   }
 
   @Test
@@ -60,22 +53,6 @@ class CoordinatorServiceTest {
     final boolean result = coordinatorService.editBooking();
 
     assertTrue(result);
-  }
-
-  @Test
-  void deleteBookingWorkingProperly() {
-    Booking booking = BookingFactory.createBookingWithId();
-
-    when(bookingRepository.findById(1L)).thenReturn(Optional.of(booking));
-
-    assertTrue(coordinatorService.deleteBooking(1L));
-  }
-
-  @Test
-  void deleteBookingThrowsAnExceptionIfBookingNotExists() {
-
-    assertThrows(BookingNotFoundException.class, () ->
-        coordinatorService.deleteBooking(1L));
   }
 
   @Test
