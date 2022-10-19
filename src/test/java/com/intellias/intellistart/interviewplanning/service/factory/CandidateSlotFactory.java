@@ -1,4 +1,4 @@
-package com.intellias.intellistart.interviewplanning.util;
+package com.intellias.intellistart.interviewplanning.service.factory;
 
 import com.intellias.intellistart.interviewplanning.model.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.TimePeriod;
