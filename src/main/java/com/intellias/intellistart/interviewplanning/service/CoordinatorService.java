@@ -47,6 +47,17 @@ public class CoordinatorService {
       InterviewerSlot newSlot) {
 
     User user = findById(interviewerId);
+    checkIfSlotHasBooking(interviewerSlotId, interviewerId);
+
+    newSlot.setId(interviewerSlotId);
+    newSlot.setInterviewerId(user);
+
+    validateSlot(newSlot);
+
+    return interviewerService.save(newSlot);
+  }
+
+  private void checkIfSlotHasBooking(Long interviewerSlotId, Long interviewerId) {
     InterviewerSlot oldSlot = interviewerService.findSlotByIdAndInterviewerId(interviewerSlotId,
         interviewerId);
 
@@ -54,15 +65,12 @@ public class CoordinatorService {
       throw new SlotContainsBookingsException(
           "InterviewerSlot id = " + interviewerSlotId + " has bookings");
     }
+  }
 
-    newSlot.setId(interviewerSlotId);
-    newSlot.setInterviewerId(user);
-
-    DateUtils.checkDateIsInFuture(newSlot.getDate());
-    TimePeriodValidator.checkTimePeriod(newSlot.getPeriod());
-    interviewerService.checkSlotOverlapping(newSlot);
-
-    return interviewerService.save(newSlot);
+  private void validateSlot(InterviewerSlot slot) {
+    DateUtils.checkDateIsInFuture(slot.getDate());
+    TimePeriodValidator.checkTimePeriod(slot.getPeriod());
+    interviewerService.checkSlotOverlapping(slot);
   }
 
   public boolean editBooking() {

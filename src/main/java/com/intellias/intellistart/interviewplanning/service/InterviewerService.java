@@ -84,7 +84,7 @@ public class InterviewerService {
   /**
    * Returns InterviewerSlot  relative to {@code interviewerSlotId} and {@code interviewerId}.
    *
-   * @param interviewerId slot owner interviewerId
+   * @param interviewerId     slot owner interviewerId
    * @param interviewerSlotId id of interviewer slot
    * @return slot
    * @throws SlotNotFoundException if {@code slot} is not {@code interviewerId}
@@ -103,7 +103,6 @@ public class InterviewerService {
 
   /**
    * Returns list of interviewerSlot relate {@code user}.
-   *
    */
   public List<InterviewerSlot> findAllByInterviewerId(User user) {
     return interviewerSlotRepository.getAllByInterviewerId(user);
@@ -128,9 +127,20 @@ public class InterviewerService {
 
   private boolean isSlotOverlapping(List<InterviewerSlot> interviewerSlots, InterviewerSlot slot) {
     return interviewerSlots.stream()
-        .filter(anotherSlot -> !anotherSlot.getId().equals(slot.getId()))
-        .filter(anotherSlot -> anotherSlot.getDate().equals(slot.getDate()))
+        .filter(anotherSlot -> checkThatDatesAreEqualAndIdAreNot(slot, anotherSlot))
         .anyMatch(anotherSlot -> TimePeriodValidator.isOverlapping(slot.getPeriod(),
             anotherSlot.getPeriod()));
+  }
+
+  private boolean checkThatDatesAreEqualAndIdAreNot(InterviewerSlot interviewerSlot,
+      InterviewerSlot anotherInterviewerSlot) {
+    boolean datesAreEqual = interviewerSlot.getDate().equals(anotherInterviewerSlot.getDate());
+    return datesAreEqual && checkThatIdIsNullOrNotEqualWithAnotherSlotId(interviewerSlot.getId(),
+        anotherInterviewerSlot);
+  }
+
+  private boolean checkThatIdIsNullOrNotEqualWithAnotherSlotId(Long id,
+      InterviewerSlot anotherInterviewerSlot) {
+    return id == null || !id.equals(anotherInterviewerSlot.getId());
   }
 }
