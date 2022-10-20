@@ -8,75 +8,86 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 import com.intellias.intellistart.interviewplanning.model.Booking;
+import com.intellias.intellistart.interviewplanning.model.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.model.User;
 import com.intellias.intellistart.interviewplanning.model.role.UserRole;
+import com.intellias.intellistart.interviewplanning.util.InterviewerSlotFactory;
 import java.util.List;
 import org.aspectj.weaver.patterns.ConcreteCflowPointcut.Slot;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 class CoordinatorServiceTest {
-  private final CoordinatorService serviceMock = Mockito.mock(CoordinatorService.class);
+
+  private final CoordinatorService coordinatorServiceMock = Mockito.mock(CoordinatorService.class);
+
 
   @Test
   void createBooking() {
-    when(serviceMock.createBooking()).thenReturn(new Booking());
-    final Booking newBooking = serviceMock.createBooking();
+    when(coordinatorServiceMock.createBooking()).thenReturn(new Booking());
+    final Booking newBooking = coordinatorServiceMock.createBooking();
 
     assertNotNull(newBooking);
   }
 
   @Test
-  void editSlot() {
-    when(serviceMock.editSlot()).thenReturn(true);
-    final boolean result = serviceMock.editSlot();
+  void editSlotWorkingProperly() {
 
-    assertTrue(result);
+    InterviewerSlot interviewerSlot = InterviewerSlotFactory.createInterviewerSlot();
+
+    InterviewerSlot interviewerSlotToUpdate = InterviewerSlotFactory.createAnotherInterviewerSlot();
+    interviewerSlotToUpdate.setId(1L);
+    interviewerSlotToUpdate.setInterviewerId(new User(UserRole.INTERVIEWER));
+
+    when(coordinatorServiceMock.editSlot(1L, 1L, interviewerSlot)).thenReturn(interviewerSlot);
+    InterviewerSlot resultSlot = coordinatorServiceMock.editSlot(1L, 1L, interviewerSlot);
+
+    assertEquals(resultSlot, interviewerSlot);
   }
 
   @Test
   void editBooking() {
-    when(serviceMock.editBooking()).thenReturn(true);
-    final boolean result = serviceMock.editBooking();
+    when(coordinatorServiceMock.editBooking()).thenReturn(true);
+    final boolean result = coordinatorServiceMock.editBooking();
 
     assertTrue(result);
   }
 
   @Test
   void deleteBooking() {
-    when(serviceMock.deleteBooking()).thenReturn(true);
-    final boolean result = serviceMock.deleteBooking();
+    when(coordinatorServiceMock.deleteBooking()).thenReturn(true);
+    final boolean result = coordinatorServiceMock.deleteBooking();
 
     assertTrue(result);
   }
 
   @Test
   void grantRoleForUser() {
-    when(serviceMock.grantRoleForUser()).thenReturn(true);
-    final boolean result = serviceMock.grantRoleForUser();
+    when(coordinatorServiceMock.grantRoleForUser()).thenReturn(true);
+    final boolean result = coordinatorServiceMock.grantRoleForUser();
 
     assertTrue(result);
   }
 
   @Test
   void removeRoleFromUser() {
-    when(serviceMock.removeRoleFromUser()).thenReturn(true);
-    final boolean result = serviceMock.removeRoleFromUser();
+    when(coordinatorServiceMock.removeRoleFromUser()).thenReturn(true);
+    final boolean result = coordinatorServiceMock.removeRoleFromUser();
 
     assertTrue(result);
   }
 
   @Test
   void getAllUsersSlots() {
-    when(serviceMock.getAllUsersSlots()).thenReturn(List.of());
-    final List<Slot> result = serviceMock.getAllUsersSlots();
+    when(coordinatorServiceMock.getAllUsersSlots()).thenReturn(List.of());
+    final List<Slot> result = coordinatorServiceMock.getAllUsersSlots();
 
     assertNotNull(result);
   }
 
   @Test
   void getUsersByRole() {
-    final List<User> result = serviceMock.getUsersByRole();
+    final List<User> result = coordinatorServiceMock.getUsersByRole();
 
     assertNotNull(result);
   }
@@ -84,9 +95,9 @@ class CoordinatorServiceTest {
   @Test
   void getAllInterviewers() {
     final List<User> expectedInterviewers = List.of(new User(UserRole.INTERVIEWER));
-    when(serviceMock.getAllInterviewers()).thenReturn(expectedInterviewers);
+    when(coordinatorServiceMock.getAllInterviewers()).thenReturn(expectedInterviewers);
 
-    final List<User> actualInterviewers = serviceMock.getAllInterviewers();
+    final List<User> actualInterviewers = coordinatorServiceMock.getAllInterviewers();
 
     assertNotNull(actualInterviewers);
     assertEquals(expectedInterviewers.size(), actualInterviewers.size());
@@ -98,9 +109,9 @@ class CoordinatorServiceTest {
   void getAllCoordinators() {
     final List<User> expectedCoordinators = List.of(new User(UserRole.COORDINATOR));
 
-    when(serviceMock.getAllInterviewers()).thenReturn(expectedCoordinators);
+    when(coordinatorServiceMock.getAllInterviewers()).thenReturn(expectedCoordinators);
 
-    final List<User> actualCoordinators = serviceMock.getAllInterviewers();
+    final List<User> actualCoordinators = coordinatorServiceMock.getAllInterviewers();
 
     assertNotNull(actualCoordinators);
     assertFalse(actualCoordinators.isEmpty());

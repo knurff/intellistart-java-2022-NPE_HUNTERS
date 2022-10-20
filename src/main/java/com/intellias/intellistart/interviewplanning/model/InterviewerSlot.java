@@ -1,6 +1,8 @@
 package com.intellias.intellistart.interviewplanning.model;
 
-import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.temporal.WeekFields;
 import java.util.Objects;
 import java.util.Set;
 import javax.persistence.Embedded;
@@ -75,5 +77,16 @@ public class InterviewerSlot {
   @Override
   public int hashCode() {
     return getClass().hashCode();
+  }
+
+  /**
+   * Returns date relative to year, {@code week} and {@code dayOfWeek}.
+   *
+   * @return the LocalDate
+   */
+  public LocalDate getDate() {
+    return LocalDate.now().with(WeekFields.ISO.weekBasedYear(), LocalDate.now().getYear())
+        .with(WeekFields.ISO.weekOfYear(), week)
+        .with(WeekFields.ISO.dayOfWeek(), dayOfWeek.getValue());
   }
 }
