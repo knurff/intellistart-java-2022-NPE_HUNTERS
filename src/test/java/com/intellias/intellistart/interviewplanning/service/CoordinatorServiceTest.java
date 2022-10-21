@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.aspectj.weaver.patterns.ConcreteCflowPointcut.Slot;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -41,7 +42,6 @@ class CoordinatorServiceTest {
   private BookingService bookingService;
   @Mock
   private UserRepository userRepository;
-
 
   @Test
   void createBooking() {
