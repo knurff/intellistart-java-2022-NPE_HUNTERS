@@ -110,6 +110,12 @@ public class CoordinatorService {
         () -> new InterviewerNotFoundException("Interviewer id = " + id + "not found"));
   }
 
+  /**
+   * Returns a dashboard dto for a week specified.
+   *
+   * @param weekNumber specifies the week for which to retrieve a dashboard dto.
+   * @return a dashboard dto for a week specified.
+   */
   public DashboardDto getDashboardForWeek(final int weekNumber) {
     return new DashboardDto(
         getDashboardForDay(weekNumber, DayOfWeek.MONDAY),
@@ -124,12 +130,9 @@ public class CoordinatorService {
     final LocalDate dateFromWeekAndDay = DateUtils.getDateOfDayOfWeek(weekNumber, dayOfWeek);
 
     return new DashboardDayDto(
-        interviewerService.getAllSlotsWithRelatedBookingIdsUsingWeekAndDay
-            (weekNumber, dayOfWeek),
-        candidateService.getAllSlotsWithRelatedBookingIdsUsingDate
-            (dateFromWeekAndDay),
-        bookingService.getMapOfAllBookingsUsingDate
-            (dateFromWeekAndDay)
+        interviewerService.getAllSlotsWithRelatedBookingIdsUsingWeekAndDay(weekNumber, dayOfWeek),
+        candidateService.getAllSlotsWithRelatedBookingIdsUsingDate(dateFromWeekAndDay),
+        bookingService.getMapOfAllBookingsUsingDate(dateFromWeekAndDay)
     );
   }
 }

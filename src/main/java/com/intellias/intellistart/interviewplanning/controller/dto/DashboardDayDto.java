@@ -8,6 +8,9 @@ import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+/**
+ * A dto representing all bookings, coordinator and candidate slots for a particular day.
+ */
 @Data
 @AllArgsConstructor
 public class DashboardDayDto {

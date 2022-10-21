@@ -28,7 +28,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(MockitoExtension.class)
 class CandidateServiceTest {
-
   @Mock
   private CandidateSlotRepository candidateSlotRepository;
   @Mock

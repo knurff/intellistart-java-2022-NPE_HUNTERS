@@ -12,17 +12,19 @@ import java.time.temporal.WeekFields;
  * current and next week numbers.
  */
 public final class DateUtils {
-  private final static String INVALID_FROM_DATE_MESSAGE = "'from' value must be less than current";
-  private final static String INVALID_WEEK_NUMBER_MESSAGE = "Week number specified must be > 0";
-  /**
-   * Don't let anyone instantiate this class.
-   */
-  private DateUtils() {}
-
   /**
    * Default date from which numbering begins.
    */
   public static final LocalDate DEFAULT_NUMBERING_FROM = LocalDate.of(2022, 1, 1);
+
+  private static final String INVALID_FROM_DATE_MESSAGE = "'from' value must be less than current";
+
+  private static final String INVALID_WEEK_NUMBER_MESSAGE = "Week number specified must be >= 0";
+
+  /**
+   * Don't let anyone instantiate this class.
+   */
+  private DateUtils() {}
 
   /**
    * Returns week number of {@code current}, relative to {@code from}.
@@ -34,12 +36,12 @@ public final class DateUtils {
    */
   public static int getWeekFrom(LocalDate from, LocalDate current) {
     if (from.compareTo(current) > 0) {
-      throw new IllegalArgumentException("'from' value must be less than current");
+      throw new IllegalArgumentException(INVALID_FROM_DATE_MESSAGE);
     }
 
     TemporalField fieldIso = WeekFields.ISO.dayOfWeek();
 
-    return (int) ChronoUnit.WEEKS.between(from.with(fieldIso, 1), current) + 1;
+    return (int) ChronoUnit.WEEKS.between(from.with(fieldIso, 1), current);
   }
 
   /**
@@ -85,14 +87,14 @@ public final class DateUtils {
   }
 
   /**
-   * Returns a LocalDate for a day of a week which (week) is specified by weekNumber
+   * Returns a LocalDate for a day of a week which (week) is specified by weekNumber.
    *
    * @param weekNumber a week's number starting from DEFAULT_NUMBERING_FROM
    * @param dayOfWeek a day of the week specified for which to find the date
    * @return a LocalDate for a day of a week specified by weekNumber
    */
   public static LocalDate getDateOfDayOfWeek(final int weekNumber, final DayOfWeek dayOfWeek) {
-    if (weekNumber <= 0) {
+    if (weekNumber < 0) {
       throw new IllegalArgumentException(INVALID_WEEK_NUMBER_MESSAGE);
     }
 

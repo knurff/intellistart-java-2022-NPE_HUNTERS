@@ -13,5 +13,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CandidateSlotRepository extends JpaRepository<CandidateSlot, Long> {
   List<CandidateSlot> findAllByEmail(final String email);
+
   List<CandidateSlot> getAllByDate(final LocalDate localDate);
 }

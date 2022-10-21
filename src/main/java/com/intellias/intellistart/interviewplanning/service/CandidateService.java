@@ -53,11 +53,21 @@ public class CandidateService {
     return true;
   }
 
-  public Map<CandidateSlot, Set<Long>> getAllSlotsWithRelatedBookingIdsUsingDate(final LocalDate localDate) {
+  /**
+   * Returns a map of candidate slots as keys and booking id sets related to them as values
+   * for a particular date.
+   *
+   * @param localDate specifies the date using which to retrieve candidate slots.
+   * @return a map of candidate slots as keys and booking id sets related to them as values for a
+   *     particular date.
+   */
+  public Map<CandidateSlot, Set<Long>> getAllSlotsWithRelatedBookingIdsUsingDate(
+      final LocalDate localDate) {
+
     final Map<CandidateSlot, Set<Long>> result = new HashMap<>();
     final List<CandidateSlot> allSlots = candidateSlotRepository.getAllByDate(localDate);
 
-    for (final CandidateSlot slot: allSlots) {
+    for (final CandidateSlot slot : allSlots) {
       final Set<Long> relatedBookingIds =
           bookingService.getAllBookingIdsRelatedToCandidateSlot(slot);
 

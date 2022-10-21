@@ -3,6 +3,9 @@ package com.intellias.intellistart.interviewplanning.controller.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+/**
+ * A dto representing all bookings, coordinator and candidate slots for a particular week.
+ */
 @Data
 @AllArgsConstructor
 public class DashboardDto {

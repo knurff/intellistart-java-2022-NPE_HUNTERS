@@ -5,21 +5,42 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
+import com.intellias.intellistart.interviewplanning.controller.dto.DashboardDto;
 import com.intellias.intellistart.interviewplanning.model.Booking;
+import com.intellias.intellistart.interviewplanning.model.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.model.User;
 import com.intellias.intellistart.interviewplanning.model.role.UserRole;
+import com.intellias.intellistart.interviewplanning.repository.UserRepository;
 import com.intellias.intellistart.interviewplanning.util.InterviewerSlotFactory;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.aspectj.weaver.patterns.ConcreteCflowPointcut.Slot;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 class CoordinatorServiceTest {
-
-  private final CoordinatorService coordinatorServiceMock = Mockito.mock(CoordinatorService.class);
+  @Mock
+  private CoordinatorService coordinatorServiceMock;
+  @Mock
+  private InterviewerService interviewerService;
+  @Mock
+  private CandidateService candidateService;
+  @Mock
+  private BookingService bookingService;
+  @Mock
+  private UserRepository userRepository;
 
 
   @Test
@@ -118,5 +139,44 @@ class CoordinatorServiceTest {
     assertEquals(expectedCoordinators.size(), actualCoordinators.size());
     assertEquals(actualCoordinators.get(0).getRole(), UserRole.COORDINATOR);
     assertSame(expectedCoordinators, actualCoordinators);
+  }
+
+  @Test
+  void findById() {
+    final User expectedUser = new User();
+    when(coordinatorServiceMock.findById(anyLong())).thenReturn(expectedUser);
+
+    final User actualUser = coordinatorServiceMock.findById(346642747L);
+
+    assertNotNull(actualUser);
+    assertEquals(expectedUser, actualUser);
+  }
+
+  @Test
+  void getDashboardForWeek() {
+    final Map<InterviewerSlot, Set<Long>> expectedInterviewerSlotsMap = new HashMap<>();
+    final Map<CandidateSlot, Set<Long>> expectedCandidateSlotsMap = new HashMap<>();
+    final Map<Long, Booking> expectedBookingsMap = new HashMap<>();
+
+    when(interviewerService.getAllSlotsWithRelatedBookingIdsUsingWeekAndDay(anyInt(), any()))
+        .thenReturn(expectedInterviewerSlotsMap);
+    when(candidateService.getAllSlotsWithRelatedBookingIdsUsingDate(any()))
+        .thenReturn(expectedCandidateSlotsMap);
+    when(bookingService.getMapOfAllBookingsUsingDate(any()))
+        .thenReturn(expectedBookingsMap);
+
+    final CoordinatorService coordinatorService = new CoordinatorService(
+        userRepository,
+        interviewerService,
+        candidateService,
+        bookingService
+    );
+
+    final DashboardDto result = coordinatorService.getDashboardForWeek(1);
+
+    assertNotNull(result);
+    assertEquals(result.getMonday().getBookingIdsByInterviewerSlot(), expectedInterviewerSlotsMap);
+    assertEquals(result.getMonday().getBookingIdsByCandidateSlot(), expectedCandidateSlotsMap);
+    assertEquals(result.getMonday().getBookingsByIds(), expectedBookingsMap);
   }
 }

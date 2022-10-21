@@ -129,6 +129,14 @@ public class InterviewerService {
     }
   }
 
+  /**
+   * Returns a map of interviewer slots as keys and booking id sets related to them as values
+   * for a particular week and day.
+   *
+   * @param weekNumber a number of the week.
+   * @param dayOfWeek a day of the week specified.
+   * @return a map of interviewer slots as keys and booking id sets related to them as values.
+   */
   public Map<InterviewerSlot, Set<Long>> getAllSlotsWithRelatedBookingIdsUsingWeekAndDay(
       final int weekNumber,
       final DayOfWeek dayOfWeek) {
@@ -138,7 +146,7 @@ public class InterviewerService {
     final List<InterviewerSlot> allSlots =
         interviewerSlotRepository.getAllByWeekAndDayOfWeek(weekNumber, dayOfWeek);
 
-    for (final InterviewerSlot slot: allSlots) {
+    for (final InterviewerSlot slot : allSlots) {
       final Set<Long> relatedBookingIds =
           bookingService.getAllBookingIdsRelatedToInterviewerSlot(slot);
 
