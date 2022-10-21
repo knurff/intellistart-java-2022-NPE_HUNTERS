@@ -1,5 +1,7 @@
 package com.intellias.intellistart.interviewplanning.service;
 
+import com.intellias.intellistart.interviewplanning.controller.dto.DashboardDayDto;
+import com.intellias.intellistart.interviewplanning.controller.dto.DashboardDto;
 import com.intellias.intellistart.interviewplanning.exception.InterviewerNotFoundException;
 import com.intellias.intellistart.interviewplanning.exception.SlotContainsBookingsException;
 import com.intellias.intellistart.interviewplanning.model.Booking;
@@ -9,8 +11,11 @@ import com.intellias.intellistart.interviewplanning.model.role.UserRole;
 import com.intellias.intellistart.interviewplanning.repository.UserRepository;
 import com.intellias.intellistart.interviewplanning.service.validator.TimePeriodValidator;
 import com.intellias.intellistart.interviewplanning.util.DateUtils;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AllArgsConstructor;
 import org.aspectj.weaver.patterns.ConcreteCflowPointcut.Slot;
 import org.springframework.stereotype.Service;
 
@@ -18,17 +23,12 @@ import org.springframework.stereotype.Service;
  * CoordinatorService service.
  */
 @Service
+@AllArgsConstructor
 public class CoordinatorService {
-
   private final UserRepository userRepository;
   private final InterviewerService interviewerService;
-
-
-  public CoordinatorService(final UserRepository userRepository,
-      final InterviewerService interviewerService) {
-    this.userRepository = userRepository;
-    this.interviewerService = interviewerService;
-  }
+  private final CandidateService candidateService;
+  private final BookingService bookingService;
 
   public Booking createBooking() {
     return new Booking();
@@ -108,5 +108,28 @@ public class CoordinatorService {
   public User findById(Long id) {
     return userRepository.findById(id).orElseThrow(
         () -> new InterviewerNotFoundException("Interviewer id = " + id + "not found"));
+  }
+
+  public DashboardDto getDashboardForWeek(final int weekNumber) {
+    return new DashboardDto(
+        getDashboardForDay(weekNumber, DayOfWeek.MONDAY),
+        getDashboardForDay(weekNumber, DayOfWeek.TUESDAY),
+        getDashboardForDay(weekNumber, DayOfWeek.WEDNESDAY),
+        getDashboardForDay(weekNumber, DayOfWeek.THURSDAY),
+        getDashboardForDay(weekNumber, DayOfWeek.FRIDAY)
+    );
+  }
+
+  private DashboardDayDto getDashboardForDay(final int weekNumber, final DayOfWeek dayOfWeek) {
+    final LocalDate dateFromWeekAndDay = DateUtils.getDateOfDayOfWeek(weekNumber, dayOfWeek);
+
+    return new DashboardDayDto(
+        interviewerService.getAllSlotsWithRelatedBookingIdsUsingWeekAndDay
+            (weekNumber, dayOfWeek),
+        candidateService.getAllSlotsWithRelatedBookingIdsUsingDate
+            (dateFromWeekAndDay),
+        bookingService.getMapOfAllBookingsUsingDate
+            (dateFromWeekAndDay)
+    );
   }
 }

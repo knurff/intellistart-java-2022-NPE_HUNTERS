@@ -9,9 +9,13 @@ import com.intellias.intellistart.interviewplanning.model.role.UserRole;
 import com.intellias.intellistart.interviewplanning.repository.InterviewerSlotRepository;
 import com.intellias.intellistart.interviewplanning.repository.UserRepository;
 import com.intellias.intellistart.interviewplanning.service.validator.TimePeriodValidator;
+import java.time.DayOfWeek;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,9 +25,9 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 public class InterviewerService {
-
   private final InterviewerSlotRepository interviewerSlotRepository;
   private final UserRepository userRepository;
+  private final BookingService bookingService;
 
   public InterviewerSlot createSlot() {
     return new InterviewerSlot();
@@ -123,6 +127,25 @@ public class InterviewerService {
     if (isSlotOverlapping(interviewerSlots, slot)) {
       throw new SlotIsOverlappingException("Slot already exist");
     }
+  }
+
+  public Map<InterviewerSlot, Set<Long>> getAllSlotsWithRelatedBookingIdsUsingWeekAndDay(
+      final int weekNumber,
+      final DayOfWeek dayOfWeek) {
+
+    final Map<InterviewerSlot, Set<Long>> result = new HashMap<>();
+
+    final List<InterviewerSlot> allSlots =
+        interviewerSlotRepository.getAllByWeekAndDayOfWeek(weekNumber, dayOfWeek);
+
+    for (final InterviewerSlot slot: allSlots) {
+      final Set<Long> relatedBookingIds =
+          bookingService.getAllBookingIdsRelatedToInterviewerSlot(slot);
+
+      result.put(slot, relatedBookingIds);
+    }
+
+    return result;
   }
 
   private boolean isSlotOverlapping(List<InterviewerSlot> interviewerSlots, InterviewerSlot slot) {

@@ -1,5 +1,6 @@
 package com.intellias.intellistart.interviewplanning.controller;
 
+import com.intellias.intellistart.interviewplanning.controller.dto.DashboardDto;
 import com.intellias.intellistart.interviewplanning.controller.dto.InterviewerSlotDto;
 import com.intellias.intellistart.interviewplanning.model.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.model.User;
@@ -24,13 +25,18 @@ public class CoordinatorController {
   }
 
   @GetMapping("/users/interviewers")
-  List<User> getAllInterviewers() {
+  public List<User> getAllInterviewers() {
     return coordinatorService.getAllInterviewers();
   }
 
   @GetMapping("/users/coordinators")
-  List<User> getAllCoordinators() {
+  public List<User> getAllCoordinators() {
     return coordinatorService.getAllCoordinators();
+  }
+
+  @GetMapping("/weeks/{weekId}/dashboard")
+  public DashboardDto getDashboardForWeek(@PathVariable int weekId) {
+    return coordinatorService.getDashboardForWeek(weekId);
   }
 
   /**

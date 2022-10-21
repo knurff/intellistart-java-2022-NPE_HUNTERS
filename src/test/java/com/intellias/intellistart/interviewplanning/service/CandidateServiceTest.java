@@ -31,12 +31,13 @@ class CandidateServiceTest {
 
   @Mock
   private CandidateSlotRepository candidateSlotRepository;
-
+  @Mock
+  private BookingService bookingService;
   private CandidateService service;
 
   @BeforeEach
   void setup() {
-    service = new CandidateService(candidateSlotRepository);
+    service = new CandidateService(candidateSlotRepository, bookingService);
   }
 
   @Test

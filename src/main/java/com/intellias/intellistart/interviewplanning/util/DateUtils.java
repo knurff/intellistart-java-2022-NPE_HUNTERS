@@ -1,6 +1,7 @@
 package com.intellias.intellistart.interviewplanning.util;
 
 import com.intellias.intellistart.interviewplanning.exception.InvalidTimeSlotBoundariesException;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalField;
@@ -11,7 +12,8 @@ import java.time.temporal.WeekFields;
  * current and next week numbers.
  */
 public final class DateUtils {
-
+  private final static String INVALID_FROM_DATE_MESSAGE = "'from' value must be less than current";
+  private final static String INVALID_WEEK_NUMBER_MESSAGE = "Week number specified must be > 0";
   /**
    * Don't let anyone instantiate this class.
    */
@@ -20,7 +22,7 @@ public final class DateUtils {
   /**
    * Default date from which numbering begins.
    */
-  private static final LocalDate NUMBERING_FROM = LocalDate.of(2022, 1, 1);
+  public static final LocalDate DEFAULT_NUMBERING_FROM = LocalDate.of(2022, 1, 1);
 
   /**
    * Returns week number of {@code current}, relative to {@code from}.
@@ -58,7 +60,7 @@ public final class DateUtils {
    * @return the week number(1-INT_MAX)
    */
   public static int getCurrentWeek() {
-    return getWeekFrom(NUMBERING_FROM, LocalDate.now());
+    return getWeekFrom(DEFAULT_NUMBERING_FROM, LocalDate.now());
   }
 
   /**
@@ -67,7 +69,7 @@ public final class DateUtils {
    * @return the next week number(2-INT_MAX)
    */
   public static int getNextWeek() {
-    return getNextWeekFrom(NUMBERING_FROM, LocalDate.now());
+    return getNextWeekFrom(DEFAULT_NUMBERING_FROM, LocalDate.now());
   }
 
   /**
@@ -80,5 +82,30 @@ public final class DateUtils {
     if (date.isBefore(LocalDate.now())) {
       throw new InvalidTimeSlotBoundariesException("Date must be in future");
     }
+  }
+
+  /**
+   * Returns a LocalDate for a day of a week which (week) is specified by weekNumber
+   *
+   * @param weekNumber a week's number starting from DEFAULT_NUMBERING_FROM
+   * @param dayOfWeek a day of the week specified for which to find the date
+   * @return a LocalDate for a day of a week specified by weekNumber
+   */
+  public static LocalDate getDateOfDayOfWeek(final int weekNumber, final DayOfWeek dayOfWeek) {
+    if (weekNumber <= 0) {
+      throw new IllegalArgumentException(INVALID_WEEK_NUMBER_MESSAGE);
+    }
+
+    LocalDate result = DEFAULT_NUMBERING_FROM.plusWeeks(weekNumber);
+
+    while (result.getDayOfWeek().getValue() < dayOfWeek.getValue()) {
+      result = result.plusDays(1);
+    }
+
+    while (result.getDayOfWeek().getValue() > dayOfWeek.getValue()) {
+      result = result.minusDays(1);
+    }
+
+    return result;
   }
 }
