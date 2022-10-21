@@ -6,6 +6,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import net.bytebuddy.asm.Advice.Local;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 /**
  * Unit tests for DateUtils class.
@@ -124,5 +125,35 @@ class DateUtilsTest {
     assertEquals(expectedDate, actualDate);
 
     assertEquals(weekNumber, 42);
+  }
+
+  @Test
+  void testGetCurrentWeek() {
+    final LocalDate localDate = LocalDate.now();
+
+    final int yearsPassed = localDate.getYear() - DateUtils.DEFAULT_NUMBERING_FROM.getYear();
+    final int daysInAYear = 365;
+    final int daysInAWeek = 7;
+
+    final int daysPassed = localDate.getDayOfYear() + yearsPassed * daysInAYear;
+
+    int weekNumber = daysPassed / daysInAWeek;
+
+    assertEquals(weekNumber, DateUtils.getCurrentWeek());
+  }
+
+  @Test
+  void testGetNextWeek() {
+    final LocalDate localDate = LocalDate.now();
+
+    final int yearsPassed = localDate.getYear() - DateUtils.DEFAULT_NUMBERING_FROM.getYear();
+    final int daysInAYear = 365;
+    final int daysInAWeek = 7;
+
+    final int daysPassed = localDate.getDayOfYear() + yearsPassed * daysInAYear;
+
+    int nextWeekNumber = daysPassed / daysInAWeek + 1;
+
+    assertEquals(nextWeekNumber, DateUtils.getNextWeek());
   }
 }

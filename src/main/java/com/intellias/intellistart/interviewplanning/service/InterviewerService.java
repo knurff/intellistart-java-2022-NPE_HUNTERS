@@ -69,12 +69,12 @@ public class InterviewerService {
   public User getInterviewerOrThrowException(Long interviewerId) {
     Optional<User> interviewerOptional = userRepository.findById(interviewerId);
 
-    if (interviewerOptional.isEmpty()
-        || !interviewerOptional.get().getRole().equals(UserRole.INTERVIEWER)) {
+    final boolean interviewerNotFoundOrRoleNotInterviewer = interviewerOptional.isEmpty()
+        || !interviewerOptional.get().getRole().equals(UserRole.INTERVIEWER);
 
+    if (interviewerNotFoundOrRoleNotInterviewer) {
       throw new InterviewerNotFoundException(
           String.format("Interviewer with id %s doesn't exist", interviewerId));
-
     }
 
     return interviewerOptional.get();
@@ -94,9 +94,12 @@ public class InterviewerService {
    * @throws SlotNotFoundException if {@code slot} is not {@code interviewerId}
    */
   public InterviewerSlot findSlotByIdAndInterviewerId(Long interviewerSlotId, Long interviewerId) {
-    InterviewerSlot slot = findSlotById(interviewerSlotId);
+    final InterviewerSlot slot = findSlotById(interviewerSlotId);
 
-    if (!slot.getInterviewerId().getId().equals(interviewerId)) {
+    final boolean slotBelongsToInterviewerSpecified =
+        slot.getInterviewerId().getId().equals(interviewerId);
+
+    if (!slotBelongsToInterviewerSpecified) {
       throw new SlotNotFoundException(
           " Slot id = " + interviewerSlotId + " with Interviewer id = " + interviewerId
               + " not found");
