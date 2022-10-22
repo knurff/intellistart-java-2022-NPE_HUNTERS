@@ -31,7 +31,7 @@ public final class DateUtils {
    *
    * @param from the date from which numbering begins
    * @param current date week number of which we need to find
-   * @return the week number(1-INT_MAX) of {@code current}
+   * @return the week number(0-INT_MAX) of {@code current}
    * @throws IllegalArgumentException if {@code from} is greater than {@code current}
    */
   public static int getWeekFrom(LocalDate from, LocalDate current) {
@@ -68,7 +68,7 @@ public final class DateUtils {
   /**
    * Returns next week number of today's date, relative to {@code NUMBERING_FROM}.
    *
-   * @return the next week number(2-INT_MAX)
+   * @return the next week number(1-INT_MAX)
    */
   public static int getNextWeek() {
     return getNextWeekFrom(DEFAULT_NUMBERING_FROM, LocalDate.now());

@@ -11,6 +11,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -29,16 +31,10 @@ public class BookingService {
    * @return a set of booking ids.
    */
   public Set<Long> getAllBookingIdsRelatedToInterviewerSlot(final InterviewerSlot interviewerSlot) {
-    final List<Booking> relatedBookings =
-        bookingRepository.getAllByInterviewerSlot(interviewerSlot);
-
-    final Set<Long> result = new HashSet<>();
-
-    for (final Booking relatedBooking : relatedBookings) {
-      result.add(relatedBooking.getId());
-    }
-
-    return result;
+    return bookingRepository.getAllByInterviewerSlot(interviewerSlot)
+        .stream()
+        .map(Booking::getId)
+        .collect(Collectors.toSet());
   }
 
   /**
@@ -48,14 +44,10 @@ public class BookingService {
    * @return a set of booking ids.
    */
   public Set<Long> getAllBookingIdsRelatedToCandidateSlot(final CandidateSlot candidateSlot) {
-    final List<Booking> relatedBookings = bookingRepository.getAllByCandidateSlot(candidateSlot);
-    final Set<Long> result = new HashSet<>();
-
-    for (final Booking relatedBooking : relatedBookings) {
-      result.add(relatedBooking.getId());
-    }
-
-    return result;
+    return bookingRepository.getAllByCandidateSlot(candidateSlot)
+        .stream()
+        .map(Booking::getId)
+        .collect(Collectors.toSet());
   }
 
   /**
@@ -65,20 +57,9 @@ public class BookingService {
    * @return a map of bookings where booking ids are used for keys.
    */
   public Map<Long, Booking> getMapOfAllBookingsUsingDate(final LocalDate localDate) {
-    final Map<Long, Booking> result = new HashMap<>();
-    final List<Booking> allBookings = bookingRepository.findAll();
-    final List<Booking> filteredBookings = new ArrayList<>();
-
-    for (final Booking booking : allBookings) {
-      if (booking.getCandidateSlot().getDate().equals(localDate)) {
-        filteredBookings.add(booking);
-      }
-    }
-
-    for (final Booking booking : filteredBookings) {
-      result.put(booking.getId(), booking);
-    }
-
-    return result;
+    return bookingRepository.findAll()
+        .stream()
+        .filter(booking -> booking.getCandidateSlot().getDate().equals(localDate))
+        .collect(Collectors.toMap(Booking::getId, Function.identity()));
   }
 }
