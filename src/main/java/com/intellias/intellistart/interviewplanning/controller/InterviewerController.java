@@ -1,7 +1,7 @@
 package com.intellias.intellistart.interviewplanning.controller;
 
 import com.intellias.intellistart.interviewplanning.controller.dto.InterviewerSlotDto;
-import com.intellias.intellistart.interviewplanning.controller.dto.creator.InterviewerSlotsDtoCreator;
+import com.intellias.intellistart.interviewplanning.controller.dto.mapper.InterviewerSlotsMapper;
 import com.intellias.intellistart.interviewplanning.model.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.service.InterviewerService;
 import java.util.List;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class InterviewerController {
 
   private final InterviewerService interviewerService;
-  private final InterviewerSlotsDtoCreator interviewerSlotsDtoCreator;
+  private final InterviewerSlotsMapper interviewerSlotsMapper;
 
   /**
    * Returns all interviewer slots by id.
@@ -33,7 +33,7 @@ public class InterviewerController {
     List<InterviewerSlot> interviewerSlots =
         interviewerService.getAllInterviewerSlotsByInterviewerId(interviewerId);
 
-    return interviewerSlotsDtoCreator.createInterviewerSlotsDtoList(interviewerSlots);
+    return interviewerSlotsMapper.mapToInterviewerSlotsDtoList(interviewerSlots);
   }
 
 }

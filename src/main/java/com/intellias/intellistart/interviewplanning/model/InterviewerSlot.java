@@ -18,6 +18,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +34,8 @@ import org.springframework.lang.NonNull;
  */
 
 @Entity
+@Builder
+@AllArgsConstructor
 @Getter
 @Setter
 @ToString
