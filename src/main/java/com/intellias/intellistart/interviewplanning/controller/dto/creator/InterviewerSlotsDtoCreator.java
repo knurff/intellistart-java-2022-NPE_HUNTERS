@@ -27,7 +27,7 @@ public class InterviewerSlotsDtoCreator {
     return InterviewerSlotDto.builder()
         .id(interviewerSlot.getId())
         .weekNum(interviewerSlot.getWeek())
-        .dayOfWeek(interviewerSlot.getDayOfWeek().getDay())
+        .dayOfWeek(interviewerSlot.getDayOfWeek().toString())
         .from(interviewerSlot.getPeriod().getStartTime())
         .to(interviewerSlot.getPeriod().getEndTime())
         .bookings(bookingDtoCreator.createBookingDtoSet(interviewerSlot.getBookings()))

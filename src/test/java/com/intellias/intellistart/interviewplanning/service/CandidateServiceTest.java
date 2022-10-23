@@ -4,17 +4,23 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 
 import com.intellias.intellistart.interviewplanning.exception.InvalidCandidateSlotDateException;
 import com.intellias.intellistart.interviewplanning.exception.InvalidTimeSlotBoundariesException;
 import com.intellias.intellistart.interviewplanning.exception.SlotIsOverlappingException;
 import com.intellias.intellistart.interviewplanning.model.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.repository.CandidateSlotRepository;
-import com.intellias.intellistart.interviewplanning.service.factory.CandidateSlotFactory;
+import com.intellias.intellistart.interviewplanning.util.CandidateSlotFactory;
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -28,14 +34,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(MockitoExtension.class)
 class CandidateServiceTest {
-
   @Mock
   private CandidateSlotRepository candidateSlotRepository;
+  @Mock
+  private BookingService bookingService;
   private CandidateService service;
 
   @BeforeEach
   void setup() {
-    service = new CandidateService(candidateSlotRepository);
+    service = new CandidateService(candidateSlotRepository, bookingService);
   }
 
   @Test
@@ -192,6 +199,28 @@ class CandidateServiceTest {
         .thenReturn(List.of(candidateSlot1, candidateSlot2, candidateSlotToUpdate));
 
     assertThrows(SlotIsOverlappingException.class, () -> service.editSlot(candidateSlot2, 1L));
+  }
+
+  @Test
+  @Order(14)
+  void getAllSlotsWithRelatedBookingIdsUsingDateReturnsExpectedMap() {
+    final CandidateSlot expectedSlot = new CandidateSlot();
+    final Set<Long> expectedSet = new HashSet<>();
+    final Map<CandidateSlot, Set<Long>> expectedMap = new HashMap<>();
+    expectedMap.put(expectedSlot, expectedSet);
+
+    Mockito.when(candidateSlotRepository.getAllByDate(any()))
+        .thenReturn(List.of(expectedSlot));
+    Mockito.when(bookingService.getAllBookingIdsRelatedToCandidateSlot(any()))
+        .thenReturn(expectedSet);
+
+    final Map<CandidateSlot, Set<Long>> actualMap =
+        service.getAllSlotsWithRelatedBookingIdsUsingDate(LocalDate.now());
+
+    assertNotNull(actualMap);
+    assertTrue(actualMap.containsKey(expectedSlot));
+    assertEquals(actualMap.get(expectedSlot), expectedSet);
+    assertEquals(expectedMap, actualMap);
   }
 
   private Optional<CandidateSlot> findCandidateSlotFromList(

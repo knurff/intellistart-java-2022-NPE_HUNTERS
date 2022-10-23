@@ -3,7 +3,6 @@ package com.intellias.intellistart.interviewplanning.util;
 import com.intellias.intellistart.interviewplanning.controller.dto.InterviewerSlotDto;
 import com.intellias.intellistart.interviewplanning.model.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.model.TimePeriod;
-import com.intellias.intellistart.interviewplanning.model.dayofweek.DayOfWeek;
 
 /**
  * Util class, which contains methods for converting Dto to entity and entity to Dto.
@@ -22,7 +21,7 @@ public final class MappingUtils {
 
     dto.setId(entity.getId());
     dto.setWeekNum(entity.getWeek());
-    dto.setDayOfWeek(entity.getDayOfWeek().getDay());
+    dto.setDayOfWeek(entity.getDayOfWeek().toString());
     dto.setFrom(entity.getPeriod().getStartTime());
     dto.setTo(entity.getPeriod().getEndTime());
 
@@ -40,7 +39,7 @@ public final class MappingUtils {
     InterviewerSlot entity = new InterviewerSlot();
 
     entity.setWeek(dto.getWeekNum());
-    entity.setDayOfWeek(DayOfWeek.fromString(dto.getDayOfWeek()));
+    entity.setDayOfWeek(DayOfWeekConvertor.stringToDayOfWeek(dto.getDayOfWeek()));
     TimePeriod time = new TimePeriod(dto.getFrom(), dto.getTo());
     entity.setPeriod(time);
 
