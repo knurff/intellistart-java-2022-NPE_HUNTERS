@@ -1,5 +1,6 @@
 package com.intellias.intellistart.interviewplanning.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.WeekFields;
@@ -59,6 +60,7 @@ public class InterviewerSlot {
 
 
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "interviewerSlot")
+  @JsonIgnore
   @Exclude
   private Set<Booking> bookings;
 
