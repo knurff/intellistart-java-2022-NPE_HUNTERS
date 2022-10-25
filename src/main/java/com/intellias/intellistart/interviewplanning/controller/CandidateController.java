@@ -1,11 +1,9 @@
 package com.intellias.intellistart.interviewplanning.controller;
 
-import static com.intellias.intellistart.interviewplanning.util.CandidateSlotMapper.mapDtoToEntity;
-
 import com.intellias.intellistart.interviewplanning.controller.dto.CandidateSlotDto;
+import com.intellias.intellistart.interviewplanning.controller.dto.mapper.CandidateSlotMapper;
 import com.intellias.intellistart.interviewplanning.model.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.service.CandidateService;
-import com.intellias.intellistart.interviewplanning.util.CandidateSlotMapper;
 import com.intellias.intellistart.interviewplanning.util.RequestParser;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,10 +25,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class CandidateController {
 
   private final CandidateService candidateService;
+  private final CandidateSlotMapper candidateSlotMapper;
 
   @Autowired
-  public CandidateController(CandidateService candidateService) {
+  public CandidateController(CandidateService candidateService,
+      CandidateSlotMapper candidateSlotMapper) {
     this.candidateService = candidateService;
+    this.candidateSlotMapper = candidateSlotMapper;
   }
 
   /**
@@ -41,7 +42,7 @@ public class CandidateController {
   public List<CandidateSlotDto> getAllSlots() {
     List<CandidateSlot> candidateSlotList = candidateService.getAllSlots(
         RequestParser.getUserEmailFromToken());
-    return CandidateSlotMapper.convertCandidateSlotListToDtoList(candidateSlotList);
+    return candidateSlotMapper.mapToCandidateSlotDtoList(candidateSlotList);
   }
 
   /**
@@ -52,7 +53,8 @@ public class CandidateController {
   @ResponseStatus(HttpStatus.CREATED)
   public CandidateSlot addSlot(@RequestBody CandidateSlotDto candidateSlotDto) {
     candidateSlotDto.setEmail(RequestParser.getUserEmailFromToken());
-    return candidateService.createSlot(mapDtoToEntity(candidateSlotDto));
+    return candidateService.createSlot(
+        candidateSlotMapper.mapToCandidateSlotEntity(candidateSlotDto));
   }
 
   /**
@@ -63,6 +65,6 @@ public class CandidateController {
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void editSlot(@PathVariable Long id, @RequestBody CandidateSlotDto candidateSlotDto) {
     candidateSlotDto.setEmail(RequestParser.getUserEmailFromToken());
-    candidateService.editSlot(mapDtoToEntity(candidateSlotDto), id);
+    candidateService.editSlot(candidateSlotMapper.mapToCandidateSlotEntity(candidateSlotDto), id);
   }
 }

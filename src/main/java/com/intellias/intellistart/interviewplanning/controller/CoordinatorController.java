@@ -2,11 +2,11 @@ package com.intellias.intellistart.interviewplanning.controller;
 
 import com.intellias.intellistart.interviewplanning.controller.dto.DashboardDto;
 import com.intellias.intellistart.interviewplanning.controller.dto.InterviewerSlotDto;
+import com.intellias.intellistart.interviewplanning.controller.dto.mapper.InterviewerSlotsMapper;
 import com.intellias.intellistart.interviewplanning.model.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.model.User;
 import com.intellias.intellistart.interviewplanning.service.BookingService;
 import com.intellias.intellistart.interviewplanning.service.CoordinatorService;
-import com.intellias.intellistart.interviewplanning.util.MappingUtils;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,6 +27,7 @@ public class CoordinatorController {
 
   private final CoordinatorService coordinatorService;
   private final BookingService bookingService;
+  private final InterviewerSlotsMapper interviewerSlotsMapper;
 
   @GetMapping("/users/interviewers")
   public List<User> getAllInterviewers() {
@@ -54,10 +55,10 @@ public class CoordinatorController {
   @PostMapping("/interviewers/{interviewerId}/slots/{slotId}")
   public InterviewerSlotDto editSlot(@PathVariable Long interviewerId, @PathVariable Long slotId,
       @RequestBody InterviewerSlotDto slot) {
-    InterviewerSlot entity = MappingUtils.mapToInterviewerSlotEntity(slot);
+    InterviewerSlot entity = interviewerSlotsMapper.mapToInterviewerSlotEntity(slot);
 
     InterviewerSlot responseEntity = coordinatorService.editSlot(interviewerId, slotId, entity);
-    return MappingUtils.mapToInterviewerSlotDto(responseEntity);
+    return interviewerSlotsMapper.mapToInterviewerSlotsDto(responseEntity);
   }
 
   /**
