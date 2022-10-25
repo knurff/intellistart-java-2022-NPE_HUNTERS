@@ -136,9 +136,11 @@ class CandidateServiceTest {
     setIdForSlotAndConfigureMockBehaviorForEditMethod(candidateSlot);
     Mockito.when(candidateSlotRepository.findAllByEmail(candidateSlot.getEmail()))
         .thenReturn(List.of(candidateSlot, candidateSlotToUpdate));
+    Mockito.when(candidateSlotRepository.save(any(CandidateSlot.class))).thenReturn(candidateSlot);
 
-    assertTrue(service.editSlot(candidateSlot, 1L));
+    assertEquals(candidateSlot, service.editSlot(candidateSlot, 1L));
   }
+
 
   @Test
   @Order(9)
