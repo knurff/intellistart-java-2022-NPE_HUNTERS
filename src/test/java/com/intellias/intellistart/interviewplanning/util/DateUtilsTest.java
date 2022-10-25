@@ -4,13 +4,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import net.bytebuddy.asm.Advice.Local;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import java.time.temporal.ChronoUnit;
 
-/**
- * Unit tests for DateUtils class.
- */
+import org.junit.jupiter.api.Test;
+
 class DateUtilsTest {
 
   @Test
@@ -123,21 +120,17 @@ class DateUtilsTest {
 
     assertNotNull(actualDate);
     assertEquals(expectedDate, actualDate);
-
-    assertEquals(weekNumber, 42);
   }
 
   @Test
   void testGetCurrentWeek() {
     final LocalDate localDate = LocalDate.now();
-
-    final int yearsPassed = localDate.getYear() - DateUtils.DEFAULT_NUMBERING_FROM.getYear();
-    final int daysInAYear = 365;
+    final LocalDate countdownMonday = DateUtils.getDateOfDayOfWeek(0, DayOfWeek.MONDAY);
     final int daysInAWeek = 7;
 
-    final int daysPassed = localDate.getDayOfYear() + yearsPassed * daysInAYear;
+    final int daysPassed = (int) ChronoUnit.DAYS.between(countdownMonday, localDate);
 
-    int weekNumber = daysPassed / daysInAWeek;
+    final int weekNumber = daysPassed / daysInAWeek;
 
     assertEquals(weekNumber, DateUtils.getCurrentWeek());
   }
@@ -145,12 +138,10 @@ class DateUtilsTest {
   @Test
   void testGetNextWeek() {
     final LocalDate localDate = LocalDate.now();
-
-    final int yearsPassed = localDate.getYear() - DateUtils.DEFAULT_NUMBERING_FROM.getYear();
-    final int daysInAYear = 365;
+    final LocalDate countdownMonday = DateUtils.getDateOfDayOfWeek(0, DayOfWeek.MONDAY);
     final int daysInAWeek = 7;
 
-    final int daysPassed = localDate.getDayOfYear() + yearsPassed * daysInAYear;
+    final int daysPassed = (int) ChronoUnit.DAYS.between(countdownMonday, localDate);
 
     int nextWeekNumber = daysPassed / daysInAWeek + 1;
 

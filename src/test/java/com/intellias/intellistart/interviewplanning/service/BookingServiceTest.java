@@ -2,40 +2,37 @@ package com.intellias.intellistart.interviewplanning.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import com.intellias.intellistart.interviewplanning.exception.BookingNotFoundException;
 import com.intellias.intellistart.interviewplanning.model.Booking;
 import com.intellias.intellistart.interviewplanning.model.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.repository.BookingRepository;
+import com.intellias.intellistart.interviewplanning.service.factory.BookingFactory;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
-import org.aspectj.lang.annotation.Before;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.context.event.annotation.BeforeTestMethod;
 
 @ExtendWith(MockitoExtension.class)
-public class BookingServiceTest {
+class BookingServiceTest {
+
   @Mock
   private BookingRepository bookingRepository;
+  @InjectMocks
   private BookingService bookingService;
-
-  @BeforeEach
-  void setup() {
-    bookingService = new BookingService(bookingRepository);
-  }
 
   @Test
   void getAllBookingIdsRelatedToInterviewerSlot() {
@@ -91,5 +88,21 @@ public class BookingServiceTest {
 
     assertNotNull(actualMap);
     assertEquals(expectedMap, actualMap);
+  }
+
+  @Test
+  void deleteBookingWorkingProperly() {
+    Booking booking = BookingFactory.createBookingWithId();
+
+    when(bookingRepository.findById(1L)).thenReturn(Optional.of(booking));
+
+    assertTrue(bookingService.deleteBooking(1L));
+  }
+
+  @Test
+  void deleteBookingThrowsAnExceptionIfBookingNotExists() {
+
+    assertThrows(BookingNotFoundException.class, () ->
+        bookingService.deleteBooking(1L));
   }
 }
