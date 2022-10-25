@@ -62,9 +62,11 @@ public class CandidateController {
    */
 
   @PutMapping("/{id}")
-  @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void editSlot(@PathVariable Long id, @RequestBody CandidateSlotDto candidateSlotDto) {
+  public CandidateSlot editSlot(@PathVariable Long id,
+      @RequestBody CandidateSlotDto candidateSlotDto) {
     candidateSlotDto.setEmail(RequestParser.getUserEmailFromToken());
-    candidateService.editSlot(candidateSlotMapper.mapToCandidateSlotEntity(candidateSlotDto), id);
+    CandidateSlot candidateSlot = candidateSlotMapper.mapToCandidateSlotEntity(candidateSlotDto);
+    return candidateService.editSlot(candidateSlot,
+        id);
   }
 }
