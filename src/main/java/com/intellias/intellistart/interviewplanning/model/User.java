@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.intellias.intellistart.interviewplanning.model.role.UserRole;
 import java.util.Objects;
 import java.util.Set;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -13,7 +14,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -48,7 +48,7 @@ public class User {
 
   private int maxBookingsPerWeek;
 
-  @OneToMany(fetch = FetchType.LAZY, mappedBy = "interviewerId")
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "interviewerId", cascade = CascadeType.REMOVE)
   @JsonIgnore
   @Exclude
   private Set<InterviewerSlot> interviewerSlot;

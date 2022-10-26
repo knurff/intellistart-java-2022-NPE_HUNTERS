@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -52,7 +51,7 @@ public class CandidateSlot {
   @NonNull
   private TimePeriod period;
 
-  @OneToMany(fetch = FetchType.LAZY, mappedBy = "candidateSlot", cascade = CascadeType.REMOVE)
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "candidateSlot")
   @JsonIgnore
   @Exclude
   private Set<Booking> bookings = new HashSet<>();

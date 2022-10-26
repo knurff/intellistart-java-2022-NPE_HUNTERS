@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.temporal.WeekFields;
 import java.util.Objects;
 import java.util.Set;
+import javax.persistence.CascadeType;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -59,7 +60,7 @@ public class InterviewerSlot {
   private User interviewerId;
 
 
-  @OneToMany(fetch = FetchType.LAZY, mappedBy = "interviewerSlot")
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "interviewerSlot", cascade = CascadeType.REMOVE)
   @JsonIgnore
   @Exclude
   private Set<Booking> bookings;

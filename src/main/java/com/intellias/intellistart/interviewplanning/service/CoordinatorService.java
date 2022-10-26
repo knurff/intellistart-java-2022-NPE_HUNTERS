@@ -99,7 +99,6 @@ public class CoordinatorService {
   public boolean grantRoleForUser(String email, UserRole role) {
     validateRoleAbsence(email);
 
-    candidateService.deleteSlots(email);
     saveUserWithRole(email, role);
     return true;
   }

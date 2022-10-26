@@ -97,14 +97,4 @@ public class CandidateService {
   private boolean candidateSlotContainsBookings(Optional<CandidateSlot> candidateSlot) {
     return !candidateSlot.get().getBookings().isEmpty();
   }
-
-  /**
-   * Removes all slots of candidate with {@code email}.
-   *
-   * @param email email of candidate
-   */
-  @Transactional
-  public void deleteSlots(String email) {
-    candidateSlotRepository.deleteByEmail(email);
-  }
 }
