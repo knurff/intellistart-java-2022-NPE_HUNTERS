@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -11,6 +12,8 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 import com.intellias.intellistart.interviewplanning.controller.dto.DashboardDto;
+import com.intellias.intellistart.interviewplanning.exception.NoRoleException;
+import com.intellias.intellistart.interviewplanning.exception.UserAlreadyHasRoleException;
 import com.intellias.intellistart.interviewplanning.model.Booking;
 import com.intellias.intellistart.interviewplanning.model.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.InterviewerSlot;
@@ -21,8 +24,10 @@ import com.intellias.intellistart.interviewplanning.util.InterviewerSlotFactory;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import org.aspectj.weaver.patterns.ConcreteCflowPointcut.Slot;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -40,6 +45,17 @@ class CoordinatorServiceTest {
   private BookingService bookingService;
   @Mock
   private UserRepository userRepository;
+  private CoordinatorService coordinatorService;
+
+  @BeforeEach
+  void setup() {
+    coordinatorService = new CoordinatorService(
+        userRepository,
+        interviewerService,
+        candidateService,
+        bookingService
+    );
+  }
 
   @Test
   void createBooking() {
@@ -81,19 +97,54 @@ class CoordinatorServiceTest {
   }
 
   @Test
-  void grantRoleForUser() {
-//    when(coordinatorServiceMock.grantRoleForUser()).thenReturn(true);
-//    final boolean result = coordinatorServiceMock.grantRoleForUser();
-//
-//    assertTrue(result);
+  void grantRoleForUserWorksProperly() {
+    final String email = "test@test.com";
+
+    when(userRepository.getUserByEmail(email)).thenReturn(Optional.empty());
+    final boolean result = coordinatorService.grantRoleForUser(email, UserRole.COORDINATOR);
+
+    assertTrue(result);
   }
 
   @Test
-  void removeRoleFromUser() {
-//    when(coordinatorServiceMock.revokeRoleFromUser()).thenReturn(true);
-//    final boolean result = coordinatorServiceMock.revokeRoleFromUser();
-//
-//    assertTrue(result);
+  void grantRoleForUserThrows_UserAlreadyHasRoleException() {
+    final String email = "test@test.com";
+    User user = new User(UserRole.COORDINATOR);
+    user.setEmail(email);
+    user.setMaxBookingsPerWeek(5);
+
+    when(userRepository.getUserByEmail(email)).thenReturn(Optional.of(user));
+
+    assertThrows(UserAlreadyHasRoleException.class,
+        () -> coordinatorService.grantRoleForUser(email, UserRole.INTERVIEWER));
+  }
+
+  @Test
+  void revokeRoleFromUserThrows_NoRoleException() {
+    final Long customId = 0L;
+
+    when(userRepository.getUserByIdAndRole(customId, UserRole.INTERVIEWER))
+        .thenReturn(Optional.empty());
+
+    assertThrows(NoRoleException.class,
+        () -> coordinatorService.revokeRoleFromUser(customId, UserRole.INTERVIEWER));
+  }
+
+  @Test
+  void revokeRoleFromUserWorksProperly() {
+    final String email = "test@test.com";
+    final Long customId = 0L;
+    User user = new User(UserRole.COORDINATOR);
+    user.setId(customId);
+    user.setEmail(email);
+    user.setMaxBookingsPerWeek(5);
+
+    when(userRepository.getUserByIdAndRole(customId, UserRole.COORDINATOR))
+        .thenReturn(Optional.of(user));
+
+    final boolean result = coordinatorService.revokeRoleFromUser(customId, UserRole.COORDINATOR);
+
+    assertTrue(result);
   }
 
   @Test
