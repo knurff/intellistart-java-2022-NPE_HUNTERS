@@ -97,7 +97,7 @@ public class InterviewerService {
     final InterviewerSlot slot = findSlotById(interviewerSlotId);
 
     final boolean slotBelongsToInterviewerSpecified =
-        slot.getInterviewerId().getId().equals(interviewerId);
+        slot.getInterviewer().getId().equals(interviewerId);
 
     if (!slotBelongsToInterviewerSpecified) {
       throw new SlotNotFoundException(
@@ -125,7 +125,7 @@ public class InterviewerService {
    * @throws SlotIsOverlappingException if {@code slot} is overlapping
    */
   public void checkSlotOverlapping(InterviewerSlot slot) {
-    List<InterviewerSlot> interviewerSlots = findAllByInterviewerId(slot.getInterviewerId());
+    List<InterviewerSlot> interviewerSlots = findAllByInterviewerId(slot.getInterviewer());
 
     if (isSlotOverlapping(interviewerSlots, slot)) {
       throw new SlotIsOverlappingException("Slot already exist");
