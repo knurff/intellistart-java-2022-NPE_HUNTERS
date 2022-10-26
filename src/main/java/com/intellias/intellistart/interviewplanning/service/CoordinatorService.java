@@ -4,7 +4,6 @@ import com.intellias.intellistart.interviewplanning.controller.dto.DashboardDayD
 import com.intellias.intellistart.interviewplanning.controller.dto.DashboardDto;
 import com.intellias.intellistart.interviewplanning.exception.InterviewerNotFoundException;
 import com.intellias.intellistart.interviewplanning.exception.SlotContainsBookingsException;
-import com.intellias.intellistart.interviewplanning.model.Booking;
 import com.intellias.intellistart.interviewplanning.model.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.model.User;
 import com.intellias.intellistart.interviewplanning.model.role.UserRole;
@@ -25,14 +24,11 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 public class CoordinatorService {
+
   private final UserRepository userRepository;
   private final InterviewerService interviewerService;
   private final CandidateService candidateService;
   private final BookingService bookingService;
-
-  public Booking createBooking() {
-    return new Booking();
-  }
 
   /**
    * Returns editSlot for {@code interviewerSlotId} relative to {@code newSlot}.
@@ -50,7 +46,7 @@ public class CoordinatorService {
     checkIfSlotHasBooking(interviewerSlotId, interviewerId);
 
     newSlot.setId(interviewerSlotId);
-    newSlot.setInterviewerId(user);
+    newSlot.setInterviewer(user);
 
     validateSlot(newSlot);
 
@@ -72,15 +68,6 @@ public class CoordinatorService {
     TimePeriodValidator.checkTimePeriod(slot.getPeriod());
     interviewerService.checkSlotOverlapping(slot);
   }
-
-  public boolean editBooking() {
-    return true;
-  }
-
-  public boolean deleteBooking() {
-    return true;
-  }
-
   public boolean grantRoleForUser() {
     return true;
   }
