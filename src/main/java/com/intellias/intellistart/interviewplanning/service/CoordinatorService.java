@@ -68,6 +68,7 @@ public class CoordinatorService {
     TimePeriodValidator.checkTimePeriod(slot.getPeriod());
     interviewerService.checkSlotOverlapping(slot);
   }
+
   public boolean grantRoleForUser() {
     return true;
   }
