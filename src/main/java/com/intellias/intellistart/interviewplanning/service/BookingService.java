@@ -73,7 +73,13 @@ public class BookingService {
   }
 
   /**
-   * Inserts slots into booking, validates it and creates if valid.
+   * Inserts slots into booking, validates it and creates new booking.
+   *
+   * @param booking           booking to create
+   * @param interviewerSlotId id of interviewer slot
+   * @param candidateSlotId   id of candidate slot
+   * @throws SlotNotFoundException         if slots not found
+   * @throws BookingLimitExceededException if interviewer booking limit for week is exceeded
    */
   public Booking createBooking(Booking booking, Long interviewerSlotId, Long candidateSlotId) {
     setInterviewerSlotForBooking(booking, interviewerSlotId);
