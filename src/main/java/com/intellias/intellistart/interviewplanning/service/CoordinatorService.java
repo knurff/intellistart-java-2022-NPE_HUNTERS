@@ -3,7 +3,10 @@ package com.intellias.intellistart.interviewplanning.service;
 import com.intellias.intellistart.interviewplanning.controller.dto.DashboardDayDto;
 import com.intellias.intellistart.interviewplanning.controller.dto.DashboardDto;
 import com.intellias.intellistart.interviewplanning.exception.InterviewerNotFoundException;
+import com.intellias.intellistart.interviewplanning.exception.NoRoleException;
+import com.intellias.intellistart.interviewplanning.exception.SelfRevokingException;
 import com.intellias.intellistart.interviewplanning.exception.SlotContainsBookingsException;
+import com.intellias.intellistart.interviewplanning.exception.UserAlreadyHasRoleException;
 import com.intellias.intellistart.interviewplanning.model.Booking;
 import com.intellias.intellistart.interviewplanning.model.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.model.User;
@@ -11,10 +14,13 @@ import com.intellias.intellistart.interviewplanning.model.role.UserRole;
 import com.intellias.intellistart.interviewplanning.repository.UserRepository;
 import com.intellias.intellistart.interviewplanning.service.validator.TimePeriodValidator;
 import com.intellias.intellistart.interviewplanning.util.DateUtils;
+import com.intellias.intellistart.interviewplanning.util.RequestParser;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.aspectj.weaver.patterns.ConcreteCflowPointcut.Slot;
 import org.springframework.stereotype.Service;
@@ -81,12 +87,75 @@ public class CoordinatorService {
     return true;
   }
 
-  public boolean grantRoleForUser() {
+
+  /**
+   * Performs granting {@code role} for user with {@code email}.
+   *
+   * @param email email of user
+   * @param role role which is granted
+   * @return true if operation is successful
+   * @throws UserAlreadyHasRoleException if user already has a role
+   */
+  public boolean grantRoleForUser(String email, UserRole role) {
+    validateRoleAbsence(email);
+
+    candidateService.deleteSlots(email);
+    saveUserWithRole(email, role);
     return true;
   }
 
-  public boolean removeRoleFromUser() {
+  private void validateRoleAbsence(String email) {
+    Optional<User> user = userRepository.getUserByEmail(email);
+
+    if (user.isPresent()) {
+      throw new UserAlreadyHasRoleException(
+          String.format("User with email: %s already has a role", email)
+      );
+    }
+  }
+
+  private void saveUserWithRole(String email, UserRole role) {
+    User toSave = new User(role);
+    final int defaultMaxBookingsPerWeek = 5;
+
+    toSave.setEmail(email);
+    toSave.setMaxBookingsPerWeek(defaultMaxBookingsPerWeek);
+    userRepository.save(toSave);
+  }
+
+  /**
+   * Performs revoking {@code role} from user with {@code id}.
+   *
+   * @param id user id
+   * @param role role to revoke
+   * @return true if operation is successful
+   * @throws NoRoleException if user doesn't have {@code role}
+   * @throws SelfRevokingException if user tries to execute self-revoking
+   */
+  public boolean revokeRoleFromUser(Long id, UserRole role) {
+    validateRoleRevoking(id, role);
+
+    userRepository.deleteById(id);
     return true;
+  }
+
+  private void validateRoleRevoking(Long id, UserRole role) {
+    Optional<User> user = userRepository.getUserByIdAndRole(id, role);
+
+    if (user.isEmpty()) {
+      throw new NoRoleException(
+          String.format("User with id: %d doesn't have %s role", id, role.toString().toLowerCase())
+      );
+    }
+
+    String currentUserEmail = RequestParser.getUserEmailFromToken();
+    String userWithIdEmail = user.get().getEmail();
+
+    if (Objects.equals(currentUserEmail, userWithIdEmail)) {
+      throw new SelfRevokingException(
+          "You can't revoke coordinator role from yourself"
+      );
+    }
   }
 
   public List<Slot> getAllUsersSlots() {

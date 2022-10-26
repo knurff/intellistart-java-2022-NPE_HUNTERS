@@ -21,6 +21,9 @@ public class ApplicationExceptionHandler {
   private static final String SLOT_NOT_FOUND = "slot_not_found";
   private static final String SLOT_ALREADY_HAS_BOOKINGS = "slot_already_has_bookings";
   private static final String INVALID_SLOT_DATE_EXCEPTION = "invalid_slot_date";
+  private static final String USER_ALREADY_HAS_ROLE = "user_already_has_role";
+  private static final String NO_ROLE = "no_role";
+  private static final String SELF_REVOKING = "self_revoking";
 
   /**
    * Exception handler for InterviewerNotFoundException.
@@ -86,6 +89,36 @@ public class ApplicationExceptionHandler {
   public ResponseEntity<ExceptionResponse> handleInvalidCandidateSlotDateException(
       InvalidCandidateSlotDateException e) {
     return new ResponseEntity<>(new ExceptionResponse(INVALID_SLOT_DATE_EXCEPTION, e.getMessage()),
+        HttpStatus.BAD_REQUEST);
+  }
+
+  /**
+   * Exception handler for UserAlreadyHasRoleException.
+   */
+  @ExceptionHandler
+  public ResponseEntity<ExceptionResponse> handleUserAlreadyHasRoleException(
+      UserAlreadyHasRoleException e) {
+    return new ResponseEntity<>(new ExceptionResponse(USER_ALREADY_HAS_ROLE, e.getMessage()),
+        HttpStatus.BAD_REQUEST);
+  }
+
+  /**
+   * Exception handler for NoRoleException.
+   */
+  @ExceptionHandler
+  public ResponseEntity<ExceptionResponse> handleNoRoleException(
+      NoRoleException e) {
+    return new ResponseEntity<>(new ExceptionResponse(NO_ROLE, e.getMessage()),
+        HttpStatus.BAD_REQUEST);
+  }
+
+  /**
+   * Exception handler for SelfRevokingException.
+   */
+  @ExceptionHandler
+  public ResponseEntity<ExceptionResponse> handleSelfRevokingException(
+      SelfRevokingException e) {
+    return new ResponseEntity<>(new ExceptionResponse(SELF_REVOKING, e.getMessage()),
         HttpStatus.BAD_REQUEST);
   }
 

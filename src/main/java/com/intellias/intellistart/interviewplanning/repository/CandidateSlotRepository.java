@@ -15,4 +15,6 @@ public interface CandidateSlotRepository extends JpaRepository<CandidateSlot, Lo
   List<CandidateSlot> findAllByEmail(final String email);
 
   List<CandidateSlot> getAllByDate(final LocalDate localDate);
+
+  void deleteByEmail(final String email);
 }
