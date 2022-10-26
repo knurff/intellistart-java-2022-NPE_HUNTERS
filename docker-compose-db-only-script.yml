@@ -1,0 +1,10 @@
+version: '3.8'
+services:
+  db:
+    build: 
+      context: .
+      dockerfile: Dockerfile.db-init-script
+    container_name: db
+    restart: always
+    ports:
+      - '5432:5432'
