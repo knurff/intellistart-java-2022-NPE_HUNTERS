@@ -9,10 +9,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
 import com.intellias.intellistart.interviewplanning.controller.dto.DashboardDto;
 import com.intellias.intellistart.interviewplanning.exception.NoRoleException;
+import com.intellias.intellistart.interviewplanning.exception.SelfRevokingException;
 import com.intellias.intellistart.interviewplanning.exception.UserAlreadyHasRoleException;
 import com.intellias.intellistart.interviewplanning.model.Booking;
 import com.intellias.intellistart.interviewplanning.model.CandidateSlot;
@@ -21,6 +23,7 @@ import com.intellias.intellistart.interviewplanning.model.User;
 import com.intellias.intellistart.interviewplanning.model.role.UserRole;
 import com.intellias.intellistart.interviewplanning.repository.UserRepository;
 import com.intellias.intellistart.interviewplanning.util.InterviewerSlotFactory;
+import com.intellias.intellistart.interviewplanning.util.RequestParser;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +34,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -133,6 +137,7 @@ class CoordinatorServiceTest {
   @Test
   void revokeRoleFromUserWorksProperly() {
     final String email = "test@test.com";
+    boolean result;
     final Long customId = 0L;
     User user = new User(UserRole.COORDINATOR);
     user.setId(customId);
@@ -142,9 +147,35 @@ class CoordinatorServiceTest {
     when(userRepository.getUserByIdAndRole(customId, UserRole.COORDINATOR))
         .thenReturn(Optional.of(user));
 
-    final boolean result = coordinatorService.revokeRoleFromUser(customId, UserRole.COORDINATOR);
+    try (MockedStatic<RequestParser> requestParserMock = mockStatic(RequestParser.class)) {
+      requestParserMock.when(RequestParser::getUserEmailFromToken)
+          .thenReturn("current@test.com");
+
+      result = coordinatorService.revokeRoleFromUser(customId, UserRole.COORDINATOR);
+    }
 
     assertTrue(result);
+  }
+
+  @Test
+  void revokeRoleFromUserThrows_SelfRevokingException() {
+    final String email = "current@test.com";
+    final Long customId = 0L;
+    User user = new User(UserRole.COORDINATOR);
+    user.setId(customId);
+    user.setEmail(email);
+    user.setMaxBookingsPerWeek(5);
+
+    when(userRepository.getUserByIdAndRole(customId, UserRole.COORDINATOR))
+        .thenReturn(Optional.of(user));
+
+    try (MockedStatic<RequestParser> requestParserMock = mockStatic(RequestParser.class)) {
+      requestParserMock.when(RequestParser::getUserEmailFromToken)
+          .thenReturn("current@test.com");
+
+      assertThrows(SelfRevokingException.class,
+          () -> coordinatorService.revokeRoleFromUser(customId, UserRole.COORDINATOR));
+    }
   }
 
   @Test
