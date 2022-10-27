@@ -147,13 +147,15 @@ public class CoordinatorService {
       );
     }
 
-    String currentUserEmail = RequestParser.getUserEmailFromToken();
-    String userWithIdEmail = user.get().getEmail();
+    if (Objects.equals(role, UserRole.COORDINATOR)) {
+      String currentUserEmail = RequestParser.getUserEmailFromToken();
+      String userWithIdEmail = user.get().getEmail();
 
-    if (Objects.equals(currentUserEmail, userWithIdEmail)) {
-      throw new SelfRevokingException(
-          "You can't revoke coordinator role from yourself"
-      );
+      if (Objects.equals(currentUserEmail, userWithIdEmail)) {
+        throw new SelfRevokingException(
+            "You can't revoke coordinator role from yourself"
+        );
+      }
     }
   }
 
