@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
@@ -99,7 +98,7 @@ class InterviewerServiceTest {
     final User actualUser = interviewerService.getInterviewerOrThrowException(35635758L);
 
     assertNotNull(actualUser);
-    assertEquals(actualUser.getRole(), UserRole.INTERVIEWER);
+    assertEquals(UserRole.INTERVIEWER, actualUser.getRole());
     assertEquals(expectedUser, actualUser);
   }
 
@@ -130,7 +129,7 @@ class InterviewerServiceTest {
 
     final InterviewerSlot interviewerSlot = new InterviewerSlot();
     interviewerSlot.setId(32570782L);
-    interviewerSlot.setInterviewerId(interviewer);
+    interviewerSlot.setInterviewer(interviewer);
 
     when(interviewerSlotRepository.findById(anyLong())).thenReturn(Optional.of(interviewerSlot));
 
@@ -146,7 +145,7 @@ class InterviewerServiceTest {
 
     final InterviewerSlot expectedSlot = new InterviewerSlot();
     expectedSlot.setId(32570782L);
-    expectedSlot.setInterviewerId(interviewer);
+    expectedSlot.setInterviewer(interviewer);
 
     when(interviewerSlotRepository.findById(anyLong())).thenReturn(Optional.of(expectedSlot));
 

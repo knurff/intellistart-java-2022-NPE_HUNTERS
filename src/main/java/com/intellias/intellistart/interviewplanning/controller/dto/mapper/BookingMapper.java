@@ -2,6 +2,7 @@ package com.intellias.intellistart.interviewplanning.controller.dto.mapper;
 
 import com.intellias.intellistart.interviewplanning.controller.dto.BookingDto;
 import com.intellias.intellistart.interviewplanning.model.Booking;
+import com.intellias.intellistart.interviewplanning.model.TimePeriod;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
@@ -23,9 +24,27 @@ public class BookingMapper {
   public BookingDto createBookingDto(Booking booking) {
     return BookingDto.builder()
         .id(booking.getId())
-        .period(booking.getPeriod())
+        .from(booking.getPeriod().getStartTime())
+        .to(booking.getPeriod().getEndTime())
         .subject(booking.getSubject())
         .description(booking.getDescription())
+        .interviewerSlotId(booking.getInterviewerSlot().getId())
+        .candidateSlotId(booking.getCandidateSlot().getId())
+        .build();
+  }
+
+
+  /**
+   * Returns entity created from DTO object.
+   *
+   * @param bookingDto BookingDto
+   * @return Booking
+   */
+  public Booking createBookingFromDto(BookingDto bookingDto) {
+    return Booking.builder()
+        .period(new TimePeriod(bookingDto.getFrom(), bookingDto.getTo()))
+        .subject(bookingDto.getSubject())
+        .description(bookingDto.getDescription())
         .build();
   }
 

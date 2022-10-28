@@ -5,14 +5,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 
 import com.intellias.intellistart.interviewplanning.exception.InvalidCandidateSlotDateException;
-import com.intellias.intellistart.interviewplanning.exception.InvalidTimeSlotBoundariesException;
+import com.intellias.intellistart.interviewplanning.exception.InvalidTimePeriodBoundaries;
 import com.intellias.intellistart.interviewplanning.exception.SlotIsOverlappingException;
 import com.intellias.intellistart.interviewplanning.model.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.repository.CandidateSlotRepository;
-import com.intellias.intellistart.interviewplanning.util.CandidateSlotFactory;
+import com.intellias.intellistart.interviewplanning.service.factory.CandidateSlotFactory;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -93,7 +92,7 @@ class CandidateServiceTest {
   void createSlotThrowsAnExceptionIfTimeIsNotInFuture() {
     CandidateSlot candidateSlot = CandidateSlotFactory.createSlotWithTimePeriodInPast();
 
-    assertThrows(InvalidTimeSlotBoundariesException.class, () -> service.createSlot(candidateSlot));
+    assertThrows(InvalidTimePeriodBoundaries.class, () -> service.createSlot(candidateSlot));
   }
 
   @Test
@@ -101,7 +100,7 @@ class CandidateServiceTest {
   void createSlotThrowsAnExceptionIfDurationLessThanMin() {
     CandidateSlot candidateSlot = CandidateSlotFactory.createSlotWithDurationLessThanMin();
 
-    assertThrows(InvalidTimeSlotBoundariesException.class, () -> service.createSlot(candidateSlot));
+    assertThrows(InvalidTimePeriodBoundaries.class, () -> service.createSlot(candidateSlot));
 
   }
 
@@ -110,7 +109,7 @@ class CandidateServiceTest {
   void createSlotThrowsAnExceptionIfPeriodIsNotRounded() {
     CandidateSlot candidateSlot = CandidateSlotFactory.createSlotWithNotRoundedPeriod();
 
-    assertThrows(InvalidTimeSlotBoundariesException.class, () -> service.createSlot(candidateSlot));
+    assertThrows(InvalidTimePeriodBoundaries.class, () -> service.createSlot(candidateSlot));
   }
 
   @Test
@@ -160,7 +159,7 @@ class CandidateServiceTest {
 
     setIdForSlotAndConfigureMockBehaviorForEditMethod(candidateSlot);
 
-    assertThrows(InvalidTimeSlotBoundariesException.class,
+    assertThrows(InvalidTimePeriodBoundaries.class,
         () -> service.editSlot(candidateSlot, 1L));
   }
 
@@ -171,7 +170,7 @@ class CandidateServiceTest {
 
     setIdForSlotAndConfigureMockBehaviorForEditMethod(candidateSlot);
 
-    assertThrows(InvalidTimeSlotBoundariesException.class,
+    assertThrows(InvalidTimePeriodBoundaries.class,
         () -> service.editSlot(candidateSlot, 1L));
 
   }
@@ -183,7 +182,7 @@ class CandidateServiceTest {
 
     setIdForSlotAndConfigureMockBehaviorForEditMethod(candidateSlot);
 
-    assertThrows(InvalidTimeSlotBoundariesException.class,
+    assertThrows(InvalidTimePeriodBoundaries.class,
         () -> service.editSlot(candidateSlot, 1L));
   }
 

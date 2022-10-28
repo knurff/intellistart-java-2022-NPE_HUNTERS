@@ -1,8 +1,11 @@
 package com.intellias.intellistart.interviewplanning.controller;
 
+import com.intellias.intellistart.interviewplanning.controller.dto.BookingDto;
 import com.intellias.intellistart.interviewplanning.controller.dto.DashboardDto;
 import com.intellias.intellistart.interviewplanning.controller.dto.InterviewerSlotDto;
+import com.intellias.intellistart.interviewplanning.controller.dto.mapper.BookingMapper;
 import com.intellias.intellistart.interviewplanning.controller.dto.mapper.InterviewerSlotsMapper;
+import com.intellias.intellistart.interviewplanning.model.Booking;
 import com.intellias.intellistart.interviewplanning.model.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.model.User;
 import com.intellias.intellistart.interviewplanning.service.BookingService;
@@ -28,6 +31,7 @@ public class CoordinatorController {
   private final CoordinatorService coordinatorService;
   private final BookingService bookingService;
   private final InterviewerSlotsMapper interviewerSlotsMapper;
+  private final BookingMapper bookingMapper;
 
   @GetMapping("/users/interviewers")
   public List<User> getAllInterviewers() {
@@ -59,6 +63,20 @@ public class CoordinatorController {
 
     InterviewerSlot responseEntity = coordinatorService.editSlot(interviewerId, slotId, entity);
     return interviewerSlotsMapper.mapToInterviewerSlotsDto(responseEntity);
+  }
+
+  /**
+   * Handles POST requests and creates booking.
+   */
+  @PostMapping("/bookings")
+  @ResponseStatus(HttpStatus.CREATED)
+  public BookingDto createBooking(@RequestBody BookingDto bookingDto) {
+    Booking booking = bookingMapper.createBookingFromDto(bookingDto);
+
+    Booking responseEntity = bookingService.createBooking(booking,
+        bookingDto.getInterviewerSlotId(),
+        bookingDto.getCandidateSlotId());
+    return bookingMapper.createBookingDto(responseEntity);
   }
 
   /**

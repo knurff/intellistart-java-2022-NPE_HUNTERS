@@ -1,7 +1,7 @@
 package com.intellias.intellistart.interviewplanning.service.validator;
 
 import com.intellias.intellistart.interviewplanning.exception.InvalidCandidateSlotDateException;
-import com.intellias.intellistart.interviewplanning.exception.InvalidTimeSlotBoundariesException;
+import com.intellias.intellistart.interviewplanning.exception.InvalidTimePeriodBoundaries;
 import com.intellias.intellistart.interviewplanning.exception.SlotIsOverlappingException;
 import com.intellias.intellistart.interviewplanning.model.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.TimePeriod;
@@ -43,7 +43,7 @@ public class CandidateSlotValidator {
     if (slotDateIsInThePastCondition(candidateSlot)) {
       throw new InvalidCandidateSlotDateException("Candidate slot date must be in future");
     } else if (slotDateEqualsCurrentDate && slotTimeIsInThePastCondition(timePeriod)) {
-      throw new InvalidTimeSlotBoundariesException("Candidate slot time period must be in future");
+      throw new InvalidTimePeriodBoundaries("Candidate slot time period must be in future");
     }
   }
 
@@ -60,9 +60,9 @@ public class CandidateSlotValidator {
     int startTimeMinutes = TimeConverter.convertTimeToMinutes(timePeriod.getStartTime());
     int endTimeMinutes = TimeConverter.convertTimeToMinutes(timePeriod.getEndTime());
     if (endTimeMinutes - startTimeMinutes < 90) {
-      throw new InvalidTimeSlotBoundariesException("Slot has to be 1,5 hours or more");
+      throw new InvalidTimePeriodBoundaries("Slot has to be 1,5 hours or more");
     } else if (startTimeMinutes % 30 != 0 || endTimeMinutes % 30 != 0) {
-      throw new InvalidTimeSlotBoundariesException("Slot has to be rounded to 30 minutes");
+      throw new InvalidTimePeriodBoundaries("Slot has to be rounded to 30 minutes");
     }
   }
 
