@@ -20,7 +20,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode(exclude = {"id","bookings"})
+@EqualsAndHashCode(exclude = {"id", "bookings"})
 @RequiredArgsConstructor
 public class CandidateSlotDto {
 
