@@ -2,6 +2,7 @@ package com.intellias.intellistart.interviewplanning.controller.dto.mapper;
 
 import com.intellias.intellistart.interviewplanning.controller.dto.CandidateSlotDto;
 import com.intellias.intellistart.interviewplanning.model.CandidateSlot;
+import com.intellias.intellistart.interviewplanning.model.TimePeriod;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,8 @@ public class CandidateSlotMapper {
         .id(entity.getId())
         .email(entity.getEmail())
         .date(entity.getDate())
-        .period(entity.getPeriod())
+        .from(entity.getPeriod().getStartTime())
+        .to(entity.getPeriod().getEndTime())
         .bookings(bookingMapper.createBookingDtoSet(entity.getBookings()))
         .build();
   }
@@ -56,7 +58,7 @@ public class CandidateSlotMapper {
     return CandidateSlot.builder()
         .email(dto.getEmail())
         .date(dto.getDate())
-        .period(dto.getPeriod())
+        .period(new TimePeriod(dto.getFrom(), dto.getTo()))
         .build();
   }
 

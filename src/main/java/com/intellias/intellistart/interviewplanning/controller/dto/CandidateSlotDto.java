@@ -1,9 +1,10 @@
 package com.intellias.intellistart.interviewplanning.controller.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.intellias.intellistart.interviewplanning.model.TimePeriod;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,7 +20,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode(of = {"email", "date", "period"})
+@EqualsAndHashCode(exclude = {"id","bookings"})
 @RequiredArgsConstructor
 public class CandidateSlotDto {
 
@@ -30,7 +31,11 @@ public class CandidateSlotDto {
 
   private LocalDate date;
 
-  private TimePeriod period;
+  @JsonFormat(pattern = "HH:mm")
+  private LocalTime from;
+
+  @JsonFormat(pattern = "HH:mm")
+  private LocalTime to;
 
   @JsonInclude(value = Include.NON_EMPTY)
   private Set<BookingDto> bookings;
