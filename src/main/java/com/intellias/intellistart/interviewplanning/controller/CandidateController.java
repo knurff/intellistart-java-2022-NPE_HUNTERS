@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -58,10 +57,10 @@ public class CandidateController {
   }
 
   /**
-   * Handles PUT request and updates existing CandidateSlot.
+   * Handles POST request and updates existing CandidateSlot.
    */
 
-  @PutMapping("/{id}")
+  @PostMapping("/{id}")
   public CandidateSlot editSlot(@PathVariable Long id,
       @RequestBody CandidateSlotDto candidateSlotDto) {
     candidateSlotDto.setEmail(RequestParser.getUserEmailFromToken());
