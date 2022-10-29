@@ -38,7 +38,7 @@ import org.hibernate.Hibernate;
 @RequiredArgsConstructor
 @NoArgsConstructor
 @Table(name = "candidate_slots")
-public class CandidateSlot {
+public class CandidateSlot implements Slot {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

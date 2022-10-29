@@ -43,7 +43,7 @@ import org.springframework.lang.NonNull;
 @RequiredArgsConstructor
 @NoArgsConstructor
 @Table(name = "interviewer_slots")
-public class InterviewerSlot {
+public class InterviewerSlot implements Slot {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
