@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 
-import com.intellias.intellistart.interviewplanning.exception.InvalidCandidateSlotDateException;
+import com.intellias.intellistart.interviewplanning.exception.InvalidSlotDateException;
 import com.intellias.intellistart.interviewplanning.exception.InvalidTimePeriodBoundaries;
 import com.intellias.intellistart.interviewplanning.exception.SlotIsOverlappingException;
 import com.intellias.intellistart.interviewplanning.model.CandidateSlot;
@@ -84,7 +84,7 @@ class CandidateServiceTest {
   void createSlotThrowsAnExceptionIfDateIsNotInFuture() {
     CandidateSlot candidateSlot = CandidateSlotFactory.createSlotWithDateInPast();
 
-    assertThrows(InvalidCandidateSlotDateException.class, () -> service.createSlot(candidateSlot));
+    assertThrows(InvalidSlotDateException.class, () -> service.createSlot(candidateSlot));
   }
 
   @Test
@@ -148,7 +148,7 @@ class CandidateServiceTest {
 
     setIdForSlotAndConfigureMockBehaviorForEditMethod(candidateSlot);
 
-    assertThrows(InvalidCandidateSlotDateException.class,
+    assertThrows(InvalidSlotDateException.class,
         () -> service.editSlot(candidateSlot, 1L));
   }
 
