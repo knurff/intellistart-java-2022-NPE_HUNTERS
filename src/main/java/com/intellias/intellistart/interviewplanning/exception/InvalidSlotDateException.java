@@ -4,9 +4,9 @@ package com.intellias.intellistart.interviewplanning.exception;
  * Exception for invalid CandidateSlot date.
  */
 
-public class InvalidCandidateSlotDateException extends RuntimeException {
+public class InvalidSlotDateException extends RuntimeException {
 
-  public InvalidCandidateSlotDateException(String message) {
+  public InvalidSlotDateException(String message) {
     super(message);
   }
 }

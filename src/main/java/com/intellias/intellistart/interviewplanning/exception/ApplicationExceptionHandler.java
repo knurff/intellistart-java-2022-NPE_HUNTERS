@@ -93,7 +93,7 @@ public class ApplicationExceptionHandler {
    */
   @ExceptionHandler
   public ResponseEntity<ExceptionResponse> handleInvalidCandidateSlotDateException(
-      InvalidCandidateSlotDateException e) {
+      InvalidSlotDateException e) {
     return new ResponseEntity<>(new ExceptionResponse(INVALID_SLOT_DATE, e.getMessage()),
         HttpStatus.BAD_REQUEST);
   }

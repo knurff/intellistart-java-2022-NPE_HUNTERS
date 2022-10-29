@@ -1,5 +1,6 @@
 package com.intellias.intellistart.interviewplanning.util;
 
+import com.intellias.intellistart.interviewplanning.exception.InvalidSlotDateException;
 import com.intellias.intellistart.interviewplanning.exception.InvalidTimePeriodBoundaries;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -8,10 +9,10 @@ import java.time.temporal.TemporalField;
 import java.time.temporal.WeekFields;
 
 /**
- * Util class, which contains methods for getting information about
- * current and next week numbers.
+ * Util class, which contains methods for getting information about current and next week numbers.
  */
 public final class DateUtils {
+
   /**
    * Default date from which numbering begins.
    */
@@ -24,12 +25,13 @@ public final class DateUtils {
   /**
    * Don't let anyone instantiate this class.
    */
-  private DateUtils() {}
+  private DateUtils() {
+  }
 
   /**
    * Returns week number of {@code current}, relative to {@code from}.
    *
-   * @param from the date from which numbering begins
+   * @param from    the date from which numbering begins
    * @param current date week number of which we need to find
    * @return the week number(0-INT_MAX) of {@code current}
    * @throws IllegalArgumentException if {@code from} is greater than {@code current}
@@ -47,7 +49,7 @@ public final class DateUtils {
   /**
    * Returns next week number of {@code current}, relative to {@code from}.
    *
-   * @param from the date from which numbering begins
+   * @param from    the date from which numbering begins
    * @param current date next week number of which we need to find
    * @return the next week number(2-INT_MAX) of {@code current}
    * @throws IllegalArgumentException if {@code from} is greater than {@code current}
@@ -82,7 +84,7 @@ public final class DateUtils {
    */
   public static void checkDateIsInFuture(LocalDate date) {
     if (date.isBefore(LocalDate.now())) {
-      throw new InvalidTimePeriodBoundaries("Date must be in future");
+      throw new InvalidSlotDateException("Date must be in future");
     }
   }
 
@@ -90,7 +92,7 @@ public final class DateUtils {
    * Returns a LocalDate for a day of a week which (week) is specified by weekNumber.
    *
    * @param weekNumber a week's number starting from DEFAULT_NUMBERING_FROM
-   * @param dayOfWeek a day of the week specified for which to find the date
+   * @param dayOfWeek  a day of the week specified for which to find the date
    * @return a LocalDate for a day of a week specified by weekNumber
    */
   public static LocalDate getDateOfDayOfWeek(final int weekNumber, final DayOfWeek dayOfWeek) {
