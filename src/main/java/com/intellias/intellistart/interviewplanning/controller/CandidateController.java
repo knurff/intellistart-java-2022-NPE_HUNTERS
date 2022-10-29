@@ -50,10 +50,12 @@ public class CandidateController {
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public CandidateSlot addSlot(@RequestBody CandidateSlotDto candidateSlotDto) {
+  public CandidateSlotDto addSlot(@RequestBody CandidateSlotDto candidateSlotDto) {
     candidateSlotDto.setEmail(RequestParser.getUserEmailFromToken());
-    return candidateService.createSlot(
+    CandidateSlot responseEntity = candidateService.createSlot(
         candidateSlotMapper.mapToCandidateSlotEntity(candidateSlotDto));
+
+    return candidateSlotMapper.mapToCandidateSlotDto(responseEntity);
   }
 
   /**
@@ -61,11 +63,12 @@ public class CandidateController {
    */
 
   @PostMapping("/{id}")
-  public CandidateSlot editSlot(@PathVariable Long id,
+  public CandidateSlotDto editSlot(@PathVariable Long id,
       @RequestBody CandidateSlotDto candidateSlotDto) {
     candidateSlotDto.setEmail(RequestParser.getUserEmailFromToken());
     CandidateSlot candidateSlot = candidateSlotMapper.mapToCandidateSlotEntity(candidateSlotDto);
-    return candidateService.editSlot(candidateSlot,
+    CandidateSlot responseEntity = candidateService.editSlot(candidateSlot,
         id);
+    return candidateSlotMapper.mapToCandidateSlotDto(responseEntity);
   }
 }
