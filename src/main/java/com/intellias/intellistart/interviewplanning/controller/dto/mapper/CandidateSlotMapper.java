@@ -3,6 +3,7 @@ package com.intellias.intellistart.interviewplanning.controller.dto.mapper;
 import com.intellias.intellistart.interviewplanning.controller.dto.CandidateSlotDto;
 import com.intellias.intellistart.interviewplanning.model.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.TimePeriod;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -59,6 +60,7 @@ public class CandidateSlotMapper {
         .email(dto.getEmail())
         .date(dto.getDate())
         .period(new TimePeriod(dto.getFrom(), dto.getTo()))
+        .bookings(new HashSet<>())
         .build();
   }
 
