@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 public class InterviewerService {
+
   private final InterviewerSlotRepository interviewerSlotRepository;
   private final UserRepository userRepository;
   private final BookingService bookingService;
@@ -55,7 +56,7 @@ public class InterviewerService {
   public List<InterviewerSlot> getAllInterviewerSlotsByInterviewerId(Long interviewerId) {
     var interviewer = getInterviewerOrThrowException(interviewerId);
 
-    return interviewerSlotRepository.getAllByInterviewerId(interviewer);
+    return interviewerSlotRepository.getAllByInterviewer(interviewer);
   }
 
   /**
@@ -112,7 +113,7 @@ public class InterviewerService {
    * Returns list of interviewerSlot relate {@code user}.
    */
   public List<InterviewerSlot> findAllByInterviewerId(User user) {
-    return interviewerSlotRepository.getAllByInterviewerId(user);
+    return interviewerSlotRepository.getAllByInterviewer(user);
   }
 
   public InterviewerSlot save(InterviewerSlot slot) {
@@ -133,11 +134,11 @@ public class InterviewerService {
   }
 
   /**
-   * Returns a map of interviewer slots as keys and booking id sets related to them as values
-   * for a particular week and day.
+   * Returns a map of interviewer slots as keys and booking id sets related to them as values for a
+   * particular week and day.
    *
    * @param weekNumber a number of the week.
-   * @param dayOfWeek a day of the week specified.
+   * @param dayOfWeek  a day of the week specified.
    * @return a map of interviewer slots as keys and booking id sets related to them as values.
    */
   public Map<InterviewerSlot, Set<Long>> getAllSlotsWithRelatedBookingIdsUsingWeekAndDay(
