@@ -19,7 +19,7 @@ public class InterviewerSlotFactory {
 
   public static InterviewerSlot createSlotWithDurationLessThanMin() {
     InterviewerSlot slot = new InterviewerSlot();
-    slot.setWeek(DateUtils.getCurrentWeek() + 1);
+    slot.setWeek(DateUtils.getNextWeek());
     slot.setDayOfWeek(DayOfWeek.THURSDAY);
     slot.setPeriod(new TimePeriod(LocalTime.of(15, 0), LocalTime.of(15, 30)));
     return slot;
@@ -27,7 +27,7 @@ public class InterviewerSlotFactory {
 
   public static InterviewerSlot createSlotWithNotRoundedPeriod() {
     InterviewerSlot slot = new InterviewerSlot();
-    slot.setWeek(DateUtils.getCurrentWeek() + 1);
+    slot.setWeek(DateUtils.getNextWeek());
     slot.setDayOfWeek(DayOfWeek.THURSDAY);
     slot.setPeriod(new TimePeriod(LocalTime.of(15, 0), LocalTime.of(17, 2)));
 
@@ -36,9 +36,18 @@ public class InterviewerSlotFactory {
 
   public static InterviewerSlot createSlotWithTimePeriodInNotWorkingHours() {
     InterviewerSlot slot = new InterviewerSlot();
-    slot.setWeek(DateUtils.getCurrentWeek() + 1);
+    slot.setWeek(DateUtils.getNextWeek());
     slot.setDayOfWeek(DayOfWeek.THURSDAY);
-    slot.setPeriod(new TimePeriod(LocalTime.of(7, 0), LocalTime.of(17, 2)));
+    slot.setPeriod(new TimePeriod(LocalTime.of(7, 0), LocalTime.of(17, 0)));
+
+    return slot;
+  }
+
+  public static InterviewerSlot createSlotWithDateNotOnTheNextWeek() {
+    InterviewerSlot slot = new InterviewerSlot();
+    slot.setWeek(DateUtils.getNextWeek() + 2);
+    slot.setDayOfWeek(DayOfWeek.THURSDAY);
+    slot.setPeriod(new TimePeriod(LocalTime.of(14, 0), LocalTime.of(17, 0)));
 
     return slot;
   }
@@ -46,7 +55,7 @@ public class InterviewerSlotFactory {
 
   public static InterviewerSlot createInterviewerSlot() {
     InterviewerSlot slot = new InterviewerSlot();
-    slot.setWeek(DateUtils.getCurrentWeek() + 1);
+    slot.setWeek(DateUtils.getNextWeek());
     slot.setDayOfWeek(DayOfWeek.THURSDAY);
     slot.setPeriod(new TimePeriod(LocalTime.of(14, 0), LocalTime.of(19, 0)));
 
@@ -56,7 +65,7 @@ public class InterviewerSlotFactory {
 
   public static InterviewerSlot createAnotherInterviewerSlot() {
     InterviewerSlot slot = new InterviewerSlot();
-    slot.setWeek(DateUtils.getCurrentWeek() + 1);
+    slot.setWeek(DateUtils.getNextWeek());
     slot.setDayOfWeek(DayOfWeek.WEDNESDAY);
     slot.setPeriod(new TimePeriod(LocalTime.of(9, 0), LocalTime.of(17, 0)));
 
