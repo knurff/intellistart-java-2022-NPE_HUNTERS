@@ -21,31 +21,46 @@ public class TimePeriodValidator {
   private static final LocalTime END_WORK_HOURS = LocalTime.of(22, 0);
 
   /**
-   * Check TimePeriod boundaries.
-   *
-   * @param period period to check
+   * Checks that TimePeriod startTime is before endTime, time period is round, startTime and endTime
+   * involves working hours, and duration more than 1,5 hours.
    */
-  public static void checkTimePeriod(TimePeriod period) {
+  public static void checkTimePeriodWithWorkingHoursAndDurationMoreThanMin(TimePeriod period) {
     LocalTime startTime = period.getStartTime();
     LocalTime endTime = period.getEndTime();
 
-    checkStartTimeIsBeforeEndTime(startTime, endTime);
-    checkTimePeriodRound(startTime, endTime);
+    checkStartTimeIsBeforeEndAndTimePeriodIsRound(startTime, endTime);
     checkTimePeriodIsIsWorkingHours(startTime, endTime);
     checkTimePeriodDurationMoreThanMin(startTime, endTime);
   }
 
   /**
-   * Checks TimePeriod boundaries without working hours and validates, that duration is equal to 1,5
-   * hours.
+   * Checks that TimePeriod startTime is before endTime, time period is round and duration is equal
+   * to 1,5 hours.
    */
   public static void checkTimePeriodWithoutWorkingHours(TimePeriod period) {
     LocalTime startTime = period.getStartTime();
     LocalTime endTime = period.getEndTime();
 
+    checkStartTimeIsBeforeEndAndTimePeriodIsRound(startTime, endTime);
+    checkTimePeriodDurationIsEqualToNinetyMinutes(startTime, endTime);
+  }
+
+  /**
+   * Checks that in TimePeriod startTime is before endTime, time period is round and duration more
+   * than 1,5 hours.
+   */
+  public static void checkTimePeriodWithoutWorkingHoursAndDurationMoreThanMin(TimePeriod period) {
+    LocalTime startTime = period.getStartTime();
+    LocalTime endTime = period.getEndTime();
+
+    checkStartTimeIsBeforeEndAndTimePeriodIsRound(startTime, endTime);
+    checkTimePeriodDurationMoreThanMin(startTime, endTime);
+  }
+
+  private static void checkStartTimeIsBeforeEndAndTimePeriodIsRound(LocalTime startTime,
+      LocalTime endTime) {
     checkStartTimeIsBeforeEndTime(startTime, endTime);
     checkTimePeriodRound(startTime, endTime);
-    checkTimePeriodDurationIsEqualToNinetyMinutes(startTime, endTime);
   }
 
   public static boolean isOverlapping(TimePeriod period1, TimePeriod period2) {
