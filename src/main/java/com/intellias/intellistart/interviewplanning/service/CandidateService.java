@@ -4,7 +4,7 @@ import com.intellias.intellistart.interviewplanning.exception.SlotContainsBookin
 import com.intellias.intellistart.interviewplanning.exception.SlotNotFoundException;
 import com.intellias.intellistart.interviewplanning.model.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.repository.CandidateSlotRepository;
-import com.intellias.intellistart.interviewplanning.service.validator.CandidateSlotValidator;
+import com.intellias.intellistart.interviewplanning.service.validator.SlotValidator;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -13,7 +13,6 @@ import java.util.Optional;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * CandidateService service.
@@ -36,7 +35,6 @@ public class CandidateService {
   /**
    * Validates and creates CandidateSlot.
    */
-
   public CandidateSlot createSlot(CandidateSlot candidateSlot) {
     return validateAndSaveCandidateSlot(candidateSlot);
   }
@@ -45,7 +43,6 @@ public class CandidateService {
    * Validates and updates existing CandidateSlot.
    */
 
-  @Transactional
   public CandidateSlot editSlot(CandidateSlot candidateSlot, Long id) {
     checkThatCandidateSlotExistsWithNoBookings(id);
     candidateSlot.setId(id);
@@ -89,7 +86,8 @@ public class CandidateService {
   private CandidateSlot validateAndSaveCandidateSlot(CandidateSlot candidateSlot) {
     List<CandidateSlot> anotherCandidateSlots = candidateSlotRepository.findAllByEmail(
         candidateSlot.getEmail());
-    CandidateSlotValidator.validate(candidateSlot, anotherCandidateSlots, candidateSlot.getId());
+    SlotValidator.validateCandidateSlot(candidateSlot, anotherCandidateSlots,
+        candidateSlot.getId());
     return candidateSlotRepository.save(candidateSlot);
   }
 
