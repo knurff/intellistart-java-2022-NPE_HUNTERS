@@ -15,9 +15,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import javax.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * InterviewerService service.
@@ -61,13 +61,6 @@ public class InterviewerService {
     return new ArrayList<>();
   }
 
-  /**
-   * Set max quantity of bookings to next week.
-   *
-   * @param interviewerId long id of interviewer
-   * @param maxBookings quantity of booking to next week
-   * @throws InterviewerNotFoundException if {@code interviewerId} is not id of interviewer.
-   */
   @Transactional
   public void setMaxBookings(Long interviewerId, int maxBookings) {
     int currentWeekBookings = getInterviewerOrThrowException(interviewerId).getMaxBookingsPerWeek()
@@ -136,31 +129,6 @@ public class InterviewerService {
     }
 
     return slot;
-  }
-
-  /**
-
-   * Returns list of interviewerSlot relate {@code user}.
-   */
-  public List<InterviewerSlot> findAllByInterviewerId(User user) {
-    return interviewerSlotRepository.getAllByInterviewerId(user);
-  }
-
-  public InterviewerSlot save(InterviewerSlot slot) {
-    return interviewerSlotRepository.save(slot);
-  }
-
-  /**
-   * Check overlapping relate on {@code slot}.
-   *
-   * @throws SlotIsOverlappingException if {@code slot} is overlapping
-   */
-  public void checkSlotOverlapping(InterviewerSlot slot) {
-    List<InterviewerSlot> interviewerSlots = findAllByInterviewerId(slot.getInterviewerId());
-
-    if (isSlotOverlapping(interviewerSlots, slot)) {
-      throw new SlotIsOverlappingException("Slot already exist");
-    }
   }
 
   /**
