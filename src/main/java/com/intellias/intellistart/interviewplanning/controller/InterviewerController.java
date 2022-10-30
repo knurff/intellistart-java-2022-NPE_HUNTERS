@@ -8,6 +8,8 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -34,6 +36,11 @@ public class InterviewerController {
         interviewerService.getAllInterviewerSlotsByInterviewerId(interviewerId);
 
     return interviewerSlotsDtoCreator.createInterviewerSlotsDtoList(interviewerSlots);
+  }
+
+  @PostMapping("/{interviewerId}/bookings")
+  public void setMaxBookings(@PathVariable Long interviewerId, int maxBooking) {
+    interviewerService.setMaxBookings(interviewerId, maxBooking);
   }
 
 }

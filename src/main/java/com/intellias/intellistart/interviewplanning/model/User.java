@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.intellias.intellistart.interviewplanning.model.role.UserRole;
 import java.util.Objects;
 import java.util.Set;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -46,7 +48,8 @@ public class User {
   @Enumerated(EnumType.STRING)
   private UserRole role;
 
-  private int maxBookingsPerWeek;
+  @Embedded
+  private WeekBooking maxBookingsPerWeek;
 
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "interviewerId")
   @JsonIgnore

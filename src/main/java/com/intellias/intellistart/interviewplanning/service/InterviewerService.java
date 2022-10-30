@@ -18,6 +18,7 @@ import java.util.Optional;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * InterviewerService service.
@@ -25,6 +26,7 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 public class InterviewerService {
+
   private final InterviewerSlotRepository interviewerSlotRepository;
   private final UserRepository userRepository;
   private final BookingService bookingService;
@@ -41,8 +43,11 @@ public class InterviewerService {
     return new ArrayList<>();
   }
 
-  public void setMaxBookings() {
-
+  @Transactional
+  public void setMaxBookings(Long interviewerId, int maxBookings) {
+    int currentWeekBookings = getInterviewerOrThrowException(interviewerId).getMaxBookingsPerWeek()
+        .getCurrentWeek();
+    userRepository.setMaxBookings(interviewerId, currentWeekBookings, maxBookings);
   }
 
   /**
@@ -133,11 +138,11 @@ public class InterviewerService {
   }
 
   /**
-   * Returns a map of interviewer slots as keys and booking id sets related to them as values
-   * for a particular week and day.
+   * Returns a map of interviewer slots as keys and booking id sets related to them as values for a
+   * particular week and day.
    *
    * @param weekNumber a number of the week.
-   * @param dayOfWeek a day of the week specified.
+   * @param dayOfWeek  a day of the week specified.
    * @return a map of interviewer slots as keys and booking id sets related to them as values.
    */
   public Map<InterviewerSlot, Set<Long>> getAllSlotsWithRelatedBookingIdsUsingWeekAndDay(

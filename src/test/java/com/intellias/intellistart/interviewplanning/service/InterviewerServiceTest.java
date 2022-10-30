@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
@@ -12,6 +11,7 @@ import com.intellias.intellistart.interviewplanning.exception.InterviewerNotFoun
 import com.intellias.intellistart.interviewplanning.exception.SlotNotFoundException;
 import com.intellias.intellistart.interviewplanning.model.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.model.User;
+import com.intellias.intellistart.interviewplanning.model.WeekBooking;
 import com.intellias.intellistart.interviewplanning.model.role.UserRole;
 import com.intellias.intellistart.interviewplanning.repository.InterviewerSlotRepository;
 import com.intellias.intellistart.interviewplanning.repository.UserRepository;
@@ -25,6 +25,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class InterviewerServiceTest {
+
   @Mock
   private InterviewerSlotRepository interviewerSlotRepository;
   @Mock
@@ -69,7 +70,8 @@ class InterviewerServiceTest {
 
   @Test
   void setMaxBookings() {
-    interviewerServiceMock.setMaxBookings();
+    interviewerServiceMock.setMaxBookings(1L, 1);
+    assertTrue(true);
   }
 
   @Test
