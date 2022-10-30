@@ -43,6 +43,13 @@ public class InterviewerService {
     return new ArrayList<>();
   }
 
+  /**
+   * Set max quantity of bookings to next week.
+   *
+   * @param interviewerId long id of interviewer
+   * @param maxBookings quantity of booking to next week
+   * @throws InterviewerNotFoundException if {@code interviewerId} is not id of interviewer.
+   */
   @Transactional
   public void setMaxBookings(Long interviewerId, int maxBookings) {
     int currentWeekBookings = getInterviewerOrThrowException(interviewerId).getMaxBookingsPerWeek()

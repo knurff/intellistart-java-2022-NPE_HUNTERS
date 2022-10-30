@@ -7,6 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Class for tracking quantity of bookings per week.
+ */
 @Embeddable
 @Data
 @AllArgsConstructor
