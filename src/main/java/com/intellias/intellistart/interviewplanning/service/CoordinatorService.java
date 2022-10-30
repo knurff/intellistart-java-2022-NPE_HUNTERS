@@ -2,14 +2,21 @@ package com.intellias.intellistart.interviewplanning.service;
 
 import com.intellias.intellistart.interviewplanning.controller.dto.DashboardDayDto;
 import com.intellias.intellistart.interviewplanning.controller.dto.DashboardDto;
+import com.intellias.intellistart.interviewplanning.exception.BookingNotFoundException;
 import com.intellias.intellistart.interviewplanning.exception.InterviewerNotFoundException;
 import com.intellias.intellistart.interviewplanning.exception.SlotContainsBookingsException;
+import com.intellias.intellistart.interviewplanning.exception.SlotNotFoundException;
+import com.intellias.intellistart.interviewplanning.model.Booking;
+import com.intellias.intellistart.interviewplanning.model.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.model.User;
 import com.intellias.intellistart.interviewplanning.model.role.UserRole;
+import com.intellias.intellistart.interviewplanning.repository.BookingRepository;
+import com.intellias.intellistart.interviewplanning.repository.CandidateSlotRepository;
 import com.intellias.intellistart.interviewplanning.repository.InterviewerSlotRepository;
 import com.intellias.intellistart.interviewplanning.repository.UserRepository;
 import com.intellias.intellistart.interviewplanning.service.validator.InterviewerSlotValidator;
+import com.intellias.intellistart.interviewplanning.service.validator.SlotValidator;
 import com.intellias.intellistart.interviewplanning.util.DateUtils;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -28,6 +35,8 @@ public class CoordinatorService {
 
   private final UserRepository userRepository;
   private final InterviewerSlotRepository interviewerSlotRepository;
+  private final CandidateSlotRepository candidateSlotRepository;
+  private final BookingRepository bookingRepository;
   private final InterviewerService interviewerService;
   private final CandidateService candidateService;
   private final BookingService bookingService;
@@ -50,10 +59,7 @@ public class CoordinatorService {
     newSlot.setId(interviewerSlotId);
     newSlot.setInterviewer(user);
 
-    List<InterviewerSlot> interviewerSlots = interviewerSlotRepository.getAllByInterviewer(
-        newSlot.getInterviewer());
-    InterviewerSlotValidator.validateSlotForCurrentAndNextWeek(newSlot, interviewerSlots,
-        interviewerSlotId);
+    validateInterviewerSlot(newSlot, interviewerSlotId);
 
     return interviewerSlotRepository.save(newSlot);
   }
@@ -114,6 +120,35 @@ public class CoordinatorService {
     );
   }
 
+  public Booking updateBooking(Long bookingId, Long candidateSlotId,
+      Long interviewerSlotId, Booking updatedBooking) {
+
+    Booking oldBooking = bookingRepository.findById(bookingId).orElseThrow(
+        () -> new BookingNotFoundException("Booking specified by id = " + bookingId + " does not exist"));
+
+    if (oldBooking.equals(updatedBooking)) {
+      return updatedBooking;
+    }
+
+    CandidateSlot associatedCandidateSlot =
+        candidateSlotRepository.findById(candidateSlotId)
+            .orElseThrow(() -> new SlotNotFoundException("Candidate slot with id = " +
+                candidateSlotId + " was not found"));
+
+    InterviewerSlot associatedInterviewerSlot =
+        interviewerSlotRepository.findById(interviewerSlotId)
+            .orElseThrow(() -> new SlotNotFoundException("Interviewer slot with id = " +
+                interviewerSlotId + " was not found"));
+
+    validateCandidateSlot(associatedCandidateSlot, candidateSlotId);
+    validateInterviewerSlot(associatedInterviewerSlot, interviewerSlotId);
+
+    updatedBooking.setCandidateSlot(associatedCandidateSlot);
+    updatedBooking.setInterviewerSlot(associatedInterviewerSlot);
+
+    return bookingRepository.saveAndFlush(updatedBooking);
+  }
+
   private DashboardDayDto getDashboardForDay(final int weekNumber, final DayOfWeek dayOfWeek) {
     final LocalDate dateFromWeekAndDay = DateUtils.getDateOfDayOfWeek(weekNumber, dayOfWeek);
 
@@ -122,5 +157,20 @@ public class CoordinatorService {
         candidateService.getAllSlotsWithRelatedBookingIdsUsingDate(dateFromWeekAndDay),
         bookingService.getMapOfAllBookingsUsingDate(dateFromWeekAndDay)
     );
+  }
+
+  private void validateCandidateSlot(CandidateSlot candidateSlot, Long candidateSlotId) {
+    List<CandidateSlot> candidateSlots = candidateSlotRepository.findAllByEmail(
+        candidateSlot.getEmail());
+    SlotValidator.validateCandidateSlot(candidateSlot, candidateSlots,
+        candidateSlotId);
+  }
+
+  private void validateInterviewerSlot(InterviewerSlot interviewerSlot, Long interviewerSlotId) {
+    List<InterviewerSlot> interviewerSlots = interviewerSlotRepository.getAllByInterviewer(
+        interviewerSlot.getInterviewer());
+    InterviewerSlotValidator.validateSlotForCurrentAndNextWeek(interviewerSlot,
+        interviewerSlots,
+        interviewerSlotId);
   }
 }
