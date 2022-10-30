@@ -269,7 +269,7 @@ class BookingServiceTest {
       bookingLimit) {
     User user = new User();
     user.setRole(UserRole.INTERVIEWER);
-    user.setMaxBookingsPerWeek(new WeekBooking(0, bookingLimit));
+    user.setMaxBookingsPerWeek(new WeekBooking(bookingLimit,0));
     user.setId(1L);
     interviewerSlot.setInterviewer(user);
 
