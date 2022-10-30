@@ -13,7 +13,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface InterviewerSlotRepository extends JpaRepository<InterviewerSlot, Long> {
-  List<InterviewerSlot> getAllByInterviewerId(User interviewerId);
+
+  List<InterviewerSlot> getAllByInterviewer(User interviewer);
 
   List<InterviewerSlot> getAllByWeekAndDayOfWeek(final int week, final DayOfWeek dayOfWeek);
 }

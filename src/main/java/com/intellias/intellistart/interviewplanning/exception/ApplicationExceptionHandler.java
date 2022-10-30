@@ -27,6 +27,8 @@ public class ApplicationExceptionHandler {
   private static final String BOOKING_IS_OVERLAPPING = "booking_is_overlapping";
   private static final String BOOKING_LIMIT_EXCEEDED = "booking_limit_exceeded";
 
+  private static final String INVALID_DAY_FOR_SLOT_CREATION = "invalid_day_for_slot_creation";
+
 
   /**
    * Exception handler for InterviewerNotFoundException.
@@ -93,7 +95,7 @@ public class ApplicationExceptionHandler {
    */
   @ExceptionHandler
   public ResponseEntity<ExceptionResponse> handleInvalidCandidateSlotDateException(
-      InvalidCandidateSlotDateException e) {
+      InvalidSlotDateException e) {
     return new ResponseEntity<>(new ExceptionResponse(INVALID_SLOT_DATE, e.getMessage()),
         HttpStatus.BAD_REQUEST);
   }
@@ -147,6 +149,18 @@ public class ApplicationExceptionHandler {
     return new ResponseEntity<>(new ExceptionResponse(BOOKING_LIMIT_EXCEEDED, e.getMessage()),
         HttpStatus.BAD_REQUEST);
   }
+
+  /**
+   * Exception handler for InvalidDayForSlotCreationException.
+   */
+  @ExceptionHandler
+  public ResponseEntity<ExceptionResponse> handleInvalidDayForSlotCreationException(
+      InvalidDayForSlotCreationException e) {
+    return new ResponseEntity<>(
+        new ExceptionResponse(INVALID_DAY_FOR_SLOT_CREATION, e.getMessage()),
+        HttpStatus.BAD_REQUEST);
+  }
+
 
   /**
    * Custom response from exceptions.

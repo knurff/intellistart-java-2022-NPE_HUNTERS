@@ -16,7 +16,6 @@ import com.intellias.intellistart.interviewplanning.model.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.model.User;
 import com.intellias.intellistart.interviewplanning.model.role.UserRole;
-import com.intellias.intellistart.interviewplanning.repository.UserRepository;
 import com.intellias.intellistart.interviewplanning.service.factory.InterviewerSlotFactory;
 import java.util.HashMap;
 import java.util.List;
@@ -25,11 +24,13 @@ import java.util.Set;
 import org.aspectj.weaver.patterns.ConcreteCflowPointcut.Slot;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class CoordinatorServiceTest {
+
   @Mock
   private CoordinatorService coordinatorServiceMock;
   @Mock
@@ -38,8 +39,8 @@ class CoordinatorServiceTest {
   private CandidateService candidateService;
   @Mock
   private BookingService bookingService;
-  @Mock
-  private UserRepository userRepository;
+  @InjectMocks
+  private CoordinatorService coordinatorService;
 
   @Test
   void editSlotWorkingProperly() {
@@ -138,13 +139,6 @@ class CoordinatorServiceTest {
         .thenReturn(expectedCandidateSlotsMap);
     when(bookingService.getMapOfAllBookingsUsingDate(any()))
         .thenReturn(expectedBookingsMap);
-
-    final CoordinatorService coordinatorService = new CoordinatorService(
-        userRepository,
-        interviewerService,
-        candidateService,
-        bookingService
-    );
 
     final DashboardDto result = coordinatorService.getDashboardForWeek(1);
 

@@ -4,6 +4,7 @@ import com.intellias.intellistart.interviewplanning.controller.dto.InterviewerSl
 import com.intellias.intellistart.interviewplanning.model.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.model.TimePeriod;
 import com.intellias.intellistart.interviewplanning.util.DayOfWeekConvertor;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -62,6 +63,7 @@ public class InterviewerSlotsMapper {
         .week(dto.getWeekNum())
         .dayOfWeek(DayOfWeekConvertor.stringToDayOfWeek(dto.getDayOfWeek()))
         .period(new TimePeriod(dto.getFrom(), dto.getTo()))
+        .bookings(new HashSet<>())
         .build();
   }
 }

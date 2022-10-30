@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 
-import com.intellias.intellistart.interviewplanning.exception.InvalidCandidateSlotDateException;
+import com.intellias.intellistart.interviewplanning.exception.InvalidSlotDateException;
 import com.intellias.intellistart.interviewplanning.exception.InvalidTimePeriodBoundaries;
 import com.intellias.intellistart.interviewplanning.exception.SlotIsOverlappingException;
 import com.intellias.intellistart.interviewplanning.model.CandidateSlot;
@@ -20,32 +20,25 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(MockitoExtension.class)
 class CandidateServiceTest {
+
   @Mock
   private CandidateSlotRepository candidateSlotRepository;
   @Mock
   private BookingService bookingService;
+  @InjectMocks
   private CandidateService service;
 
-  @BeforeEach
-  void setup() {
-    service = new CandidateService(candidateSlotRepository, bookingService);
-  }
 
   @Test
-  @Order(1)
   void getAllSlotsWorkingProperly() {
     CandidateSlot candidateSlot1 = CandidateSlotFactory.createCandidateSlot();
     CandidateSlot candidateSlot2 = CandidateSlotFactory.createCandidateSlot();
@@ -63,7 +56,6 @@ class CandidateServiceTest {
   }
 
   @Test
-  @Order(2)
   void createSlotWorkingProperly() {
     CandidateSlot candidateSlot = CandidateSlotFactory.createCandidateSlot();
     candidateSlot.setId(1L);
@@ -80,15 +72,13 @@ class CandidateServiceTest {
   }
 
   @Test
-  @Order(3)
   void createSlotThrowsAnExceptionIfDateIsNotInFuture() {
     CandidateSlot candidateSlot = CandidateSlotFactory.createSlotWithDateInPast();
 
-    assertThrows(InvalidCandidateSlotDateException.class, () -> service.createSlot(candidateSlot));
+    assertThrows(InvalidSlotDateException.class, () -> service.createSlot(candidateSlot));
   }
 
   @Test
-  @Order(4)
   void createSlotThrowsAnExceptionIfTimeIsNotInFuture() {
     CandidateSlot candidateSlot = CandidateSlotFactory.createSlotWithTimePeriodInPast();
 
@@ -96,7 +86,6 @@ class CandidateServiceTest {
   }
 
   @Test
-  @Order(5)
   void createSlotThrowsAnExceptionIfDurationLessThanMin() {
     CandidateSlot candidateSlot = CandidateSlotFactory.createSlotWithDurationLessThanMin();
 
@@ -105,7 +94,6 @@ class CandidateServiceTest {
   }
 
   @Test
-  @Order(6)
   void createSlotThrowsAnExceptionIfPeriodIsNotRounded() {
     CandidateSlot candidateSlot = CandidateSlotFactory.createSlotWithNotRoundedPeriod();
 
@@ -113,7 +101,6 @@ class CandidateServiceTest {
   }
 
   @Test
-  @Order(7)
   void createSlotThrowsAnExceptionIfAnOverlappingSlotExists() {
     CandidateSlot candidateSlot = CandidateSlotFactory.createCandidateSlot();
     CandidateSlot candidateSlot1 = CandidateSlotFactory.createCandidateSlot();
@@ -126,7 +113,6 @@ class CandidateServiceTest {
 
 
   @Test
-  @Order(8)
   void editSlotWorkingProperly() {
     CandidateSlot candidateSlot = CandidateSlotFactory.createCandidateSlot();
     candidateSlot.setDate(LocalDate.now().plusDays(2));
@@ -142,18 +128,16 @@ class CandidateServiceTest {
 
 
   @Test
-  @Order(9)
   void editSlotThrowsAnExceptionIfDateIsNotInFuture() {
     CandidateSlot candidateSlot = CandidateSlotFactory.createSlotWithDateInPast();
 
     setIdForSlotAndConfigureMockBehaviorForEditMethod(candidateSlot);
 
-    assertThrows(InvalidCandidateSlotDateException.class,
+    assertThrows(InvalidSlotDateException.class,
         () -> service.editSlot(candidateSlot, 1L));
   }
 
   @Test
-  @Order(10)
   void editSlotThrowsAnExceptionIfTimeIsNotInFuture() {
     CandidateSlot candidateSlot = CandidateSlotFactory.createSlotWithTimePeriodInPast();
 
@@ -164,7 +148,6 @@ class CandidateServiceTest {
   }
 
   @Test
-  @Order(11)
   void editSlotThrowsAnExceptionIfDurationLessThanMin() {
     CandidateSlot candidateSlot = CandidateSlotFactory.createSlotWithDurationLessThanMin();
 
@@ -176,7 +159,6 @@ class CandidateServiceTest {
   }
 
   @Test
-  @Order(12)
   void editSlotThrowsAnExceptionIfPeriodIsNotRounded() {
     CandidateSlot candidateSlot = CandidateSlotFactory.createSlotWithNotRoundedPeriod();
 
@@ -187,7 +169,6 @@ class CandidateServiceTest {
   }
 
   @Test
-  @Order(13)
   void editSlotThrowsAnExceptionIfAnOverlappingSlotExists() {
 
     CandidateSlot candidateSlot1 = CandidateSlotFactory.createCandidateSlot();
@@ -203,7 +184,6 @@ class CandidateServiceTest {
   }
 
   @Test
-  @Order(14)
   void getAllSlotsWithRelatedBookingIdsUsingDateReturnsExpectedMap() {
     final CandidateSlot expectedSlot = new CandidateSlot();
     final Set<Long> expectedSet = new HashSet<>();
