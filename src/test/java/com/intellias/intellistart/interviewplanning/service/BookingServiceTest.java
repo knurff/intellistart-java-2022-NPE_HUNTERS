@@ -18,6 +18,7 @@ import com.intellias.intellistart.interviewplanning.model.Booking;
 import com.intellias.intellistart.interviewplanning.model.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.model.User;
+import com.intellias.intellistart.interviewplanning.model.WeekBooking;
 import com.intellias.intellistart.interviewplanning.model.role.UserRole;
 import com.intellias.intellistart.interviewplanning.repository.BookingRepository;
 import com.intellias.intellistart.interviewplanning.repository.CandidateSlotRepository;
@@ -268,7 +269,7 @@ class BookingServiceTest {
       bookingLimit) {
     User user = new User();
     user.setRole(UserRole.INTERVIEWER);
-    user.setMaxBookingsPerWeek(bookingLimit);
+    user.setMaxBookingsPerWeek(new WeekBooking(0, bookingLimit));
     user.setId(1L);
     interviewerSlot.setInterviewer(user);
 
