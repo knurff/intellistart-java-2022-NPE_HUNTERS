@@ -4,7 +4,7 @@ import com.intellias.intellistart.interviewplanning.exception.SlotContainsBookin
 import com.intellias.intellistart.interviewplanning.exception.SlotNotFoundException;
 import com.intellias.intellistart.interviewplanning.model.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.repository.CandidateSlotRepository;
-import com.intellias.intellistart.interviewplanning.service.validator.CandidateSlotValidator;
+import com.intellias.intellistart.interviewplanning.service.validator.SlotValidator;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -13,7 +13,6 @@ import java.util.Optional;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * CandidateService service.
@@ -21,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @AllArgsConstructor
 public class CandidateService {
+
   private final CandidateSlotRepository candidateSlotRepository;
   private final BookingService bookingService;
 
@@ -35,27 +35,23 @@ public class CandidateService {
   /**
    * Validates and creates CandidateSlot.
    */
-
   public CandidateSlot createSlot(CandidateSlot candidateSlot) {
-    validateAndSaveCandidateSlot(candidateSlot);
-    return candidateSlot;
+    return validateAndSaveCandidateSlot(candidateSlot);
   }
 
   /**
    * Validates and updates existing CandidateSlot.
    */
 
-  @Transactional
-  public boolean editSlot(CandidateSlot candidateSlot, Long id) {
+  public CandidateSlot editSlot(CandidateSlot candidateSlot, Long id) {
     checkThatCandidateSlotExistsWithNoBookings(id);
     candidateSlot.setId(id);
-    validateAndSaveCandidateSlot(candidateSlot);
-    return true;
+    return validateAndSaveCandidateSlot(candidateSlot);
   }
 
   /**
-   * Returns a map of candidate slots as keys and booking id sets related to them as values
-   * for a particular date.
+   * Returns a map of candidate slots as keys and booking id sets related to them as values for a
+   * particular date.
    *
    * @param localDate specifies the date using which to retrieve candidate slots.
    * @return a map of candidate slots as keys and booking id sets related to them as values for a
@@ -87,11 +83,12 @@ public class CandidateService {
     }
   }
 
-  private void validateAndSaveCandidateSlot(CandidateSlot candidateSlot) {
+  private CandidateSlot validateAndSaveCandidateSlot(CandidateSlot candidateSlot) {
     List<CandidateSlot> anotherCandidateSlots = candidateSlotRepository.findAllByEmail(
         candidateSlot.getEmail());
-    CandidateSlotValidator.validate(candidateSlot, anotherCandidateSlots, candidateSlot.getId());
-    candidateSlotRepository.save(candidateSlot);
+    SlotValidator.validateCandidateSlot(candidateSlot, anotherCandidateSlots,
+        candidateSlot.getId());
+    return candidateSlotRepository.save(candidateSlot);
   }
 
   private boolean candidateSlotContainsBookings(Optional<CandidateSlot> candidateSlot) {

@@ -7,13 +7,27 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import com.intellias.intellistart.interviewplanning.exception.BookingIsOverlappingException;
+import com.intellias.intellistart.interviewplanning.exception.BookingLimitExceededException;
 import com.intellias.intellistart.interviewplanning.exception.BookingNotFoundException;
+import com.intellias.intellistart.interviewplanning.exception.InvalidBookingDurationException;
+import com.intellias.intellistart.interviewplanning.exception.InvalidTimePeriodBoundaries;
+import com.intellias.intellistart.interviewplanning.exception.SlotDatesAreNotEqualException;
+import com.intellias.intellistart.interviewplanning.exception.SlotNotFoundException;
 import com.intellias.intellistart.interviewplanning.model.Booking;
 import com.intellias.intellistart.interviewplanning.model.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.InterviewerSlot;
+import com.intellias.intellistart.interviewplanning.model.User;
+import com.intellias.intellistart.interviewplanning.model.role.UserRole;
 import com.intellias.intellistart.interviewplanning.repository.BookingRepository;
+import com.intellias.intellistart.interviewplanning.repository.CandidateSlotRepository;
+import com.intellias.intellistart.interviewplanning.repository.InterviewerSlotRepository;
+import com.intellias.intellistart.interviewplanning.repository.UserRepository;
 import com.intellias.intellistart.interviewplanning.service.factory.BookingFactory;
+import com.intellias.intellistart.interviewplanning.service.factory.CandidateSlotFactory;
+import com.intellias.intellistart.interviewplanning.service.factory.InterviewerSlotFactory;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -31,6 +45,12 @@ class BookingServiceTest {
 
   @Mock
   private BookingRepository bookingRepository;
+  @Mock
+  private InterviewerSlotRepository interviewerSlotRepository;
+  @Mock
+  private CandidateSlotRepository candidateSlotRepository;
+  @Mock
+  private UserRepository userRepository;
   @InjectMocks
   private BookingService bookingService;
 
@@ -91,6 +111,136 @@ class BookingServiceTest {
   }
 
   @Test
+  void createBookingWorkingProperly() {
+    Booking booking = BookingFactory.createBookingWithTimePeriod(LocalTime.of(16, 30),
+        LocalTime.of(18, 0));
+
+    createSlotsAndConfigureMockBehavior(1);
+    when(bookingRepository.save(booking)).thenReturn(booking);
+
+    assertNotNull(bookingService.createBooking(booking, 1L, 1L));
+  }
+
+  @Test
+  void createBookingThrowsAnExceptionIfInterviewerSlotNotFound() {
+    Booking booking = BookingFactory.createBooking();
+    assertThrows(SlotNotFoundException.class,
+        () -> bookingService.createBooking(booking, 1L, 1L));
+  }
+
+  @Test
+  void createBookingThrowsAnExceptionIfCandidateSlotNotFound() {
+    InterviewerSlot interviewerSlot = new InterviewerSlot();
+    Booking booking = new Booking();
+
+    when(interviewerSlotRepository.findById(1L)).thenReturn(Optional.of(interviewerSlot));
+
+    assertThrows(SlotNotFoundException.class,
+        () -> bookingService.createBooking(booking, 1L, 1L)
+    );
+  }
+
+  @Test
+  void createBookingThrowsAnExceptionIfSlotDatesAreNotEqual() {
+    CandidateSlot candidateSlot = CandidateSlotFactory.createCandidateSlot();
+    InterviewerSlot interviewerSlot = InterviewerSlotFactory.createInterviewerSlot();
+    Booking booking = BookingFactory.createBooking();
+    createInterviewerWithBookingLimitAndSetIntoSlot(interviewerSlot, 1);
+
+    configureMockBehaviorForFindById(interviewerSlot, candidateSlot);
+
+    assertThrows(SlotDatesAreNotEqualException.class, () ->
+        bookingService.createBooking(booking, 1L, 1L));
+  }
+
+  @Test
+  void createBookingThrowsAnExceptionIfPeriodIsNotInBoundariesOfSlotPeriod() {
+    Booking booking1 = BookingFactory.createBookingWithTimePeriod(LocalTime.of(14, 30),
+        LocalTime.of(16, 0));
+    Booking booking2 = BookingFactory.createBookingWithTimePeriod(LocalTime.of(18, 0),
+        LocalTime.of(19, 30));
+
+    createSlotsAndConfigureMockBehavior(1);
+
+    assertThrows(InvalidTimePeriodBoundaries.class,
+        () -> bookingService.createBooking(booking1, 1L, 1L));
+    assertThrows(InvalidTimePeriodBoundaries.class,
+        () -> bookingService.createBooking(booking2, 1L, 1L));
+  }
+
+  @Test
+  void createBookingThrowsAnExceptionIfOverlappingBookingExists() {
+    Booking candidateSlotBooking = BookingFactory.createBookingWithTimePeriod(LocalTime.of(14, 30),
+        LocalTime.of(16, 0));
+    Booking interviewerSlotBooking = BookingFactory.createBookingWithTimePeriod
+        (LocalTime.of(18, 0), LocalTime.of(19, 30));
+    Booking booking1 = BookingFactory.createBookingWithTimePeriod(LocalTime.of(15, 0),
+        LocalTime.of(16, 30));
+    Booking booking2 = BookingFactory.createBookingWithTimePeriod(LocalTime.of(17, 30),
+        LocalTime.of(19, 0));
+
+    CandidateSlot candidateSlot = CandidateSlotFactory.createCandidateSlot();
+    InterviewerSlot interviewerSlot = InterviewerSlotFactory.createInterviewerSlot();
+    candidateSlot.setDate(interviewerSlot.getDate());
+
+    candidateSlot.getBookings().add(candidateSlotBooking);
+    interviewerSlot.getBookings().add(interviewerSlotBooking);
+    createInterviewerWithBookingLimitAndSetIntoSlot(interviewerSlot, 1);
+
+    configureMockBehaviorForFindById(interviewerSlot, candidateSlot);
+
+    assertThrows(BookingIsOverlappingException.class,
+        () -> bookingService.createBooking(booking1, 1L, 1L));
+    assertThrows(BookingIsOverlappingException.class,
+        () -> bookingService.createBooking(booking2, 1L, 1L));
+
+  }
+
+  @Test
+  void createBookingThrowsAnExceptionIfEndTimeIsAfterStartTime() {
+    Booking booking = BookingFactory.createBookingWithTimePeriod(LocalTime.of(18, 0),
+        LocalTime.of(16, 30));
+
+    createSlotsAndConfigureMockBehavior(1);
+
+    assertThrows(InvalidTimePeriodBoundaries.class, () -> bookingService.createBooking(booking,
+        1L, 1L));
+  }
+
+  @Test
+  void createBookingThrowsAnExceptionIfTimePeriodIsNotRounded() {
+    Booking booking = BookingFactory.createBookingWithTimePeriod(LocalTime.of(16, 31),
+        LocalTime.of(18, 1));
+
+    createSlotsAndConfigureMockBehavior(1);
+
+    assertThrows(InvalidTimePeriodBoundaries.class, () -> bookingService.createBooking(booking,
+        1L, 1L));
+  }
+
+  @Test
+  void createBookingThrowsAnExceptionIfTimePeriodDurationIsNotEqualToNinetyMinutes() {
+    Booking booking = BookingFactory.createBookingWithTimePeriod(LocalTime.of(16, 30),
+        LocalTime.of(18, 30));
+
+    createSlotsAndConfigureMockBehavior(1);
+
+    assertThrows(InvalidBookingDurationException.class, () -> bookingService.createBooking(booking,
+        1L, 1L));
+  }
+
+  @Test
+  void createBookingThrowsAnExceptionIfBookingLimitIsExceeded() {
+    Booking booking = BookingFactory.createBookingWithTimePeriod(LocalTime.of(16, 30),
+        LocalTime.of(18, 0));
+
+    createSlotsAndConfigureMockBehavior(0);
+
+    assertThrows(BookingLimitExceededException.class,
+        () -> bookingService.createBooking(booking, 1L, 1L));
+  }
+
+  @Test
   void deleteBookingWorkingProperly() {
     Booking booking = BookingFactory.createBookingWithId();
 
@@ -101,8 +251,33 @@ class BookingServiceTest {
 
   @Test
   void deleteBookingThrowsAnExceptionIfBookingNotExists() {
-
     assertThrows(BookingNotFoundException.class, () ->
         bookingService.deleteBooking(1L));
+  }
+
+  private void createSlotsAndConfigureMockBehavior(int bookingLimit) {
+    CandidateSlot candidateSlot = CandidateSlotFactory.createCandidateSlot();
+    InterviewerSlot interviewerSlot = InterviewerSlotFactory.createInterviewerSlot();
+    candidateSlot.setDate(interviewerSlot.getDate());
+    createInterviewerWithBookingLimitAndSetIntoSlot(interviewerSlot, bookingLimit);
+    configureMockBehaviorForFindById(interviewerSlot, candidateSlot);
+
+  }
+
+  private void createInterviewerWithBookingLimitAndSetIntoSlot(InterviewerSlot interviewerSlot, int
+      bookingLimit) {
+    User user = new User();
+    user.setRole(UserRole.INTERVIEWER);
+    user.setMaxBookingsPerWeek(bookingLimit);
+    user.setId(1L);
+    interviewerSlot.setInterviewer(user);
+
+    when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+  }
+
+  private void configureMockBehaviorForFindById(InterviewerSlot interviewerSlot,
+      CandidateSlot candidateSlot) {
+    when(interviewerSlotRepository.findById(1L)).thenReturn(Optional.of(interviewerSlot));
+    when(candidateSlotRepository.findById(1L)).thenReturn(Optional.of(candidateSlot));
   }
 }

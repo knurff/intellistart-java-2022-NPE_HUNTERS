@@ -1,6 +1,7 @@
 package com.intellias.intellistart.interviewplanning.util;
 
-import com.intellias.intellistart.interviewplanning.exception.InvalidTimeSlotBoundariesException;
+import com.intellias.intellistart.interviewplanning.exception.InvalidSlotDateException;
+import com.intellias.intellistart.interviewplanning.exception.InvalidTimePeriodBoundaries;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -78,11 +79,11 @@ public final class DateUtils {
    * Returns nothing.
    *
    * @param date date to check
-   * @throws InvalidTimeSlotBoundariesException if {@code date} is before than current date
+   * @throws InvalidTimePeriodBoundaries if {@code date} is before than current date
    */
   public static void checkDateIsInFuture(LocalDate date) {
     if (date.isBefore(LocalDate.now())) {
-      throw new InvalidTimeSlotBoundariesException("Date must be in future");
+      throw new InvalidSlotDateException("Date must be in future");
     }
   }
 

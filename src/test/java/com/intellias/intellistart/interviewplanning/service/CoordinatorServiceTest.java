@@ -16,22 +16,21 @@ import com.intellias.intellistart.interviewplanning.model.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.model.User;
 import com.intellias.intellistart.interviewplanning.model.role.UserRole;
-import com.intellias.intellistart.interviewplanning.repository.UserRepository;
-import com.intellias.intellistart.interviewplanning.util.InterviewerSlotFactory;
+import com.intellias.intellistart.interviewplanning.service.factory.InterviewerSlotFactory;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.aspectj.weaver.patterns.ConcreteCflowPointcut.Slot;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class CoordinatorServiceTest {
+
   @Mock
   private CoordinatorService coordinatorServiceMock;
   @Mock
@@ -40,16 +39,8 @@ class CoordinatorServiceTest {
   private CandidateService candidateService;
   @Mock
   private BookingService bookingService;
-  @Mock
-  private UserRepository userRepository;
-
-  @Test
-  void createBooking() {
-    when(coordinatorServiceMock.createBooking()).thenReturn(new Booking());
-    final Booking newBooking = coordinatorServiceMock.createBooking();
-
-    assertNotNull(newBooking);
-  }
+  @InjectMocks
+  private CoordinatorService coordinatorService;
 
   @Test
   void editSlotWorkingProperly() {
@@ -58,28 +49,12 @@ class CoordinatorServiceTest {
 
     InterviewerSlot interviewerSlotToUpdate = InterviewerSlotFactory.createAnotherInterviewerSlot();
     interviewerSlotToUpdate.setId(1L);
-    interviewerSlotToUpdate.setInterviewerId(new User(UserRole.INTERVIEWER));
+    interviewerSlotToUpdate.setInterviewer(new User(UserRole.INTERVIEWER));
 
     when(coordinatorServiceMock.editSlot(1L, 1L, interviewerSlot)).thenReturn(interviewerSlot);
     InterviewerSlot resultSlot = coordinatorServiceMock.editSlot(1L, 1L, interviewerSlot);
 
     assertEquals(resultSlot, interviewerSlot);
-  }
-
-  @Test
-  void editBooking() {
-    when(coordinatorServiceMock.editBooking()).thenReturn(true);
-    final boolean result = coordinatorServiceMock.editBooking();
-
-    assertTrue(result);
-  }
-
-  @Test
-  void deleteBooking() {
-    when(coordinatorServiceMock.deleteBooking()).thenReturn(true);
-    final boolean result = coordinatorServiceMock.deleteBooking();
-
-    assertTrue(result);
   }
 
   @Test
@@ -122,7 +97,7 @@ class CoordinatorServiceTest {
 
     assertNotNull(actualInterviewers);
     assertEquals(expectedInterviewers.size(), actualInterviewers.size());
-    assertEquals(actualInterviewers.get(0).getRole(), UserRole.INTERVIEWER);
+    assertEquals(UserRole.INTERVIEWER, actualInterviewers.get(0).getRole());
     assertSame(expectedInterviewers, actualInterviewers);
   }
 
@@ -137,7 +112,7 @@ class CoordinatorServiceTest {
     assertNotNull(actualCoordinators);
     assertFalse(actualCoordinators.isEmpty());
     assertEquals(expectedCoordinators.size(), actualCoordinators.size());
-    assertEquals(actualCoordinators.get(0).getRole(), UserRole.COORDINATOR);
+    assertEquals(UserRole.COORDINATOR, actualCoordinators.get(0).getRole());
     assertSame(expectedCoordinators, actualCoordinators);
   }
 
@@ -164,13 +139,6 @@ class CoordinatorServiceTest {
         .thenReturn(expectedCandidateSlotsMap);
     when(bookingService.getMapOfAllBookingsUsingDate(any()))
         .thenReturn(expectedBookingsMap);
-
-    final CoordinatorService coordinatorService = new CoordinatorService(
-        userRepository,
-        interviewerService,
-        candidateService,
-        bookingService
-    );
 
     final DashboardDto result = coordinatorService.getDashboardForWeek(1);
 

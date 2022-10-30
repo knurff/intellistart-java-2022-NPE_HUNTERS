@@ -4,12 +4,12 @@ import com.intellias.intellistart.interviewplanning.controller.dto.DashboardDayD
 import com.intellias.intellistart.interviewplanning.controller.dto.DashboardDto;
 import com.intellias.intellistart.interviewplanning.exception.InterviewerNotFoundException;
 import com.intellias.intellistart.interviewplanning.exception.SlotContainsBookingsException;
-import com.intellias.intellistart.interviewplanning.model.Booking;
 import com.intellias.intellistart.interviewplanning.model.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.model.User;
 import com.intellias.intellistart.interviewplanning.model.role.UserRole;
+import com.intellias.intellistart.interviewplanning.repository.InterviewerSlotRepository;
 import com.intellias.intellistart.interviewplanning.repository.UserRepository;
-import com.intellias.intellistart.interviewplanning.service.validator.TimePeriodValidator;
+import com.intellias.intellistart.interviewplanning.service.validator.InterviewerSlotValidator;
 import com.intellias.intellistart.interviewplanning.util.DateUtils;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -25,14 +25,12 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 public class CoordinatorService {
+
   private final UserRepository userRepository;
+  private final InterviewerSlotRepository interviewerSlotRepository;
   private final InterviewerService interviewerService;
   private final CandidateService candidateService;
   private final BookingService bookingService;
-
-  public Booking createBooking() {
-    return new Booking();
-  }
 
   /**
    * Returns editSlot for {@code interviewerSlotId} relative to {@code newSlot}.
@@ -50,12 +48,16 @@ public class CoordinatorService {
     checkIfSlotHasBooking(interviewerSlotId, interviewerId);
 
     newSlot.setId(interviewerSlotId);
-    newSlot.setInterviewerId(user);
+    newSlot.setInterviewer(user);
 
-    validateSlot(newSlot);
+    List<InterviewerSlot> interviewerSlots = interviewerSlotRepository.getAllByInterviewer(
+        newSlot.getInterviewer());
+    InterviewerSlotValidator.validateSlotForCurrentAndNextWeek(newSlot, interviewerSlots,
+        interviewerSlotId);
 
-    return interviewerService.save(newSlot);
+    return interviewerSlotRepository.save(newSlot);
   }
+
 
   private void checkIfSlotHasBooking(Long interviewerSlotId, Long interviewerId) {
     InterviewerSlot oldSlot = interviewerService.findSlotByIdAndInterviewerId(interviewerSlotId,
@@ -65,20 +67,6 @@ public class CoordinatorService {
       throw new SlotContainsBookingsException(
           "InterviewerSlot id = " + interviewerSlotId + " has bookings");
     }
-  }
-
-  private void validateSlot(InterviewerSlot slot) {
-    DateUtils.checkDateIsInFuture(slot.getDate());
-    TimePeriodValidator.checkTimePeriod(slot.getPeriod());
-    interviewerService.checkSlotOverlapping(slot);
-  }
-
-  public boolean editBooking() {
-    return true;
-  }
-
-  public boolean deleteBooking() {
-    return true;
   }
 
   public boolean grantRoleForUser() {

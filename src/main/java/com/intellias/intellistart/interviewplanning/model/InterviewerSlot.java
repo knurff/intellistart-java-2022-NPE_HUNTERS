@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.WeekFields;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import javax.persistence.Embedded;
@@ -18,6 +19,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -32,13 +35,15 @@ import org.springframework.lang.NonNull;
  */
 
 @Entity
+@Builder
+@AllArgsConstructor
 @Getter
 @Setter
 @ToString
 @RequiredArgsConstructor
 @NoArgsConstructor
 @Table(name = "interviewer_slots")
-public class InterviewerSlot {
+public class InterviewerSlot implements Slot {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,13 +61,13 @@ public class InterviewerSlot {
 
   @ManyToOne
   @JoinColumn(name = "interviewer_id")
-  private User interviewerId;
+  private User interviewer;
 
 
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "interviewerSlot")
   @JsonIgnore
   @Exclude
-  private Set<Booking> bookings;
+  private Set<Booking> bookings = new HashSet<>();
 
   @Override
   public boolean equals(Object o) {
