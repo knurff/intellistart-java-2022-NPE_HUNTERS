@@ -29,6 +29,9 @@ public class ApplicationExceptionHandler {
 
   private static final String INVALID_DAY_FOR_SLOT_CREATION = "invalid_day_for_slot_creation";
 
+  private static final String USER_ALREADY_HAS_ROLE = "user_already_has_role";
+  private static final String NO_ROLE = "no_role";
+  private static final String SELF_REVOKING = "self_revoking";
 
   /**
    * Exception handler for InterviewerNotFoundException.
@@ -158,6 +161,36 @@ public class ApplicationExceptionHandler {
       InvalidDayForSlotCreationException e) {
     return new ResponseEntity<>(
         new ExceptionResponse(INVALID_DAY_FOR_SLOT_CREATION, e.getMessage()),
+        HttpStatus.BAD_REQUEST);
+  }
+
+  /**
+   * Exception handler for UserAlreadyHasRoleException.
+   */
+  @ExceptionHandler
+  public ResponseEntity<ExceptionResponse> handleUserAlreadyHasRoleException(
+      UserAlreadyHasRoleException e) {
+    return new ResponseEntity<>(new ExceptionResponse(USER_ALREADY_HAS_ROLE, e.getMessage()),
+        HttpStatus.BAD_REQUEST);
+  }
+
+  /**
+   * Exception handler for NoRoleException.
+   */
+  @ExceptionHandler
+  public ResponseEntity<ExceptionResponse> handleNoRoleException(
+      NoRoleException e) {
+    return new ResponseEntity<>(new ExceptionResponse(NO_ROLE, e.getMessage()),
+        HttpStatus.BAD_REQUEST);
+  }
+
+  /**
+   * Exception handler for SelfRevokingException.
+   */
+  @ExceptionHandler
+  public ResponseEntity<ExceptionResponse> handleSelfRevokingException(
+      SelfRevokingException e) {
+    return new ResponseEntity<>(new ExceptionResponse(SELF_REVOKING, e.getMessage()),
         HttpStatus.BAD_REQUEST);
   }
 

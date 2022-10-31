@@ -3,11 +3,13 @@ package com.intellias.intellistart.interviewplanning.controller;
 import com.intellias.intellistart.interviewplanning.controller.dto.BookingDto;
 import com.intellias.intellistart.interviewplanning.controller.dto.DashboardDto;
 import com.intellias.intellistart.interviewplanning.controller.dto.InterviewerSlotDto;
+import com.intellias.intellistart.interviewplanning.controller.dto.UserDto;
 import com.intellias.intellistart.interviewplanning.controller.dto.mapper.BookingMapper;
 import com.intellias.intellistart.interviewplanning.controller.dto.mapper.InterviewerSlotsMapper;
 import com.intellias.intellistart.interviewplanning.model.Booking;
 import com.intellias.intellistart.interviewplanning.model.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.model.User;
+import com.intellias.intellistart.interviewplanning.model.role.UserRole;
 import com.intellias.intellistart.interviewplanning.service.BookingService;
 import com.intellias.intellistart.interviewplanning.service.CoordinatorService;
 import java.util.List;
@@ -86,5 +88,29 @@ public class CoordinatorController {
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void deleteBooking(@PathVariable Long id) {
     bookingService.deleteBooking(id);
+  }
+
+  @PostMapping("/users/coordinators")
+  @ResponseStatus(HttpStatus.CREATED)
+  public void grantCoordinatorRole(@RequestBody UserDto userDto) {
+    coordinatorService.grantRoleForUser(userDto.getEmail(), UserRole.COORDINATOR);
+  }
+
+  @PostMapping("/users/interviewers")
+  @ResponseStatus(HttpStatus.CREATED)
+  public void grantInterviewerRole(@RequestBody UserDto userDto) {
+    coordinatorService.grantRoleForUser(userDto.getEmail(), UserRole.INTERVIEWER);
+  }
+
+  @DeleteMapping("/users/coordinators/{id}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void revokeCoordinatorRole(@PathVariable Long id) {
+    coordinatorService.revokeRoleFromUser(id, UserRole.COORDINATOR);
+  }
+
+  @DeleteMapping("/users/interviewers/{id}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void revokeInterviewerRole(@PathVariable Long id) {
+    coordinatorService.revokeRoleFromUser(id, UserRole.INTERVIEWER);
   }
 }

@@ -5,6 +5,7 @@ import com.intellias.intellistart.interviewplanning.model.role.UserRole;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -51,7 +52,7 @@ public class User {
   @Embedded
   private WeekBooking maxBookingsPerWeek;
 
-  @OneToMany(fetch = FetchType.LAZY, mappedBy = "interviewer")
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "interviewer", cascade = CascadeType.REMOVE)
   @JsonIgnore
   @Exclude
   private Set<InterviewerSlot> interviewerSlot = new HashSet<>();

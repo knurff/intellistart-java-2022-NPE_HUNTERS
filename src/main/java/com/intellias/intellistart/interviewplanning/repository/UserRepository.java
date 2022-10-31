@@ -25,4 +25,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
   void setMaxBookings(@Param("interviewerId") Long interviewerId,
       @Param("currentWeek") int currentWeek,
       @Param("nextWeek") int nextWeek);
+
+  Optional<User> getUserByEmail(final String email);
+
+  Optional<User> getUserByIdAndRole(final Long id, final UserRole role);
 }
