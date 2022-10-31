@@ -1,7 +1,7 @@
-FROM maven:latest as build
+FROM maven:3.8.6-openjdk-11 as build
 WORKDIR /usr/app
-COPY pom.xml .
 COPY checkstyle.xml .
+COPY pom.xml .
 RUN mvn -q -ntp -B dependency:go-offline
 
 COPY src/ ./src/

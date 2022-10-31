@@ -4,10 +4,10 @@ package com.intellias.intellistart.interviewplanning.exception;
  * Exception for invalid time slot boundaries.
  */
 
-public class InvalidTimeSlotBoundariesException extends
+public class InvalidTimePeriodBoundaries extends
     RuntimeException {
 
-  public InvalidTimeSlotBoundariesException(String message) {
+  public InvalidTimePeriodBoundaries(String message) {
     super(message);
   }
 }

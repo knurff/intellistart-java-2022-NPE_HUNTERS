@@ -19,6 +19,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class InterviewerSlotDto {
 
+  @JsonInclude(value = Include.NON_NULL)
   private Long id;
 
   private int weekNum;
@@ -31,6 +32,6 @@ public class InterviewerSlotDto {
   @JsonFormat(pattern = "HH:mm")
   private LocalTime to;
 
-  @JsonInclude(Include.NON_NULL)
+  @JsonInclude(Include.NON_EMPTY)
   private Set<BookingDto> bookings;
 }

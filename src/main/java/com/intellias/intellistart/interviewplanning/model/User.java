@@ -2,8 +2,11 @@ package com.intellias.intellistart.interviewplanning.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.intellias.intellistart.interviewplanning.model.role.UserRole;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -46,12 +49,13 @@ public class User {
   @Enumerated(EnumType.STRING)
   private UserRole role;
 
-  private int maxBookingsPerWeek;
+  @Embedded
+  private WeekBooking maxBookingsPerWeek;
 
-  @OneToMany(fetch = FetchType.LAZY, mappedBy = "interviewerId", cascade = CascadeType.REMOVE)
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "interviewer", cascade = CascadeType.REMOVE)
   @JsonIgnore
   @Exclude
-  private Set<InterviewerSlot> interviewerSlot;
+  private Set<InterviewerSlot> interviewerSlot = new HashSet<>();
 
   @Override
   public boolean equals(Object o) {

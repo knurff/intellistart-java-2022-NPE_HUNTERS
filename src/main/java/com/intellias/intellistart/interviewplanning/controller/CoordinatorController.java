@@ -1,14 +1,19 @@
 package com.intellias.intellistart.interviewplanning.controller;
 
+import com.intellias.intellistart.interviewplanning.controller.dto.BookingDto;
 import com.intellias.intellistart.interviewplanning.controller.dto.DashboardDto;
 import com.intellias.intellistart.interviewplanning.controller.dto.InterviewerSlotDto;
+import com.intellias.intellistart.interviewplanning.controller.dto.mapper.BookingMapper;
+import com.intellias.intellistart.interviewplanning.controller.dto.mapper.InterviewerSlotsMapper;
+import com.intellias.intellistart.interviewplanning.model.Booking;
 import com.intellias.intellistart.interviewplanning.controller.dto.UserDto;
 import com.intellias.intellistart.interviewplanning.model.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.model.User;
+import com.intellias.intellistart.interviewplanning.service.BookingService;
 import com.intellias.intellistart.interviewplanning.model.role.UserRole;
 import com.intellias.intellistart.interviewplanning.service.CoordinatorService;
-import com.intellias.intellistart.interviewplanning.util.MappingUtils;
 import java.util.List;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,12 +27,13 @@ import org.springframework.web.bind.annotation.RestController;
  * CoordinatorController controller.
  */
 @RestController
+@AllArgsConstructor
 public class CoordinatorController {
-  private final CoordinatorService coordinatorService;
 
-  public CoordinatorController(final CoordinatorService coordinatorService) {
-    this.coordinatorService = coordinatorService;
-  }
+  private final CoordinatorService coordinatorService;
+  private final BookingService bookingService;
+  private final InterviewerSlotsMapper interviewerSlotsMapper;
+  private final BookingMapper bookingMapper;
 
   @GetMapping("/users/interviewers")
   public List<User> getAllInterviewers() {
@@ -48,17 +54,40 @@ public class CoordinatorController {
    * Returns InterviewerSlotDto relative to {@code slot}.
    *
    * @param interviewerId slot owner interviewerId
-   * @param slotId id of interviewer slot
-   * @param slot new interviewerSlot
+   * @param slotId        id of interviewer slot
+   * @param slot          new interviewerSlot
    * @return interviewerSlotDto as updated slot
    */
   @PostMapping("/interviewers/{interviewerId}/slots/{slotId}")
   public InterviewerSlotDto editSlot(@PathVariable Long interviewerId, @PathVariable Long slotId,
       @RequestBody InterviewerSlotDto slot) {
-    InterviewerSlot entity = MappingUtils.mapToInterviewerSlotEntity(slot);
+    InterviewerSlot entity = interviewerSlotsMapper.mapToInterviewerSlotEntity(slot);
 
     InterviewerSlot responseEntity = coordinatorService.editSlot(interviewerId, slotId, entity);
-    return MappingUtils.mapToInterviewerSlotDto(responseEntity);
+    return interviewerSlotsMapper.mapToInterviewerSlotsDto(responseEntity);
+  }
+
+  /**
+   * Handles POST requests and creates booking.
+   */
+  @PostMapping("/bookings")
+  @ResponseStatus(HttpStatus.CREATED)
+  public BookingDto createBooking(@RequestBody BookingDto bookingDto) {
+    Booking booking = bookingMapper.createBookingFromDto(bookingDto);
+
+    Booking responseEntity = bookingService.createBooking(booking,
+        bookingDto.getInterviewerSlotId(),
+        bookingDto.getCandidateSlotId());
+    return bookingMapper.createBookingDto(responseEntity);
+  }
+
+  /**
+   * Handles DELETE requests and deletes booking by id.
+   */
+  @DeleteMapping("/bookings/{id}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void deleteBooking(@PathVariable Long id) {
+    bookingService.deleteBooking(id);
   }
 
   @PostMapping("/users/coordinators")

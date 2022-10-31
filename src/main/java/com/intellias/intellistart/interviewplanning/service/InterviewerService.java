@@ -1,14 +1,13 @@
 package com.intellias.intellistart.interviewplanning.service;
 
 import com.intellias.intellistart.interviewplanning.exception.InterviewerNotFoundException;
-import com.intellias.intellistart.interviewplanning.exception.SlotIsOverlappingException;
 import com.intellias.intellistart.interviewplanning.exception.SlotNotFoundException;
 import com.intellias.intellistart.interviewplanning.model.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.model.User;
 import com.intellias.intellistart.interviewplanning.model.role.UserRole;
 import com.intellias.intellistart.interviewplanning.repository.InterviewerSlotRepository;
 import com.intellias.intellistart.interviewplanning.repository.UserRepository;
-import com.intellias.intellistart.interviewplanning.service.validator.TimePeriodValidator;
+import com.intellias.intellistart.interviewplanning.service.validator.InterviewerSlotValidator;
 import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import javax.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,24 +25,54 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 public class InterviewerService {
+
   private final InterviewerSlotRepository interviewerSlotRepository;
   private final UserRepository userRepository;
   private final BookingService bookingService;
 
-  public InterviewerSlot createSlot() {
-    return new InterviewerSlot();
+  /**
+   * Finds interviewer, sets it into slot, validates and creates new InterviewerSlot.
+   *
+   * @return interviewerSlot created entity
+   * @throws InterviewerNotFoundException if {@code interviewerId} is not id of interviewer.
+   */
+  public InterviewerSlot createSlot(InterviewerSlot interviewerSlot, Long interviewerId) {
+    findInterviewerAndSetIntoSlot(interviewerSlot, interviewerId);
+    return validateSlotAndSave(interviewerSlot);
   }
 
-  public boolean editSlot() {
-    return true;
+  /**
+   * Finds interviewer and slot to update, sets interviewer and slotId into slot, validates and
+   * updates existent InterviewerSlot.
+   *
+   * @return interviewerSlot updated entity
+   * @throws InterviewerNotFoundException if {@code interviewerId} is not id of interviewer.
+   * @throws SlotNotFoundException        if {@code slotId} is not id of existent interviewer slot.
+   */
+  public InterviewerSlot editSlot(InterviewerSlot interviewerSlot, Long interviewerId,
+      Long slotId) {
+    findSlotById(slotId);
+    findInterviewerAndSetIntoSlot(interviewerSlot, interviewerId);
+    interviewerSlot.setId(slotId);
+    return validateSlotAndSave(interviewerSlot);
   }
 
   public List<InterviewerSlot> getAllSlots() {
     return new ArrayList<>();
   }
 
-  public void setMaxBookings() {
-
+  /**
+   * Set max quantity of bookings to next week.
+   *
+   * @param interviewerId long id of interviewer
+   * @param maxBookings quantity of booking to next week
+   * @throws InterviewerNotFoundException if {@code interviewerId} is not id of interviewer.
+   */
+  @Transactional
+  public void setMaxBookings(Long interviewerId, int maxBookings) {
+    int currentWeekBookings = getInterviewerOrThrowException(interviewerId).getMaxBookingsPerWeek()
+        .getCurrentWeek();
+    userRepository.setMaxBookings(interviewerId, currentWeekBookings, maxBookings);
   }
 
   /**
@@ -55,7 +85,7 @@ public class InterviewerService {
   public List<InterviewerSlot> getAllInterviewerSlotsByInterviewerId(Long interviewerId) {
     var interviewer = getInterviewerOrThrowException(interviewerId);
 
-    return interviewerSlotRepository.getAllByInterviewerId(interviewer);
+    return interviewerSlotRepository.getAllByInterviewer(interviewer);
   }
 
   /**
@@ -97,7 +127,7 @@ public class InterviewerService {
     final InterviewerSlot slot = findSlotById(interviewerSlotId);
 
     final boolean slotBelongsToInterviewerSpecified =
-        slot.getInterviewerId().getId().equals(interviewerId);
+        slot.getInterviewer().getId().equals(interviewerId);
 
     if (!slotBelongsToInterviewerSpecified) {
       throw new SlotNotFoundException(
@@ -109,35 +139,11 @@ public class InterviewerService {
   }
 
   /**
-   * Returns list of interviewerSlot relate {@code user}.
-   */
-  public List<InterviewerSlot> findAllByInterviewerId(User user) {
-    return interviewerSlotRepository.getAllByInterviewerId(user);
-  }
-
-  public InterviewerSlot save(InterviewerSlot slot) {
-    return interviewerSlotRepository.save(slot);
-  }
-
-  /**
-   * Check overlapping relate on {@code slot}.
-   *
-   * @throws SlotIsOverlappingException if {@code slot} is overlapping
-   */
-  public void checkSlotOverlapping(InterviewerSlot slot) {
-    List<InterviewerSlot> interviewerSlots = findAllByInterviewerId(slot.getInterviewerId());
-
-    if (isSlotOverlapping(interviewerSlots, slot)) {
-      throw new SlotIsOverlappingException("Slot already exist");
-    }
-  }
-
-  /**
-   * Returns a map of interviewer slots as keys and booking id sets related to them as values
-   * for a particular week and day.
+   * Returns a map of interviewer slots as keys and booking id sets related to them as values for a
+   * particular week and day.
    *
    * @param weekNumber a number of the week.
-   * @param dayOfWeek a day of the week specified.
+   * @param dayOfWeek  a day of the week specified.
    * @return a map of interviewer slots as keys and booking id sets related to them as values.
    */
   public Map<InterviewerSlot, Set<Long>> getAllSlotsWithRelatedBookingIdsUsingWeekAndDay(
@@ -159,22 +165,16 @@ public class InterviewerService {
     return result;
   }
 
-  private boolean isSlotOverlapping(List<InterviewerSlot> interviewerSlots, InterviewerSlot slot) {
-    return interviewerSlots.stream()
-        .filter(anotherSlot -> checkThatDatesAreEqualAndIdAreNot(slot, anotherSlot))
-        .anyMatch(anotherSlot -> TimePeriodValidator.isOverlapping(slot.getPeriod(),
-            anotherSlot.getPeriod()));
+  private void findInterviewerAndSetIntoSlot(InterviewerSlot interviewerSlot, Long interviewerId) {
+    User interviewer = getInterviewerOrThrowException(interviewerId);
+    interviewerSlot.setInterviewer(interviewer);
   }
 
-  private boolean checkThatDatesAreEqualAndIdAreNot(InterviewerSlot interviewerSlot,
-      InterviewerSlot anotherInterviewerSlot) {
-    boolean datesAreEqual = interviewerSlot.getDate().equals(anotherInterviewerSlot.getDate());
-    return datesAreEqual && checkThatIdIsNullOrNotEqualWithAnotherSlotId(interviewerSlot.getId(),
-        anotherInterviewerSlot);
-  }
-
-  private boolean checkThatIdIsNullOrNotEqualWithAnotherSlotId(Long id,
-      InterviewerSlot anotherInterviewerSlot) {
-    return id == null || !id.equals(anotherInterviewerSlot.getId());
+  private InterviewerSlot validateSlotAndSave(InterviewerSlot interviewerSlot) {
+    List<InterviewerSlot> interviewerSlots = interviewerSlotRepository.getAllByInterviewer(
+        interviewerSlot.getInterviewer());
+    InterviewerSlotValidator.validateSlotForNextWeek(interviewerSlot, interviewerSlots,
+        interviewerSlot.getId());
+    return interviewerSlotRepository.save(interviewerSlot);
   }
 }

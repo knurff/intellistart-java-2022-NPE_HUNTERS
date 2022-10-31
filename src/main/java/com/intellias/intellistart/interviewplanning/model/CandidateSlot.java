@@ -14,6 +14,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -28,13 +30,15 @@ import org.hibernate.Hibernate;
  */
 
 @Entity
+@Builder
+@AllArgsConstructor
 @Getter
 @Setter
 @ToString
 @RequiredArgsConstructor
 @NoArgsConstructor
 @Table(name = "candidate_slots")
-public class CandidateSlot {
+public class CandidateSlot implements Slot {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,4 +1,4 @@
-package com.intellias.intellistart.interviewplanning.util;
+package com.intellias.intellistart.interviewplanning.service.factory;
 
 import com.intellias.intellistart.interviewplanning.model.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.TimePeriod;
@@ -33,6 +33,6 @@ public class CandidateSlotFactory {
 
   public static CandidateSlot createCandidateSlot() {
     return new CandidateSlot(TEST_EMAIL, LocalDate.now().plusDays(1),
-        new TimePeriod(LocalTime.of(10, 30), LocalTime.of(15, 30)));
+        new TimePeriod(LocalTime.of(15, 0), LocalTime.of(19, 30)));
   }
 }

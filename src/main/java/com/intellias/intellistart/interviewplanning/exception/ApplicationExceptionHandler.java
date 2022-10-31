@@ -20,7 +20,15 @@ public class ApplicationExceptionHandler {
   private static final String INVALID_DAY_OF_WEEK = "invalid_day_of_week";
   private static final String SLOT_NOT_FOUND = "slot_not_found";
   private static final String SLOT_ALREADY_HAS_BOOKINGS = "slot_already_has_bookings";
-  private static final String INVALID_SLOT_DATE_EXCEPTION = "invalid_slot_date";
+  private static final String INVALID_SLOT_DATE = "invalid_slot_date";
+  private static final String BOOKING_NOT_FOUND = "booking_not_found";
+  private static final String SLOT_DATES_ARE_NOT_EQUAL = "slot_dates_are_not_equal";
+  private static final String INVALID_BOOKING_DURATION = "invalid_booking_duration";
+  private static final String BOOKING_IS_OVERLAPPING = "booking_is_overlapping";
+  private static final String BOOKING_LIMIT_EXCEEDED = "booking_limit_exceeded";
+
+  private static final String INVALID_DAY_FOR_SLOT_CREATION = "invalid_day_for_slot_creation";
+
   private static final String USER_ALREADY_HAS_ROLE = "user_already_has_role";
   private static final String NO_ROLE = "no_role";
   private static final String SELF_REVOKING = "self_revoking";
@@ -59,8 +67,8 @@ public class ApplicationExceptionHandler {
    * Exception handler for InvalidTimeSlotBoundariesException.
    */
   @ExceptionHandler
-  public ResponseEntity<ExceptionResponse> handleInvalidTimeSlotBoundariesException(
-      InvalidTimeSlotBoundariesException e) {
+  public ResponseEntity<ExceptionResponse> handleInvalidTimePeriodBoundariesException(
+      InvalidTimePeriodBoundaries e) {
     return new ResponseEntity<>(new ExceptionResponse(INVALID_BOUNDARIES, e.getMessage()),
         HttpStatus.BAD_REQUEST);
   }
@@ -85,10 +93,74 @@ public class ApplicationExceptionHandler {
         HttpStatus.BAD_REQUEST);
   }
 
+  /**
+   * Exception handler for InvalidCandidateSlotDateException.
+   */
   @ExceptionHandler
   public ResponseEntity<ExceptionResponse> handleInvalidCandidateSlotDateException(
-      InvalidCandidateSlotDateException e) {
-    return new ResponseEntity<>(new ExceptionResponse(INVALID_SLOT_DATE_EXCEPTION, e.getMessage()),
+      InvalidSlotDateException e) {
+    return new ResponseEntity<>(new ExceptionResponse(INVALID_SLOT_DATE, e.getMessage()),
+        HttpStatus.BAD_REQUEST);
+  }
+
+  /**
+   * Exception handler for BookingNotFoundException.
+   */
+  @ExceptionHandler
+  public ResponseEntity<ExceptionResponse> handleBookingNotFoundException(
+      BookingNotFoundException e) {
+    return new ResponseEntity<>(new ExceptionResponse(BOOKING_NOT_FOUND, e.getMessage()),
+        HttpStatus.NOT_FOUND);
+  }
+
+  /**
+   * Exception handler for SlotDatesAreNotEqualException.
+   */
+  @ExceptionHandler
+  public ResponseEntity<ExceptionResponse> handleSlotDatesAreNotEqualException(
+      SlotDatesAreNotEqualException e) {
+    return new ResponseEntity<>(new ExceptionResponse(SLOT_DATES_ARE_NOT_EQUAL, e.getMessage()),
+        HttpStatus.BAD_REQUEST);
+  }
+
+  /**
+   * Exception handler for InvalidBookingDurationException.
+   */
+  @ExceptionHandler
+  public ResponseEntity<ExceptionResponse> handleInvalidBookingDurationException(
+      InvalidBookingDurationException e) {
+    return new ResponseEntity<>(new ExceptionResponse(INVALID_BOOKING_DURATION, e.getMessage()),
+        HttpStatus.BAD_REQUEST);
+  }
+
+  /**
+   * Exception handler for BookingIsOverlappingException.
+   */
+  @ExceptionHandler
+  public ResponseEntity<ExceptionResponse> handleBookingIsOverlappingException(
+      BookingIsOverlappingException e) {
+    return new ResponseEntity<>(new ExceptionResponse(BOOKING_IS_OVERLAPPING, e.getMessage()),
+        HttpStatus.BAD_REQUEST);
+  }
+
+  /**
+   * Exception handler for BookingLimitExceededException.
+   */
+  @ExceptionHandler
+  public ResponseEntity<ExceptionResponse> handleBookingLimitExceededException(
+      BookingLimitExceededException e) {
+    return new ResponseEntity<>(new ExceptionResponse(BOOKING_LIMIT_EXCEEDED, e.getMessage()),
+        HttpStatus.BAD_REQUEST);
+  }
+
+  /**
+   * Exception handler for InvalidDayForSlotCreationException.
+   */
+  @ExceptionHandler
+  public ResponseEntity<ExceptionResponse> handleInvalidDayForSlotCreationException(
+      InvalidDayForSlotCreationException e) {
+    return new ResponseEntity<>(
+        new ExceptionResponse(INVALID_DAY_FOR_SLOT_CREATION, e.getMessage()),
         HttpStatus.BAD_REQUEST);
   }
 
@@ -121,6 +193,7 @@ public class ApplicationExceptionHandler {
     return new ResponseEntity<>(new ExceptionResponse(SELF_REVOKING, e.getMessage()),
         HttpStatus.BAD_REQUEST);
   }
+
 
   /**
    * Custom response from exceptions.
