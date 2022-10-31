@@ -16,10 +16,7 @@ import com.intellias.intellistart.interviewplanning.controller.dto.DashboardDto;
 import com.intellias.intellistart.interviewplanning.exception.NoRoleException;
 import com.intellias.intellistart.interviewplanning.exception.SelfRevokingException;
 import com.intellias.intellistart.interviewplanning.exception.UserAlreadyHasRoleException;
-import com.intellias.intellistart.interviewplanning.model.Booking;
-import com.intellias.intellistart.interviewplanning.model.CandidateSlot;
-import com.intellias.intellistart.interviewplanning.model.InterviewerSlot;
-import com.intellias.intellistart.interviewplanning.model.User;
+import com.intellias.intellistart.interviewplanning.model.*;
 import com.intellias.intellistart.interviewplanning.model.role.UserRole;
 import com.intellias.intellistart.interviewplanning.repository.UserRepository;
 import com.intellias.intellistart.interviewplanning.service.factory.InterviewerSlotFactory;
@@ -81,9 +78,10 @@ class CoordinatorServiceTest {
   @Test
   void grantRoleForUserThrows_UserAlreadyHasRoleException() {
     final String email = "test@test.com";
+    final WeekBooking weekBooking = new WeekBooking(5, 5);
     User user = new User(UserRole.COORDINATOR);
     user.setEmail(email);
-    user.setMaxBookingsPerWeek(5);
+    user.setMaxBookingsPerWeek(weekBooking);
 
     when(userRepository.getUserByEmail(email)).thenReturn(Optional.of(user));
 
@@ -107,10 +105,11 @@ class CoordinatorServiceTest {
     final String email = "test@test.com";
     boolean result;
     final Long customId = 0L;
+    final WeekBooking weekBooking = new WeekBooking(5, 5);
     User user = new User(UserRole.COORDINATOR);
     user.setId(customId);
     user.setEmail(email);
-    user.setMaxBookingsPerWeek(5);
+    user.setMaxBookingsPerWeek(weekBooking);
 
     when(userRepository.getUserByIdAndRole(customId, UserRole.COORDINATOR))
         .thenReturn(Optional.of(user));
@@ -129,10 +128,11 @@ class CoordinatorServiceTest {
   void revokeRoleFromUserThrows_SelfRevokingException() {
     final String email = "current@test.com";
     final Long customId = 0L;
+    final WeekBooking weekBooking = new WeekBooking(5, 5);
     User user = new User(UserRole.COORDINATOR);
     user.setId(customId);
     user.setEmail(email);
-    user.setMaxBookingsPerWeek(5);
+    user.setMaxBookingsPerWeek(weekBooking);
 
     when(userRepository.getUserByIdAndRole(customId, UserRole.COORDINATOR))
         .thenReturn(Optional.of(user));

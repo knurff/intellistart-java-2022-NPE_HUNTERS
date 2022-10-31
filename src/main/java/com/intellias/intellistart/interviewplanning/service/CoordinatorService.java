@@ -9,6 +9,7 @@ import com.intellias.intellistart.interviewplanning.exception.SlotContainsBookin
 import com.intellias.intellistart.interviewplanning.exception.UserAlreadyHasRoleException;
 import com.intellias.intellistart.interviewplanning.model.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.model.User;
+import com.intellias.intellistart.interviewplanning.model.WeekBooking;
 import com.intellias.intellistart.interviewplanning.model.role.UserRole;
 import com.intellias.intellistart.interviewplanning.repository.InterviewerSlotRepository;
 import com.intellias.intellistart.interviewplanning.repository.UserRepository;
@@ -103,9 +104,11 @@ public class CoordinatorService {
   private void saveUserWithRole(String email, UserRole role) {
     User toSave = new User(role);
     final int defaultMaxBookingsPerWeek = 5;
+    WeekBooking weekBooking = new WeekBooking(defaultMaxBookingsPerWeek,
+            defaultMaxBookingsPerWeek);
 
     toSave.setEmail(email);
-    toSave.setMaxBookingsPerWeek(defaultMaxBookingsPerWeek);
+    toSave.setMaxBookingsPerWeek(weekBooking);
     userRepository.save(toSave);
   }
 
