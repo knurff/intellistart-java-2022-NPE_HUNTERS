@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import javax.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -60,8 +61,18 @@ public class InterviewerService {
     return new ArrayList<>();
   }
 
-  public void setMaxBookings() {
-
+  /**
+   * Set max quantity of bookings to next week.
+   *
+   * @param interviewerId long id of interviewer
+   * @param maxBookings quantity of booking to next week
+   * @throws InterviewerNotFoundException if {@code interviewerId} is not id of interviewer.
+   */
+  @Transactional
+  public void setMaxBookings(Long interviewerId, int maxBookings) {
+    int currentWeekBookings = getInterviewerOrThrowException(interviewerId).getMaxBookingsPerWeek()
+        .getCurrentWeek();
+    userRepository.setMaxBookings(interviewerId, currentWeekBookings, maxBookings);
   }
 
   /**

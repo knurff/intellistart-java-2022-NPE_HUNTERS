@@ -130,8 +130,7 @@ public class BookingService {
     long numberOfAllBookingsForThisWeek = bookingRepository.countAllInterviewerBookingsOnThisWeek(
         booking.getInterviewerSlot().getWeek(), interviewerId);
 
-    if (numberOfAllBookingsForThisWeek + 1
-        > user.getMaxBookingsPerWeek()) {
+    if (numberOfAllBookingsForThisWeek + 1 > user.getMaxBookingsPerWeek().getCurrentWeek()) {
       throw new BookingLimitExceededException(
           String.format("Booking limit for interviewer with id: %d exceeded", interviewerId));
     }
