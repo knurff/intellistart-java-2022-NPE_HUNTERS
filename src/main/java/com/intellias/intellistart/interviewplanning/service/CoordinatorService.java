@@ -32,7 +32,6 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 public class CoordinatorService {
-
   private final UserRepository userRepository;
   private final InterviewerSlotRepository interviewerSlotRepository;
   private final InterviewerService interviewerService;
@@ -57,10 +56,7 @@ public class CoordinatorService {
     newSlot.setId(interviewerSlotId);
     newSlot.setInterviewer(user);
 
-    List<InterviewerSlot> interviewerSlots = interviewerSlotRepository.getAllByInterviewer(
-        newSlot.getInterviewer());
-    InterviewerSlotValidator.validateSlotForCurrentAndNextWeek(newSlot, interviewerSlots,
-        interviewerSlotId);
+    validateInterviewerSlot(newSlot, interviewerSlotId);
 
     return interviewerSlotRepository.save(newSlot);
   }
@@ -194,5 +190,13 @@ public class CoordinatorService {
         candidateService.getAllSlotsWithRelatedBookingIdsUsingDate(dateFromWeekAndDay),
         bookingService.getMapOfAllBookingsUsingDate(dateFromWeekAndDay)
     );
+  }
+
+  private void validateInterviewerSlot(InterviewerSlot interviewerSlot, Long interviewerSlotId) {
+    List<InterviewerSlot> interviewerSlots = interviewerSlotRepository.getAllByInterviewer(
+        interviewerSlot.getInterviewer());
+    InterviewerSlotValidator.validateSlotForCurrentAndNextWeek(interviewerSlot,
+        interviewerSlots,
+        interviewerSlotId);
   }
 }
