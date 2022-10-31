@@ -79,17 +79,22 @@ public class CoordinatorController {
     return bookingMapper.createBookingDto(responseEntity);
   }
 
+  /**
+   * Handles POST request and updates an existing booking record
+   *
+   * @param bookingId an id of booking to be updated
+   * @param bookingDto updated version of booking specified by bookingId
+   * @return updated version of booking
+   */
   @PostMapping("/bookings/{bookingId}")
   @ResponseStatus(HttpStatus.OK)
-  public BookingDto updateBooking(@PathVariable Long bookingId, @RequestBody BookingDto booking) {
-    Booking bookingEntity = bookingMapper.createBookingFromDto(booking);
+  public BookingDto updateBooking(@PathVariable Long bookingId, @RequestBody BookingDto bookingDto) {
+    Booking booking = bookingMapper.createBookingFromDto(bookingDto);
 
-    Booking responseEntity = coordinatorService.updateBooking(
+    Booking responseEntity = bookingService.updateBooking(booking,
         bookingId,
-        booking.getCandidateSlotId(),
-        booking.getInterviewerSlotId(),
-        bookingEntity);
-
+        bookingDto.getInterviewerSlotId(),
+        bookingDto.getCandidateSlotId());
     return bookingMapper.createBookingDto(responseEntity);
   }
 

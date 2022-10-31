@@ -91,6 +91,25 @@ public class BookingService {
   }
 
   /**
+   *
+   * @param updatedBooking updated version of existing booking
+   * @param bookingId id of the booking to update
+   * @param interviewerSlotId id of interviewerSlot record associated with booking specified by
+   *                          bookingId
+   * @param candidateSlotId id of candidateSlot record associated with booking specified by
+   *                        bookingId
+   * @return updated version of booking
+   */
+  public Booking updateBooking(Booking updatedBooking, Long bookingId, Long interviewerSlotId,
+      Long candidateSlotId) {
+    updatedBooking.setId(bookingId);
+    setInterviewerSlotForBooking(updatedBooking, interviewerSlotId);
+    setCandidateSlotForBooking(updatedBooking, candidateSlotId);
+    BookingValidator.validate(updatedBooking);
+    return bookingRepository.save(updatedBooking);
+  }
+
+  /**
    * Deletes booking by id.
    *
    * @param bookingId long id of booking
