@@ -91,6 +91,7 @@ public class BookingService {
   }
 
   /**
+   * Updates the existing booking specified with new values provided in booking dto.
    *
    * @param updatedBooking updated version of existing booking
    * @param bookingId id of the booking to update
