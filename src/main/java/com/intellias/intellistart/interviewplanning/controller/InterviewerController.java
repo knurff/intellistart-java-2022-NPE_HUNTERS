@@ -5,6 +5,7 @@ import com.intellias.intellistart.interviewplanning.controller.dto.mapper.Interv
 import com.intellias.intellistart.interviewplanning.model.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.service.InterviewerService;
 import java.util.List;
+import javax.annotation.security.RolesAllowed;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,11 +33,18 @@ public class InterviewerController {
    * @return list of InterviewerSlotDto
    */
   @GetMapping("/{interviewerId}/slots")
+  @RolesAllowed("ROLE_INTERVIEWER")
   public List<InterviewerSlotDto> getAllInterviewerSlots(@PathVariable Long interviewerId) {
     List<InterviewerSlot> interviewerSlots =
         interviewerService.getAllInterviewerSlotsByInterviewerId(interviewerId);
 
     return interviewerSlotsMapper.mapToInterviewerSlotsDtoList(interviewerSlots);
+  }
+
+  @PostMapping("/{interviewerId}/bookings")
+  @RolesAllowed("ROLE_INTERVIEWER")
+  public void setMaxBookings(@PathVariable Long interviewerId, int maxBooking) {
+    interviewerService.setMaxBookings(interviewerId, maxBooking);
   }
 
   /**
@@ -47,6 +55,7 @@ public class InterviewerController {
    * @return InterviewerSlotDto
    */
   @PostMapping("/{interviewerId}/slots")
+  @RolesAllowed("ROLE_INTERVIEWER")
   public InterviewerSlotDto createSlot(@PathVariable Long interviewerId,
       @RequestBody InterviewerSlotDto interviewerSlotDto) {
     InterviewerSlot responseEntity = interviewerService.createSlot(
@@ -70,4 +79,3 @@ public class InterviewerController {
     return interviewerSlotsMapper.mapToInterviewerSlotsDto(responseEntity);
   }
 }
-
