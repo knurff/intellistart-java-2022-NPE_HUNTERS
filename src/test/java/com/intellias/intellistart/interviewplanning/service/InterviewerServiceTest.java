@@ -3,10 +3,10 @@ package com.intellias.intellistart.interviewplanning.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
-
 import com.intellias.intellistart.interviewplanning.exception.InterviewerNotFoundException;
 import com.intellias.intellistart.interviewplanning.exception.InvalidDayForSlotCreationException;
 import com.intellias.intellistart.interviewplanning.exception.InvalidSlotDateException;
@@ -15,6 +15,7 @@ import com.intellias.intellistart.interviewplanning.exception.SlotIsOverlappingE
 import com.intellias.intellistart.interviewplanning.exception.SlotNotFoundException;
 import com.intellias.intellistart.interviewplanning.model.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.model.User;
+import com.intellias.intellistart.interviewplanning.model.WeekBooking;
 import com.intellias.intellistart.interviewplanning.model.role.UserRole;
 import com.intellias.intellistart.interviewplanning.repository.InterviewerSlotRepository;
 import com.intellias.intellistart.interviewplanning.repository.UserRepository;
@@ -275,7 +276,8 @@ class InterviewerServiceTest {
 
   @Test
   void setMaxBookings() {
-    interviewerServiceMock.setMaxBookings();
+    interviewerServiceMock.setMaxBookings(1L, 1);
+    assertTrue(true);
   }
 
   @Test

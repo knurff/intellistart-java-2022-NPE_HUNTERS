@@ -41,9 +41,9 @@ public class InterviewerController {
     return interviewerSlotsMapper.mapToInterviewerSlotsDtoList(interviewerSlots);
   }
 
-  @PostMapping("/{interviewerId}/bookings")
-  @RolesAllowed("ROLE_INTERVIEWER")
-  public void setMaxBookings(@PathVariable Long interviewerId, int maxBooking) {
+@PostMapping("/{interviewerId}/bookings")
+@RolesAllowed("ROLE_INTERVIEWER")
+public void setMaxBookings(@PathVariable Long interviewerId, int maxBooking) {
     interviewerService.setMaxBookings(interviewerId, maxBooking);
   }
 

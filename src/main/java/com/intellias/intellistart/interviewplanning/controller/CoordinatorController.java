@@ -3,11 +3,13 @@ package com.intellias.intellistart.interviewplanning.controller;
 import com.intellias.intellistart.interviewplanning.controller.dto.BookingDto;
 import com.intellias.intellistart.interviewplanning.controller.dto.DashboardDto;
 import com.intellias.intellistart.interviewplanning.controller.dto.InterviewerSlotDto;
+import com.intellias.intellistart.interviewplanning.controller.dto.UserDto;
 import com.intellias.intellistart.interviewplanning.controller.dto.mapper.BookingMapper;
 import com.intellias.intellistart.interviewplanning.controller.dto.mapper.InterviewerSlotsMapper;
 import com.intellias.intellistart.interviewplanning.model.Booking;
 import com.intellias.intellistart.interviewplanning.model.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.model.User;
+import com.intellias.intellistart.interviewplanning.model.role.UserRole;
 import com.intellias.intellistart.interviewplanning.service.BookingService;
 import com.intellias.intellistart.interviewplanning.service.CoordinatorService;
 import java.util.List;
@@ -134,3 +136,4 @@ public class CoordinatorController {
     coordinatorService.revokeRoleFromUser(id, UserRole.INTERVIEWER);
   }
 }
+

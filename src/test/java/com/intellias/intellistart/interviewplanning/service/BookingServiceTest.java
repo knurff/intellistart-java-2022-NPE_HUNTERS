@@ -18,6 +18,7 @@ import com.intellias.intellistart.interviewplanning.model.Booking;
 import com.intellias.intellistart.interviewplanning.model.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.model.User;
+import com.intellias.intellistart.interviewplanning.model.WeekBooking;
 import com.intellias.intellistart.interviewplanning.model.role.UserRole;
 import com.intellias.intellistart.interviewplanning.repository.BookingRepository;
 import com.intellias.intellistart.interviewplanning.repository.CandidateSlotRepository;
@@ -115,7 +116,7 @@ class BookingServiceTest {
     Booking booking = BookingFactory.createBookingWithTimePeriod(LocalTime.of(16, 30),
         LocalTime.of(18, 0));
 
-    createSlotsAndConfigureMockBehavior(1);
+    createSlotsAndConfigureMockBehaviorForCreateBooking(1);
     when(bookingRepository.save(booking)).thenReturn(booking);
 
     assertNotNull(bookingService.createBooking(booking, 1L, 1L));
@@ -160,7 +161,7 @@ class BookingServiceTest {
     Booking booking2 = BookingFactory.createBookingWithTimePeriod(LocalTime.of(18, 0),
         LocalTime.of(19, 30));
 
-    createSlotsAndConfigureMockBehavior(1);
+    createSlotsAndConfigureMockBehaviorForCreateBooking(1);
 
     assertThrows(InvalidTimePeriodBoundaries.class,
         () -> bookingService.createBooking(booking1, 1L, 1L));
@@ -197,11 +198,11 @@ class BookingServiceTest {
   }
 
   @Test
-  void createBookingThrowsAnExceptionIfEndTimeIsAfterStartTime() {
+  void createBookingThrowsAnExceptionIfEndTimeIsBeforeStartTime() {
     Booking booking = BookingFactory.createBookingWithTimePeriod(LocalTime.of(18, 0),
         LocalTime.of(16, 30));
 
-    createSlotsAndConfigureMockBehavior(1);
+    createSlotsAndConfigureMockBehaviorForCreateBooking(1);
 
     assertThrows(InvalidTimePeriodBoundaries.class, () -> bookingService.createBooking(booking,
         1L, 1L));
@@ -212,7 +213,7 @@ class BookingServiceTest {
     Booking booking = BookingFactory.createBookingWithTimePeriod(LocalTime.of(16, 31),
         LocalTime.of(18, 1));
 
-    createSlotsAndConfigureMockBehavior(1);
+    createSlotsAndConfigureMockBehaviorForCreateBooking(1);
 
     assertThrows(InvalidTimePeriodBoundaries.class, () -> bookingService.createBooking(booking,
         1L, 1L));
@@ -223,7 +224,7 @@ class BookingServiceTest {
     Booking booking = BookingFactory.createBookingWithTimePeriod(LocalTime.of(16, 30),
         LocalTime.of(18, 30));
 
-    createSlotsAndConfigureMockBehavior(1);
+    createSlotsAndConfigureMockBehaviorForCreateBooking(1);
 
     assertThrows(InvalidBookingDurationException.class, () -> bookingService.createBooking(booking,
         1L, 1L));
@@ -234,7 +235,7 @@ class BookingServiceTest {
     Booking booking = BookingFactory.createBookingWithTimePeriod(LocalTime.of(16, 30),
         LocalTime.of(18, 0));
 
-    createSlotsAndConfigureMockBehavior(0);
+    createSlotsAndConfigureMockBehaviorForCreateBooking(0);
 
     assertThrows(BookingLimitExceededException.class,
         () -> bookingService.createBooking(booking, 1L, 1L));
@@ -255,20 +256,85 @@ class BookingServiceTest {
         bookingService.deleteBooking(1L));
   }
 
-  private void createSlotsAndConfigureMockBehavior(int bookingLimit) {
+  @Test
+  void updateBookingWorkingProperly() {
+    Booking booking = BookingFactory.createBookingWithTimePeriod(LocalTime.of(16, 30),
+        LocalTime.of(18, 0));
+
+    createSlotsAndConfigureMockBehaviorForUpdateBooking(1);
+    when(bookingRepository.save(booking)).thenReturn(booking);
+
+    assertNotNull(bookingService.updateBooking(booking, 1L,1L, 1L));
+  }
+
+  @Test
+  void updateBookingThrowsIfAnyOfAssociatedSlotsDoesNotExist() {
+    Booking updatedBooking = new Booking();
+    Long bookingId = 3536405697L;
+    Long nonexistentSlotId = -1L;
+
+    assertThrows(SlotNotFoundException.class, () -> {
+        bookingService.updateBooking(
+            updatedBooking,
+            bookingId,
+            nonexistentSlotId,
+            nonexistentSlotId);}
+    );
+  }
+
+  @Test
+  void updateBookingThrowsAnExceptionIfTimePeriodDurationIsNotEqualToNinetyMinutes() {
+    Booking booking = BookingFactory.createBookingWithTimePeriod(LocalTime.of(16, 30),
+        LocalTime.of(18, 30));
+
+    createSlotsAndConfigureMockBehaviorForUpdateBooking(1);
+
+    assertThrows(InvalidBookingDurationException.class, () -> bookingService.updateBooking(booking,
+        1L, 1L, 1L));
+  }
+
+  @Test
+  void updateBookingThrowsAnExceptionIfTimePeriodIsNotRounded() {
+    Booking booking = BookingFactory.createBookingWithTimePeriod(LocalTime.of(16, 31),
+        LocalTime.of(18, 1));
+
+    createSlotsAndConfigureMockBehaviorForUpdateBooking(1);
+
+    assertThrows(InvalidTimePeriodBoundaries.class, () -> bookingService.updateBooking(booking,
+        1L, 1L, 1L));
+  }
+
+  @Test
+  void updateBookingThrowsAnExceptionIfEndTimeIsBeforeStartTime() {
+    Booking booking = BookingFactory.createBookingWithTimePeriod(LocalTime.of(18, 0),
+        LocalTime.of(16, 30));
+
+    createSlotsAndConfigureMockBehaviorForUpdateBooking(1);
+
+    assertThrows(InvalidTimePeriodBoundaries.class, () -> bookingService.updateBooking(booking,
+        1L, 1L, 1L));
+  }
+
+  private void createSlotsAndConfigureMockBehaviorForCreateBooking(int bookingLimit) {
     CandidateSlot candidateSlot = CandidateSlotFactory.createCandidateSlot();
     InterviewerSlot interviewerSlot = InterviewerSlotFactory.createInterviewerSlot();
     candidateSlot.setDate(interviewerSlot.getDate());
     createInterviewerWithBookingLimitAndSetIntoSlot(interviewerSlot, bookingLimit);
     configureMockBehaviorForFindById(interviewerSlot, candidateSlot);
+  }
 
+  private void createSlotsAndConfigureMockBehaviorForUpdateBooking(int bookingLimit) {
+    CandidateSlot candidateSlot = CandidateSlotFactory.createCandidateSlot();
+    InterviewerSlot interviewerSlot = InterviewerSlotFactory.createInterviewerSlot();
+    candidateSlot.setDate(interviewerSlot.getDate());
+    configureMockBehaviorForFindById(interviewerSlot, candidateSlot);
   }
 
   private void createInterviewerWithBookingLimitAndSetIntoSlot(InterviewerSlot interviewerSlot, int
       bookingLimit) {
     User user = new User();
     user.setRole(UserRole.INTERVIEWER);
-    user.setMaxBookingsPerWeek(bookingLimit);
+    user.setMaxBookingsPerWeek(new WeekBooking(bookingLimit,0));
     user.setId(1L);
     interviewerSlot.setInterviewer(user);
 
