@@ -1,0 +1,34 @@
+name: Postman Acceptance Tests Run On Built API
+
+on:
+  workflow_run:
+    workflows: ["Maven Docker Push"]
+    branches: [main]
+    types: 
+      - completed
+
+jobs:
+  testing:
+    runs-on: ubuntu-latest
+    steps:
+      - 
+        name: Run API image
+        uses: addnab/docker-run-action@v3
+        with:
+          image: famezs/npe-interview-application:latest
+        env:
+          SPRING_DATASOURCE_URL: "jdbc:postgresql://db:5432/localdb"
+          SPRING_DATASOURCE_USERNAME: "localdb"
+          SPRING_DATASOURCE_PASSWORD: "localdb"
+      -
+        name: Setup PostgreSQL database
+        uses: addnab/docker-run-action@v3
+        with:
+          image: postgres:14.4-alpine
+        env:
+          POSTGRES_DB: "localdb"
+          POSTGRES_PASSWORD: "localdb"
+          POSTGRES_USER: "localdb"
+
+        
+    
