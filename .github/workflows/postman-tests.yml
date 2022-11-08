@@ -1,6 +1,10 @@
 name: Postman Acceptance Tests Run On Built API
 
-on: workflow_dispatch
+on: 
+  workflow_dispatch
+  push:
+    branches:
+      - '71-implement-postman-integration-with-ci-pipeline'
   #workflow_run:
     #workflows: ["Maven Docker Push"]
     #branches: [main]
