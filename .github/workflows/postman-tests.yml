@@ -1,13 +1,11 @@
 name: Postman Acceptance Tests Run On Built API
 
-on:
-  workflow_run:
-    workflows: ["Maven Docker Push"]
-    branches: [main]
-    types: 
-      - completed
-  workflow_dispatch
-  
+on: workflow_dispatch
+  #workflow_run:
+    #workflows: ["Maven Docker Push"]
+    #branches: [main]
+    #types: 
+      #- completed
 
 jobs:
   testing:
