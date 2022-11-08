@@ -6,13 +6,16 @@ on:
     branches: [main]
     types: 
       - completed
+  workflow_dispatch
+  
 
 jobs:
   testing:
     runs-on: ubuntu-latest
     steps:
-      - 
-        name: Run API image
+      - uses: actions/checkout@v3
+
+      - name: Run API image
         uses: addnab/docker-run-action@v3
         with:
           image: famezs/npe-interview-application:latest
@@ -20,8 +23,8 @@ jobs:
           SPRING_DATASOURCE_URL: "jdbc:postgresql://db:5432/localdb"
           SPRING_DATASOURCE_USERNAME: "localdb"
           SPRING_DATASOURCE_PASSWORD: "localdb"
-      -
-        name: Setup PostgreSQL database
+      
+      - name: Setup PostgreSQL database
         uses: addnab/docker-run-action@v3
         with:
           image: postgres:14.4-alpine
@@ -29,6 +32,27 @@ jobs:
           POSTGRES_DB: "localdb"
           POSTGRES_PASSWORD: "localdb"
           POSTGRES_USER: "localdb"
+      
+      - name: Install Node
+        uses: actions/setup-node@v1
+        with: 
+          node-version: '12.x'
 
-        
+      - name: Install newman
+        run: |
+          npm install -g newman
+          npm install -g newman-reporter-htmlextra
+
+      - name: Make Directory for test results
+        run: mkdir -p testResults
+
+      - name: Run POSTMAN collection
+        run: |
+          newman run ./src/test/postman-tests.json -r htmlextra --reporter-htmlextra-export testResults/htmlreport.html --reporter-htmlextra-darkTheme  > testResults/runreport1.html
+
+      - name: Output the run Details
+        uses: actions/upload-artifact@v2
+        with: 
+          name: RunReports
+          path: testResults        
     
