@@ -1,7 +1,6 @@
 name: Postman Acceptance Tests Run On Built API
 
-on: 
-  workflow_dispatch
+on:
   push:
     branches:
       - '71-implement-postman-integration-with-ci-pipeline'
