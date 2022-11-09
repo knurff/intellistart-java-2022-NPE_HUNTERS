@@ -1,7 +1,6 @@
 package com.intellias.intellistart.interviewplanning.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -13,20 +12,19 @@ import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
 import com.intellias.intellistart.interviewplanning.controller.dto.DashboardDto;
-import com.intellias.intellistart.interviewplanning.exception.NoRoleException;
-import com.intellias.intellistart.interviewplanning.exception.SelfRevokingException;
-import com.intellias.intellistart.interviewplanning.exception.UserAlreadyHasRoleException;
+import com.intellias.intellistart.interviewplanning.exception.*;
 import com.intellias.intellistart.interviewplanning.model.*;
 import com.intellias.intellistart.interviewplanning.model.role.UserRole;
+import com.intellias.intellistart.interviewplanning.repository.InterviewerSlotRepository;
 import com.intellias.intellistart.interviewplanning.repository.UserRepository;
 import com.intellias.intellistart.interviewplanning.service.factory.InterviewerSlotFactory;
+import com.intellias.intellistart.interviewplanning.service.factory.UserFactory;
 import com.intellias.intellistart.interviewplanning.util.RequestParser;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import org.aspectj.weaver.patterns.ConcreteCflowPointcut.Slot;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -38,8 +36,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class CoordinatorServiceTest {
 
   @Mock
-  private CoordinatorService coordinatorServiceMock;
-  @Mock
   private InterviewerService interviewerService;
   @Mock
   private CandidateService candidateService;
@@ -47,41 +43,91 @@ class CoordinatorServiceTest {
   private BookingService bookingService;
   @Mock
   private UserRepository userRepository;
+  @Mock
+  private InterviewerSlotRepository interviewerSlotRepository;
   @InjectMocks
   private CoordinatorService coordinatorService;
 
   @Test
-  void editSlotWorkingProperly() {
+  void editSlotThrowsAnExceptionIfInterviewerNotFound() {
+    Long interviewerId = 0L;
+    Long interviewerSlotId = 0L;
+    InterviewerSlot newSlot = new InterviewerSlot();
+
+    when(userRepository.findById(interviewerId)).thenReturn(Optional.empty());
+
+    assertThrows(InterviewerNotFoundException.class ,
+            () -> coordinatorService.editSlot(interviewerId, interviewerSlotId, newSlot));
+  }
+
+  @Test
+  void editSlotThrowsAnExceptionIfInterviewerSlotNotExists() {
+    Long interviewerId = 0L;
+    Long interviewerSlotId = 0L;
+    InterviewerSlot newSlot = new InterviewerSlot();
+
+    when(userRepository.findById(interviewerId)).thenReturn(Optional.of(new User()));
+    when(interviewerService.findSlotByIdAndInterviewerId(interviewerSlotId, interviewerId))
+            .thenThrow(SlotNotFoundException.class);
+
+    assertThrows(SlotNotFoundException.class,
+            () -> coordinatorService.editSlot(interviewerId, interviewerSlotId, newSlot));
+  }
+
+  @Test
+  void editSlotThrowsAnExceptionIfOldSlotHasBookings() {
+    Long interviewerId = 0L;
+    Long interviewerSlotId = 0L;
+    InterviewerSlot newSlot = new InterviewerSlot();
+
+    InterviewerSlot oldSlot = new InterviewerSlot();
+    oldSlot.getBookings().add(new Booking());
+
+    when(userRepository.findById(interviewerId)).thenReturn(Optional.of(new User()));
+    when(interviewerService.findSlotByIdAndInterviewerId(interviewerSlotId, interviewerId))
+            .thenReturn(oldSlot);
+
+    assertThrows(SlotContainsBookingsException.class,
+            () -> coordinatorService.editSlot(interviewerId, interviewerSlotId, newSlot));
+  }
+
+  @Test
+  void editSlotWorksProperly() {
 
     InterviewerSlot interviewerSlot = InterviewerSlotFactory.createInterviewerSlot();
+    User interviewer = new User(UserRole.INTERVIEWER);
 
     InterviewerSlot interviewerSlotToUpdate = InterviewerSlotFactory.createAnotherInterviewerSlot();
     interviewerSlotToUpdate.setId(1L);
-    interviewerSlotToUpdate.setInterviewer(new User(UserRole.INTERVIEWER));
+    interviewerSlotToUpdate.setInterviewer(interviewer);
 
-    when(coordinatorServiceMock.editSlot(1L, 1L, interviewerSlot)).thenReturn(interviewerSlot);
-    InterviewerSlot resultSlot = coordinatorServiceMock.editSlot(1L, 1L, interviewerSlot);
+    when(userRepository.findById(1L)).thenReturn(Optional.of(interviewer));
+    when(interviewerService.findSlotByIdAndInterviewerId(1L, 1L))
+            .thenReturn(interviewerSlotToUpdate);
+    when(interviewerSlotRepository.getAllByInterviewer(interviewer))
+            .thenReturn(List.of(interviewerSlotToUpdate));
+    when(interviewerSlotRepository.save(interviewerSlot))
+            .thenReturn(interviewerSlot);
+
+    InterviewerSlot resultSlot = coordinatorService.editSlot(1L, 1L, interviewerSlot);
 
     assertEquals(resultSlot, interviewerSlot);
   }
 
   @Test
   void grantRoleForUserWorksProperly() {
-    final String email = "test@test.com";
+    String email = "test@test.com";
 
     when(userRepository.getUserByEmail(email)).thenReturn(Optional.empty());
-    final boolean result = coordinatorService.grantRoleForUser(email, UserRole.COORDINATOR);
+    boolean result = coordinatorService.grantRoleForUser(email, UserRole.COORDINATOR);
 
     assertTrue(result);
   }
 
   @Test
-  void grantRoleForUserThrows_UserAlreadyHasRoleException() {
-    final String email = "test@test.com";
-    final WeekBooking weekBooking = new WeekBooking(5, 5);
-    User user = new User(UserRole.COORDINATOR);
-    user.setEmail(email);
-    user.setMaxBookingsPerWeek(weekBooking);
+  void grantRoleForUserThrowsAnExceptionIfUserAlreadyHasRole() {
+    User user = UserFactory.createCurrentCoordinator();
+    String email = user.getEmail();
 
     when(userRepository.getUserByEmail(email)).thenReturn(Optional.of(user));
 
@@ -90,8 +136,8 @@ class CoordinatorServiceTest {
   }
 
   @Test
-  void revokeRoleFromUserThrows_NoRoleException() {
-    final Long customId = 0L;
+  void revokeRoleFromUserThrowsAnExceptionIfUserWithoutRole() {
+    Long customId = 0L;
 
     when(userRepository.getUserByIdAndRole(customId, UserRole.INTERVIEWER))
         .thenReturn(Optional.empty());
@@ -102,71 +148,48 @@ class CoordinatorServiceTest {
 
   @Test
   void revokeRoleFromUserWorksProperly() {
-    final String email = "test@test.com";
+    User user = UserFactory.createCoordinator();
+    Long id = user.getId();
     boolean result;
-    final Long customId = 0L;
-    final WeekBooking weekBooking = new WeekBooking(5, 5);
-    User user = new User(UserRole.COORDINATOR);
-    user.setId(customId);
-    user.setEmail(email);
-    user.setMaxBookingsPerWeek(weekBooking);
 
-    when(userRepository.getUserByIdAndRole(customId, UserRole.COORDINATOR))
+    when(userRepository.getUserByIdAndRole(id, UserRole.COORDINATOR))
         .thenReturn(Optional.of(user));
 
     try (MockedStatic<RequestParser> requestParserMock = mockStatic(RequestParser.class)) {
       requestParserMock.when(RequestParser::getUserEmailFromToken)
-          .thenReturn("current@test.com");
+          .thenReturn(UserFactory.CURRENT_USER_EMAIL);
 
-      result = coordinatorService.revokeRoleFromUser(customId, UserRole.COORDINATOR);
+      result = coordinatorService.revokeRoleFromUser(id, UserRole.COORDINATOR);
     }
 
     assertTrue(result);
   }
 
   @Test
-  void revokeRoleFromUserThrows_SelfRevokingException() {
-    final String email = "current@test.com";
-    final Long customId = 0L;
-    final WeekBooking weekBooking = new WeekBooking(5, 5);
-    User user = new User(UserRole.COORDINATOR);
-    user.setId(customId);
-    user.setEmail(email);
-    user.setMaxBookingsPerWeek(weekBooking);
+  void revokeRoleFromUserThrowsAnExceptionIfCoordinatorRevokesItself() {
+    User user = UserFactory.createCurrentCoordinator();
+    Long id = user.getId();
 
-    when(userRepository.getUserByIdAndRole(customId, UserRole.COORDINATOR))
+    when(userRepository.getUserByIdAndRole(id, UserRole.COORDINATOR))
         .thenReturn(Optional.of(user));
 
     try (MockedStatic<RequestParser> requestParserMock = mockStatic(RequestParser.class)) {
       requestParserMock.when(RequestParser::getUserEmailFromToken)
-          .thenReturn("current@test.com");
+          .thenReturn(UserFactory.CURRENT_USER_EMAIL);
 
       assertThrows(SelfRevokingException.class,
-          () -> coordinatorService.revokeRoleFromUser(customId, UserRole.COORDINATOR));
+          () -> coordinatorService.revokeRoleFromUser(id, UserRole.COORDINATOR));
     }
-  }
-
-  @Test
-  void getAllUsersSlots() {
-    when(coordinatorServiceMock.getAllUsersSlots()).thenReturn(List.of());
-    final List<Slot> result = coordinatorServiceMock.getAllUsersSlots();
-
-    assertNotNull(result);
-  }
-
-  @Test
-  void getUsersByRole() {
-    final List<User> result = coordinatorServiceMock.getUsersByRole();
-
-    assertNotNull(result);
   }
 
   @Test
   void getAllInterviewers() {
     final List<User> expectedInterviewers = List.of(new User(UserRole.INTERVIEWER));
-    when(coordinatorServiceMock.getAllInterviewers()).thenReturn(expectedInterviewers);
 
-    final List<User> actualInterviewers = coordinatorServiceMock.getAllInterviewers();
+    when(userRepository.getAllByRole(UserRole.INTERVIEWER))
+            .thenReturn(expectedInterviewers);
+
+    final List<User> actualInterviewers = coordinatorService.getAllInterviewers();
 
     assertNotNull(actualInterviewers);
     assertEquals(expectedInterviewers.size(), actualInterviewers.size());
@@ -178,12 +201,12 @@ class CoordinatorServiceTest {
   void getAllCoordinators() {
     final List<User> expectedCoordinators = List.of(new User(UserRole.COORDINATOR));
 
-    when(coordinatorServiceMock.getAllInterviewers()).thenReturn(expectedCoordinators);
+    when(userRepository.getAllByRole(UserRole.COORDINATOR))
+            .thenReturn(expectedCoordinators);
 
-    final List<User> actualCoordinators = coordinatorServiceMock.getAllInterviewers();
+    final List<User> actualCoordinators = coordinatorService.getAllCoordinators();
 
     assertNotNull(actualCoordinators);
-    assertFalse(actualCoordinators.isEmpty());
     assertEquals(expectedCoordinators.size(), actualCoordinators.size());
     assertEquals(UserRole.COORDINATOR, actualCoordinators.get(0).getRole());
     assertSame(expectedCoordinators, actualCoordinators);
@@ -192,9 +215,10 @@ class CoordinatorServiceTest {
   @Test
   void findById() {
     final User expectedUser = new User();
-    when(coordinatorServiceMock.findById(anyLong())).thenReturn(expectedUser);
 
-    final User actualUser = coordinatorServiceMock.findById(346642747L);
+    when(userRepository.findById(anyLong())).thenReturn(Optional.of(expectedUser));
+
+    final User actualUser = coordinatorService.findById(346642747L);
 
     assertNotNull(actualUser);
     assertEquals(expectedUser, actualUser);
