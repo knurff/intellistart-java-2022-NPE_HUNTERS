@@ -9,7 +9,6 @@ import com.intellias.intellistart.interviewplanning.repository.InterviewerSlotRe
 import com.intellias.intellistart.interviewplanning.repository.UserRepository;
 import com.intellias.intellistart.interviewplanning.service.validator.InterviewerSlotValidator;
 import java.time.DayOfWeek;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,15 +56,11 @@ public class InterviewerService {
     return validateSlotAndSave(interviewerSlot);
   }
 
-  public List<InterviewerSlot> getAllSlots() {
-    return new ArrayList<>();
-  }
-
   /**
    * Set max quantity of bookings to next week.
    *
    * @param interviewerId long id of interviewer
-   * @param maxBookings quantity of booking to next week
+   * @param maxBookings   quantity of booking to next week
    * @throws InterviewerNotFoundException if {@code interviewerId} is not id of interviewer.
    */
   @Transactional

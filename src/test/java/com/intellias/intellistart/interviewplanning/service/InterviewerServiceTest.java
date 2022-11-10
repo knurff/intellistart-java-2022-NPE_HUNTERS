@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
+
 import com.intellias.intellistart.interviewplanning.exception.InterviewerNotFoundException;
 import com.intellias.intellistart.interviewplanning.exception.InvalidDayForSlotCreationException;
 import com.intellias.intellistart.interviewplanning.exception.InvalidSlotDateException;
@@ -15,7 +16,6 @@ import com.intellias.intellistart.interviewplanning.exception.SlotIsOverlappingE
 import com.intellias.intellistart.interviewplanning.exception.SlotNotFoundException;
 import com.intellias.intellistart.interviewplanning.model.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.model.User;
-import com.intellias.intellistart.interviewplanning.model.WeekBooking;
 import com.intellias.intellistart.interviewplanning.model.role.UserRole;
 import com.intellias.intellistart.interviewplanning.repository.InterviewerSlotRepository;
 import com.intellias.intellistart.interviewplanning.repository.UserRepository;
@@ -267,12 +267,6 @@ class InterviewerServiceTest {
     localDateMock.clearInvocations();
   }
 
-  @Test
-  void getAllSlots() {
-    final List<InterviewerSlot> result = interviewerServiceMock.getAllSlots();
-
-    assertNotNull(result);
-  }
 
   @Test
   void setMaxBookings() {
@@ -365,6 +359,27 @@ class InterviewerServiceTest {
     assertNotNull(actualSlot);
     assertEquals(expectedSlot, actualSlot);
   }
+
+  @Test
+  void setMaxBookingsThrowException() {
+    assertThrows(InterviewerNotFoundException.class,
+        () -> interviewerService.setMaxBookings(3333333L, 1));
+  }
+
+  @Test
+  void getAllSlotsWithRelatedBookingIdsUsingWeekAndDay() {
+    assertNotNull(interviewerService.getAllSlotsWithRelatedBookingIdsUsingWeekAndDay(3333,
+        DayOfWeek.MONDAY));
+  }
+
+  @Test
+  void getAllInterviewerSlotsByInterviewerIdThrowInterviewerNotFoundException() {
+
+    assertThrows(InterviewerNotFoundException.class,
+        () -> interviewerService.getAllInterviewerSlotsByInterviewerId(1L));
+
+  }
+
 
   private void prepareInterviewerAndConfigureMockBehaviorForEditSlot(
       InterviewerSlot interviewerSlot) {
