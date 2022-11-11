@@ -13,6 +13,7 @@ import com.intellias.intellistart.interviewplanning.model.role.UserRole;
 import com.intellias.intellistart.interviewplanning.service.BookingService;
 import com.intellias.intellistart.interviewplanning.service.CoordinatorService;
 import java.util.List;
+import javax.annotation.security.RolesAllowed;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @AllArgsConstructor
+@RolesAllowed("ROLE_COORDINATOR")
 public class CoordinatorController {
 
   private final CoordinatorService coordinatorService;
@@ -84,7 +86,7 @@ public class CoordinatorController {
   /**
    * Handles POST request and updates an existing booking record.
    *
-   * @param bookingId an id of booking to be updated
+   * @param bookingId  an id of booking to be updated
    * @param bookingDto updated version of booking specified by bookingId
    * @return updated version of booking
    */
@@ -134,3 +136,4 @@ public class CoordinatorController {
     coordinatorService.revokeRoleFromUser(id, UserRole.INTERVIEWER);
   }
 }
+
