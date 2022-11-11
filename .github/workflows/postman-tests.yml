@@ -32,10 +32,10 @@ jobs:
         run: mkdir -p testResults
 
       - name: Run Postman collection
-        run: |
-          newman run ./src/test/postman/postman-tests.json -x -r htmlextra --reporter-htmlextra-export testResults/htmlreport.html --reporter-htmlextra-darkTheme
         #run: |
-        #  newman run ./src/test/postman/postman-tests.json
+        #  newman run ./src/test/postman/postman-tests.json -x -r htmlextra --reporter-htmlextra-export testResults/htmlreport.html --reporter-htmlextra-darkTheme
+        run: |
+          newman run ./src/test/postman/postman-tests.json
       
       - name: Output the run details
         uses: actions/upload-artifact@v2
