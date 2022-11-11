@@ -1,7 +1,3 @@
 FROM postgres:14.4-alpine
 
-ENV POSTGRES_DB=localdb
-ENV POSTGRES_PASSWORD=localdb
-ENV POSTGRES_USER=localdb
-
 COPY src/main/resources/init.sql /docker-entrypoint-initdb.d/

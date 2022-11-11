@@ -14,45 +14,30 @@ jobs:
   testing:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
       - uses: actions/checkout@v3
 
-      - name: Run API image
-        uses: addnab/docker-run-action@v3
+      - name: Prepare API and DB for test run
+        uses: isbang/compose-action@v1.4.0
         with:
-          image: famezs/npe-interview-application:latest
-        env:
-          SPRING_DATASOURCE_URL: "jdbc:postgresql://db:5432/localdb"
-          SPRING_DATASOURCE_USERNAME: "localdb"
-          SPRING_DATASOURCE_PASSWORD: "localdb"
-      
-      - name: Setup PostgreSQL database
-        uses: addnab/docker-run-action@v3
-        with:
-          image: postgres:14.4-alpine
-        env:
-          POSTGRES_DB: "localdb"
-          POSTGRES_PASSWORD: "localdb"
-          POSTGRES_USER: "localdb"
-      
-      - name: Install Node
-        uses: actions/setup-node@v1
-        with: 
-          node-version: '12.x'
+          compose-file: './docker-compose.api-pull.yml'
+          up-flags: '-d'
 
-      - name: Install newman
+      - name: Install Newman
         run: |
           npm install -g newman
           npm install -g newman-reporter-htmlextra
 
-      - name: Make Directory for test results
+      - name: Make directory for test results
         run: mkdir -p testResults
 
-      - name: Run POSTMAN collection
-        #run: |
-        #  newman run ./src/test/postman/postman-tests.json -x -r htmlextra --reporter-htmlextra-export testResults/htmlreport.html --reporter-htmlextra-darkTheme
+      - name: Run Postman collection
         run: |
-          newman run ./src/test/postman/postman-tests.json
-      - name: Output the run Details
+          newman run ./src/test/postman/postman-tests.json -x -r htmlextra --reporter-htmlextra-export testResults/htmlreport.html --reporter-htmlextra-darkTheme
+        #run: |
+        #  newman run ./src/test/postman/postman-tests.json
+      
+      - name: Output the run details
         uses: actions/upload-artifact@v2
         with: 
           name: RunReports

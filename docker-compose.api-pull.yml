@@ -1,9 +1,7 @@
 version: '3.8'
 services:
   api:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: 'famezs/npe-interview-application:latest'
     container_name: api
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/localdb
@@ -14,7 +12,9 @@ services:
     depends_on:
       - db
   db:
-    image: 'postgres:14.4-alpine'
+    build: 
+      context: .
+      dockerfile: Dockerfile.db
     container_name: db
     environment:
       - POSTGRES_DB=localdb
