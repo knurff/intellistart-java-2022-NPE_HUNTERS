@@ -38,8 +38,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     String accessToken = getAccessToken(request);
 
-    if (!jwtUtils.validateToken(accessToken)) {
-      filterChain.doFilter(request, response);
+    if (!jwtUtils.validateToken(response, accessToken)) {
       return;
     }
     setAuthenticationContext(accessToken, request);
