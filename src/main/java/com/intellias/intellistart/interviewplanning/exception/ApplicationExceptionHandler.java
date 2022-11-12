@@ -1,7 +1,5 @@
 package com.intellias.intellistart.interviewplanning.exception;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -194,17 +192,13 @@ public class ApplicationExceptionHandler {
         HttpStatus.BAD_REQUEST);
   }
 
-
   /**
-   * Custom response from exceptions.
+   * Exception handler for InvalidFacebookTokenException.
    */
-  @AllArgsConstructor
-  @Data
-  public static class ExceptionResponse {
-
-    private String errorCode;
-    private String errorMessage;
-
+  @ExceptionHandler
+  public ResponseEntity<ExceptionResponse> handleInvalidFacebookTokenException(
+      InvalidFacebookTokenException e) {
+    return new ResponseEntity<>(new ExceptionResponse("invalid_fb_token", e.getMessage()),
+        HttpStatus.UNAUTHORIZED);
   }
-
 }
