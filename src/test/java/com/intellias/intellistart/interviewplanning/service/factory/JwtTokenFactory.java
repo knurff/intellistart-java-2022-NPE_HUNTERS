@@ -6,18 +6,14 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import java.util.Date;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
-@Component
 @AllArgsConstructor
 public class JwtTokenFactory {
 
   private static final String TEST_EMAIL = "test@test.com";
   private static final String MALFORMED_TOKEN = "malformed_token";
   private JwtGenerator jwtGenerator;
-  @Value("${jwt.token.secret}")
-  private static final String SECRET = "test_secret";
+  private String secret;
 
   public String generateTestToken() {
     JwtUserDetails jwtUserDetails = JwtUserDetailsFactory.createJwtUserDetailsWithCandidateRole();
@@ -27,7 +23,7 @@ public class JwtTokenFactory {
   public String generateExpiredToken() {
     return Jwts.builder().setClaims(Jwts.claims().setSubject(TEST_EMAIL))
         .setExpiration(new Date())
-        .signWith(SignatureAlgorithm.HS512, SECRET)
+        .signWith(SignatureAlgorithm.HS512, secret)
         .compact();
   }
 

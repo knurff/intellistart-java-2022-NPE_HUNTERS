@@ -2,28 +2,50 @@ package com.intellias.intellistart.interviewplanning.security;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.intellias.intellistart.interviewplanning.service.JwtUserDetailsService;
 import com.intellias.intellistart.interviewplanning.service.factory.JwtUserDetailsFactory;
+import com.intellias.intellistart.interviewplanning.util.JwtUtils;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class JwtTokenParserTest {
 
-  @Autowired
+  private static JwtGenerator jwtGenerator;
+  @Mock
+  private JwtUserDetailsService jwtUserDetailsService;
+  @Mock
+  private JwtUtils jwtUtils;
+  @InjectMocks
   private JwtTokenParser jwtTokenParser;
-  @Autowired
-  private JwtGenerator jwtGenerator;
+
+  @BeforeAll
+  public static void setUp() {
+    jwtGenerator = new JwtGenerator();
+    ReflectionTestUtils.setField(jwtGenerator, "secret", "test_secret");
+    ReflectionTestUtils.setField(jwtGenerator, "tokenExpirationMillis", 100000000L);
+  }
 
   @Test
   void parseUserDetailsFromToken() {
-    String token = jwtGenerator.generateToken(JwtUserDetailsFactory.createJwtUserDetailsWithCandidateRole());
-    JwtUserDetails jwtUserDetails = jwtTokenParser.parseUserDetailsFromToken(token);
+    JwtUserDetails jwtUserDetails = JwtUserDetailsFactory.createJwtUserDetailsWithCandidateRole();
+    String token = jwtGenerator.generateToken(jwtUserDetails);
 
-    String roleFromParsedUserDetails = jwtUserDetails.getAuthorities().stream().findFirst().get()
+    Mockito.when(jwtTokenParser.parseUserDetailsFromToken(Mockito.anyString())).
+        thenReturn(jwtUserDetails);
+
+    JwtUserDetails jwtUserDetailsFromToken = jwtTokenParser.parseUserDetailsFromToken(token);
+    String roleFromParsedUserDetails = jwtUserDetailsFromToken.getAuthorities().stream().findFirst()
+        .get()
         .toString();
 
-    assertEquals("test@test.com", jwtUserDetails.getUsername());
+    assertEquals("test@test.com", jwtUserDetailsFromToken.getUsername());
     assertEquals(("ROLE_CANDIDATE"), roleFromParsedUserDetails);
   }
 }

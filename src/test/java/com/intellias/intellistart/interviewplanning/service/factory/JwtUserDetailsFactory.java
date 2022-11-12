@@ -1,7 +1,7 @@
 package com.intellias.intellistart.interviewplanning.service.factory;
 
 import com.intellias.intellistart.interviewplanning.security.JwtUserDetails;
-import java.util.List;
+import java.util.Set;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 public class JwtUserDetailsFactory {
@@ -10,7 +10,7 @@ public class JwtUserDetailsFactory {
 
   public static JwtUserDetails createJwtUserDetailsWithCandidateRole() {
     return new JwtUserDetails(TEST_EMAIL, TEST_EMAIL,
-        List.of(new SimpleGrantedAuthority("ROLE_CANDIDATE")));
+        Set.of(new SimpleGrantedAuthority("ROLE_CANDIDATE")));
   }
 
 }
