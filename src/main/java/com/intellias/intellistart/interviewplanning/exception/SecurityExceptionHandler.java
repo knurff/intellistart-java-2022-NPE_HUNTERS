@@ -21,7 +21,8 @@ public class SecurityExceptionHandler {
   private static final String UNSUPPORTED_JWT_ERROR_CODE = "unsupported_jwt";
   private static final String INVALID_SIGNATURE_ERROR_CODE = "invalid_signature";
   private static final String EXPIRED_JWT_ERROR_MESSAGE = "JWT token expired";
-  private static final String ILLEGAL_JWT_ERROR_MESSAGE = "Token is null,empty or only whitespace";
+  private static final String ILLEGAL_JWT_ERROR_MESSAGE = "Token is null,empty or starts with "
+      + "whitespace";
   private static final String MALFORMED_JWT_ERROR_MESSAGE = "Token is invalid";
   private static final String UNSUPPORTED_JWT_ERROR_MESSAGE = "JWT is not supported";
   private static final String INVALID_SIGNATURE_ERROR_MESSAGE = "Signature validation failed";
