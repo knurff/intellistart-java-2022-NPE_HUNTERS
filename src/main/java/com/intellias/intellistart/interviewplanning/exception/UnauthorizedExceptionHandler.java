@@ -24,7 +24,8 @@ public class UnauthorizedExceptionHandler {
   /**
    * Creates exception response for unauthorized requests and returns it to user.
    */
-  public void handleUnauthorizedException(HttpServletResponse httpServletResponse) throws IOException {
+  public void handleUnauthorizedException(HttpServletResponse httpServletResponse)
+      throws IOException {
     ExceptionResponse exceptionResponse = new ExceptionResponse(NOT_AUTHORIZED_ERROR_CODE,
         NOT_AUTHORIZED_ERROR_MESSAGE
     );
