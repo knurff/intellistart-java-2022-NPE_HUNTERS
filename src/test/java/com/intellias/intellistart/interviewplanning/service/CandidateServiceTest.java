@@ -6,9 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 
-import com.intellias.intellistart.interviewplanning.exception.InvalidSlotDateException;
-import com.intellias.intellistart.interviewplanning.exception.InvalidTimePeriodBoundaries;
-import com.intellias.intellistart.interviewplanning.exception.SlotIsOverlappingException;
+import com.intellias.intellistart.interviewplanning.exception.*;
+import com.intellias.intellistart.interviewplanning.model.Booking;
 import com.intellias.intellistart.interviewplanning.model.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.repository.CandidateSlotRepository;
 import com.intellias.intellistart.interviewplanning.service.factory.CandidateSlotFactory;
@@ -181,6 +180,29 @@ class CandidateServiceTest {
         .thenReturn(List.of(candidateSlot1, candidateSlot2, candidateSlotToUpdate));
 
     assertThrows(SlotIsOverlappingException.class, () -> service.editSlot(candidateSlot2, 1L));
+  }
+
+  @Test
+  void editSlotThrowsAnExceptionIfSlotNotExists() {
+    Long id = 1L;
+    CandidateSlot newSlot = new CandidateSlot();
+
+    Mockito.when(candidateSlotRepository.findById(id)).thenReturn(Optional.empty());
+
+    assertThrows(SlotNotFoundException.class,
+            () -> service.editSlot(newSlot, id));
+  }
+
+  @Test
+  void editSlotThrowsAnExceptionIfSlotContainsBookings() {
+    CandidateSlot newSlot = new CandidateSlot();
+    CandidateSlot oldSlot = new CandidateSlot();
+    oldSlot.getBookings().add(new Booking());
+
+    setIdForSlotAndConfigureMockBehaviorForEditMethod(oldSlot);
+
+    assertThrows(SlotContainsBookingsException.class,
+            () -> service.editSlot(newSlot, 1L));
   }
 
   @Test
