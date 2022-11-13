@@ -21,7 +21,7 @@ jobs:
         uses: isbang/compose-action@v1.4.0
         with:
           compose-file: './docker-compose.api-pull.yml'
-          up-flags: '-d'
+          up-flags: '--wait --attach'
 
       - name: Wait for API and DB to start
         run: sleep 45s
