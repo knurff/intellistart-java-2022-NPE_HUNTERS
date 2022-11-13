@@ -22,7 +22,7 @@ jobs:
 
       - name: Run docker compose on API and DB
         run: |
-          docker compose -f .\docker-compose.api-pull.yml up
+          docker compose -f docker-compose.api-pull.yml up
 
       - name: Wait for API and DB to start
         run: sleep 45s
