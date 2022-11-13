@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Install Docker Compose
-        uses: ndeloof/install-docker-compose
+        uses: ndeloof/install-compose-action@v0.0.1
 
       - name: Run docker compose on API and DB
         run: |
