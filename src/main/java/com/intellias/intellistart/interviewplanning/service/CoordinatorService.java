@@ -18,12 +18,10 @@ import com.intellias.intellistart.interviewplanning.util.DateUtils;
 import com.intellias.intellistart.interviewplanning.util.RequestParser;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
-import org.aspectj.weaver.patterns.ConcreteCflowPointcut.Slot;
 import org.springframework.stereotype.Service;
 
 /**
@@ -143,14 +141,6 @@ public class CoordinatorService {
         );
       }
     }
-  }
-
-  public List<Slot> getAllUsersSlots() {
-    return new ArrayList<>();
-  }
-
-  public List<User> getUsersByRole() {
-    return new ArrayList<>();
   }
 
   public List<User> getAllInterviewers() {

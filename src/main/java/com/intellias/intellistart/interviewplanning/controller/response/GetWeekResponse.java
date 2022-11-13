@@ -1,4 +1,4 @@
-package com.intellias.intellistart.interviewplanning.response;
+package com.intellias.intellistart.interviewplanning.controller.response;
 
 import com.intellias.intellistart.interviewplanning.controller.UserController;
 import lombok.AllArgsConstructor;
