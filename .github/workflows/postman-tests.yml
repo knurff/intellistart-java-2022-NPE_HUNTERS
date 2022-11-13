@@ -17,11 +17,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Prepare API and DB for test run
+      - name: Start API and DB for test run
         uses: isbang/compose-action@v1.4.0
         with:
           compose-file: './docker-compose.api-pull.yml'
           up-flags: '-d'
+
+      - name: Wait for API and DB to start
+        run: sleep 45s
 
       - name: Install Newman
         run: |
