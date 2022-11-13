@@ -59,10 +59,10 @@
 					}
 				},
 				"url": {
-					"raw": "http://api:8080/users/interviewers",
+					"raw": "http://localhost:8080/users/interviewers",
 					"protocol": "http",
 					"host": [
-						"api"
+						"localhost"
 					],
 					"port": "8080",
 					"path": [
@@ -94,10 +94,10 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://api:8080/users/coordinators",
+					"raw": "http://localhost:8080/users/coordinators",
 					"protocol": "http",
 					"host": [
-						"api"
+						"localhost"
 					],
 					"port": "8080",
 					"path": [
@@ -149,10 +149,10 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://api:8080/weeks/current",
+					"raw": "http://localhost:8080/weeks/current",
 					"protocol": "http",
 					"host": [
-						"api"
+						"localhost"
 					],
 					"port": "8080",
 					"path": [
@@ -184,10 +184,10 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://api:8080/weeks/next",
+					"raw": "http://localhost:8080/weeks/next",
 					"protocol": "http",
 					"host": [
-						"api"
+						"localhost"
 					],
 					"port": "8080",
 					"path": [
@@ -231,10 +231,10 @@
 					}
 				},
 				"url": {
-					"raw": "http://api:8080/weeks/44/dashboard",
+					"raw": "http://localhost:8080/weeks/44/dashboard",
 					"protocol": "http",
 					"host": [
-						"api"
+						"localhost"
 					],
 					"port": "8080",
 					"path": [
@@ -267,10 +267,10 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://api:8080/interviewers/2/slots",
+					"raw": "http://localhost:8080/interviewers/2/slots",
 					"protocol": "http",
 					"host": [
-						"api"
+						"localhost"
 					],
 					"port": "8080",
 					"path": [
@@ -303,10 +303,10 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://api:8080/users/interviewers",
+					"raw": "http://localhost:8080/users/interviewers",
 					"protocol": "http",
 					"host": [
-						"api"
+						"localhost"
 					],
 					"port": "8080",
 					"path": [
@@ -338,10 +338,10 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://api:8080/candidates/current/slots",
+					"raw": "http://localhost:8080/candidates/current/slots",
 					"protocol": "http",
 					"host": [
-						"api"
+						"localhost"
 					],
 					"port": "8080",
 					"path": [
@@ -383,10 +383,10 @@
 					}
 				},
 				"url": {
-					"raw": "http://api:8080/candidates/current/slots",
+					"raw": "http://localhost:8080/candidates/current/slots",
 					"protocol": "http",
 					"host": [
-						"api"
+						"localhost"
 					],
 					"port": "8080",
 					"path": [
@@ -428,10 +428,10 @@
 					}
 				},
 				"url": {
-					"raw": "http://api:8080/candidates/current/slots/1",
+					"raw": "http://localhost:8080/candidates/current/slots/1",
 					"protocol": "http",
 					"host": [
-						"api"
+						"localhost"
 					],
 					"port": "8080",
 					"path": [
@@ -474,10 +474,10 @@
 					}
 				},
 				"url": {
-					"raw": "http://api:8080/bookings",
+					"raw": "http://localhost:8080/bookings",
 					"protocol": "http",
 					"host": [
-						"api"
+						"localhost"
 					],
 					"port": "8080",
 					"path": [
@@ -506,10 +506,10 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "http://api:8080/bookings/10",
+					"raw": "http://localhost:8080/bookings/10",
 					"protocol": "http",
 					"host": [
-						"api"
+						"localhost"
 					],
 					"port": "8080",
 					"path": [
