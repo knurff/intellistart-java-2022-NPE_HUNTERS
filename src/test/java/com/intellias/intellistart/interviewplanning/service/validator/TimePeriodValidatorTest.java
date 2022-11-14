@@ -6,86 +6,64 @@ import com.intellias.intellistart.interviewplanning.exception.InvalidBookingDura
 import com.intellias.intellistart.interviewplanning.exception.InvalidTimePeriodBoundaries;
 import com.intellias.intellistart.interviewplanning.model.TimePeriod;
 import java.time.LocalTime;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 class TimePeriodValidatorTest {
 
-  @Test
-  void checkTimePeriodWithWorkingHoursAndDurationMoreThanMinIfEndTimeBeforeStartTime() {
-    LocalTime startTime1 = LocalTime.of(13, 0);
-    LocalTime endTime1 = LocalTime.of(11, 0);
-    TimePeriod period1 = new TimePeriod(startTime1, endTime1);
+  @ParameterizedTest
+  @CsvSource({"13:00, 11:00", "23:02, 23:00"})
+  void checkTimePeriodWithWorkingHoursAndDurationMoreThanMinIfEndTimeBeforeStartTime(
+      LocalTime startTime,
+      LocalTime endTime
+  ) {
+    TimePeriod period = new TimePeriod(startTime, endTime);
+    String expectedMessage
+        = "Start time : " + startTime + " is later then end time :  " + endTime;
 
-    LocalTime startTime2 = LocalTime.of(23, 2);
-    LocalTime endTime2 = LocalTime.of(23, 0);
-    TimePeriod period2 = new TimePeriod(startTime2, endTime2);
+    Exception e = assertThrows(InvalidTimePeriodBoundaries.class,
+        () -> TimePeriodValidator.checkTimePeriodWithWorkingHoursAndDurationMoreThanMin(period));
 
-    String expectedMessage1
-        = "Start time : " + startTime1 + " is later then end time :  " + endTime1;
-
-    String expectedMessage2
-        = "Start time : " + startTime2 + " is later then end time :  " + endTime2;
-
-    Exception e1 = assertThrows(InvalidTimePeriodBoundaries.class,
-        () -> TimePeriodValidator.checkTimePeriodWithWorkingHoursAndDurationMoreThanMin(period1));
-
-    Exception e2 = assertThrows(InvalidTimePeriodBoundaries.class,
-        () -> TimePeriodValidator.checkTimePeriodWithWorkingHoursAndDurationMoreThanMin(period2));
-
-    assertEquals(expectedMessage1, e1.getMessage());
-    assertEquals(expectedMessage2, e2.getMessage());
+    assertEquals(expectedMessage, e.getMessage());
   }
 
-  @Test
-  void checkTimePeriodWithWorkingHoursAndDurationMoreThanMinIfTimeNotRound() {
-    LocalTime startTime1 = LocalTime.of(13, 0);
-    LocalTime endTime1 = LocalTime.of(14, 35);
-    TimePeriod period1 = new TimePeriod(startTime1, endTime1);
-
-    LocalTime startTime2 = LocalTime.of(17, 5);
-    LocalTime endTime2 = LocalTime.of(19, 0);
-    TimePeriod period2 = new TimePeriod(startTime2, endTime2);
-
+  @ParameterizedTest
+  @CsvSource({"13:00, 14:35", "17:05, 19:00"})
+  void checkTimePeriodWithWorkingHoursAndDurationMoreThanMinIfTimeNotRound(
+      LocalTime startTime,
+      LocalTime endTime
+  ) {
+    TimePeriod period = new TimePeriod(startTime, endTime);
     String expectedMessage = "Time period has to be rounded to 30 minutes";
 
-    Exception e1 = assertThrows(InvalidTimePeriodBoundaries.class,
-        () -> TimePeriodValidator.checkTimePeriodWithWorkingHoursAndDurationMoreThanMin(period1));
+    Exception e = assertThrows(InvalidTimePeriodBoundaries.class,
+        () -> TimePeriodValidator.checkTimePeriodWithWorkingHoursAndDurationMoreThanMin(period));
 
-    Exception e2 = assertThrows(InvalidTimePeriodBoundaries.class,
-        () -> TimePeriodValidator.checkTimePeriodWithWorkingHoursAndDurationMoreThanMin(period2));
-
-    assertEquals(expectedMessage, e1.getMessage());
-    assertEquals(expectedMessage, e2.getMessage());
+    assertEquals(expectedMessage, e.getMessage());
   }
 
-  @Test
-  void checkTimePeriodWithWorkingHoursAndDurationMoreThanMinIfPeriodIsNotInWorkingHours() {
-    LocalTime startTime1 = LocalTime.of(7, 0);
-    LocalTime endTime1 = LocalTime.of(8, 30);
-    TimePeriod period1 = new TimePeriod(startTime1, endTime1);
-
-    LocalTime startTime2 = LocalTime.of(21, 0);
-    LocalTime endTime2 = LocalTime.of(22, 30);
-    TimePeriod period2 = new TimePeriod(startTime2, endTime2);
-
+  @ParameterizedTest
+  @CsvSource({"07:00, 08:30", "21:00, 22:30"})
+  void checkTimePeriodWithWorkingHoursAndDurationMoreThanMinIfPeriodIsNotInWorkingHours(
+      LocalTime startTime,
+      LocalTime endTime
+  ) {
+    TimePeriod period = new TimePeriod(startTime, endTime);
     String expectedMessage = " Working time  is (8:00-22:00)";
 
-    Exception e1 = assertThrows(InvalidTimePeriodBoundaries.class,
-        () -> TimePeriodValidator.checkTimePeriodWithWorkingHoursAndDurationMoreThanMin(period1));
+    Exception e = assertThrows(InvalidTimePeriodBoundaries.class,
+        () -> TimePeriodValidator.checkTimePeriodWithWorkingHoursAndDurationMoreThanMin(period));
 
-    Exception e2 = assertThrows(InvalidTimePeriodBoundaries.class,
-        () -> TimePeriodValidator.checkTimePeriodWithWorkingHoursAndDurationMoreThanMin(period2));
-
-    assertEquals(expectedMessage, e1.getMessage());
-    assertEquals(expectedMessage, e2.getMessage());
+    assertEquals(expectedMessage, e.getMessage());
   }
 
-  @Test
-  void checkTimePeriodWithWorkingHoursAndDurationMoreThanMinIfPeriodDurationLessThanMin() {
-    LocalTime startTime = LocalTime.of(8, 0);
-    LocalTime endTime = LocalTime.of(9, 0);
+  @ParameterizedTest
+  @CsvSource({"08:00, 09:00", "21:00, 21:00"})
+  void checkTimePeriodWithWorkingHoursAndDurationMoreThanMinIfPeriodDurationLessThanMin(
+      LocalTime startTime,
+      LocalTime endTime
+  ) {
     TimePeriod period = new TimePeriod(startTime, endTime);
-
     String expectedMessage = "Slot has to be 1,5 hours or more";
 
     Exception e = assertThrows(InvalidTimePeriodBoundaries.class,
@@ -94,78 +72,59 @@ class TimePeriodValidatorTest {
     assertEquals(expectedMessage, e.getMessage());
   }
 
-  @Test
-  void checkTimePeriodWithWorkingHoursAndDurationMoreThanMinWorksProperly() {
-    LocalTime startTime1 = LocalTime.of(8, 0);
-    LocalTime endTime1 = LocalTime.of(9, 30);
-    TimePeriod period1 = new TimePeriod(startTime1, endTime1);
-
-    LocalTime startTime2 = LocalTime.of(20, 0);
-    LocalTime endTime2 = LocalTime.of(22, 0);
-    TimePeriod period2 = new TimePeriod(startTime2, endTime2);
+  @ParameterizedTest
+  @CsvSource({"08:00, 09:30", "20:00, 22:00"})
+  void checkTimePeriodWithWorkingHoursAndDurationMoreThanMinWorksProperly(
+      LocalTime startTime,
+      LocalTime endTime
+  ) {
+    TimePeriod period = new TimePeriod(startTime, endTime);
 
     try {
-      TimePeriodValidator.checkTimePeriodWithWorkingHoursAndDurationMoreThanMin(period1);
-      TimePeriodValidator.checkTimePeriodWithWorkingHoursAndDurationMoreThanMin(period2);
+      TimePeriodValidator.checkTimePeriodWithWorkingHoursAndDurationMoreThanMin(period);
     } catch (Exception e) {
       fail("This method should not throw an exception on given input");
     }
   }
 
-  @Test
-  void checkTimePeriodWithoutWorkingHoursIfEndTimeBeforeStartTime() {
-    LocalTime startTime1 = LocalTime.of(13, 0);
-    LocalTime endTime1 = LocalTime.of(11, 30);
-    TimePeriod period1 = new TimePeriod(startTime1, endTime1);
-
-    LocalTime startTime2 = LocalTime.of(23, 2);
-    LocalTime endTime2 = LocalTime.of(23, 0);
-    TimePeriod period2 = new TimePeriod(startTime2, endTime2);
-
+  @ParameterizedTest
+  @CsvSource({"13:00, 11:30", "23:02, 23:00"})
+  void checkTimePeriodWithoutWorkingHoursIfEndTimeBeforeStartTime(
+      LocalTime startTime,
+      LocalTime endTime
+  ) {
+    TimePeriod period = new TimePeriod(startTime, endTime);
     String expectedMessage1
-        = "Start time : " + startTime1 + " is later then end time :  " + endTime1;
+        = "Start time : " + startTime + " is later then end time :  " + endTime;
 
-    String expectedMessage2
-        = "Start time : " + startTime2 + " is later then end time :  " + endTime2;
+    Exception e = assertThrows(InvalidTimePeriodBoundaries.class,
+        () -> TimePeriodValidator.checkTimePeriodWithoutWorkingHours(period));
 
-    Exception e1 = assertThrows(InvalidTimePeriodBoundaries.class,
-        () -> TimePeriodValidator.checkTimePeriodWithoutWorkingHours(period1));
-
-    Exception e2 = assertThrows(InvalidTimePeriodBoundaries.class,
-        () -> TimePeriodValidator.checkTimePeriodWithoutWorkingHours(period2));
-
-    assertEquals(expectedMessage1, e1.getMessage());
-    assertEquals(expectedMessage2, e2.getMessage());
+    assertEquals(expectedMessage1, e.getMessage());
   }
 
-  @Test
-  void checkTimePeriodWithoutWorkingHoursIfTimeNotRound() {
-    LocalTime startTime1 = LocalTime.of(12, 0);
-    LocalTime endTime1 = LocalTime.of(13, 35);
-    TimePeriod period1 = new TimePeriod(startTime1, endTime1);
-
-    LocalTime startTime2 = LocalTime.of(17, 5);
-    LocalTime endTime2 = LocalTime.of(19, 0);
-    TimePeriod period2 = new TimePeriod(startTime2, endTime2);
-
+  @ParameterizedTest
+  @CsvSource({"12:00, 13:35", "17:05, 19:00"})
+  void checkTimePeriodWithoutWorkingHoursIfTimeNotRound(
+      LocalTime startTime,
+      LocalTime endTime
+  ) {
+    TimePeriod period = new TimePeriod(startTime, endTime);
     String expectedMessage = "Time period has to be rounded to 30 minutes";
 
-    Exception e1 = assertThrows(InvalidTimePeriodBoundaries.class,
-        () -> TimePeriodValidator.checkTimePeriodWithoutWorkingHours(period1));
+    Exception e = assertThrows(InvalidTimePeriodBoundaries.class,
+        () -> TimePeriodValidator.checkTimePeriodWithoutWorkingHours(period));
 
-    Exception e2 = assertThrows(InvalidTimePeriodBoundaries.class,
-        () -> TimePeriodValidator.checkTimePeriodWithoutWorkingHours(period2));
-
-    assertEquals(expectedMessage, e1.getMessage());
-    assertEquals(expectedMessage, e2.getMessage());
+    assertEquals(expectedMessage, e.getMessage());
   }
 
-  @Test
-  void checkTimePeriodWithoutWorkingHoursIfDurationIsNotEqualToNinetyMinutes() {
-    LocalTime startTime = LocalTime.of(12, 0);
-    LocalTime endTime = LocalTime.of(14, 0);
+  @ParameterizedTest
+  @CsvSource({"12:00, 14:00", "17:00, 17:00"})
+  void checkTimePeriodWithoutWorkingHoursIfDurationIsNotEqualToNinetyMinutes(
+      LocalTime startTime,
+      LocalTime endTime
+  ) {
     TimePeriod period = new TimePeriod(startTime, endTime);
-
     String expectedMessage = "Booking time has to be 1,5 hours";
 
     Exception e = assertThrows(InvalidBookingDurationException.class,
@@ -174,10 +133,12 @@ class TimePeriodValidatorTest {
     assertEquals(expectedMessage, e.getMessage());
   }
 
-  @Test
-  void checkTimePeriodWithoutWorkingHoursWorksProperly() {
-    LocalTime startTime = LocalTime.of(12, 0);
-    LocalTime endTime = LocalTime.of(13, 30);
+  @ParameterizedTest
+  @CsvSource({"12:00, 13:30", "13:30, 15:00"})
+  void checkTimePeriodWithoutWorkingHoursWorksProperly(
+      LocalTime startTime,
+      LocalTime endTime
+  ) {
     TimePeriod period = new TimePeriod(startTime, endTime);
 
     try {
@@ -187,64 +148,46 @@ class TimePeriodValidatorTest {
     }
   }
 
-  @Test
-  void checkTimePeriodWithoutWorkingHoursAndDurationMoreThanMinIfEndTimeBeforeStartTime() {
-    LocalTime startTime1 = LocalTime.of(13, 0);
-    LocalTime endTime1 = LocalTime.of(11, 0);
-    TimePeriod period1 = new TimePeriod(startTime1, endTime1);
-
-    LocalTime startTime2 = LocalTime.of(23, 2);
-    LocalTime endTime2 = LocalTime.of(23, 0);
-    TimePeriod period2 = new TimePeriod(startTime2, endTime2);
-
+  @ParameterizedTest
+  @CsvSource({"13:00, 11:30", "23:02, 23:00"})
+  void checkTimePeriodWithoutWorkingHoursAndDurationMoreThanMinIfEndTimeBeforeStartTime(
+      LocalTime startTime,
+      LocalTime endTime
+  ) {
+    TimePeriod period = new TimePeriod(startTime, endTime);
     String expectedMessage1
-        = "Start time : " + startTime1 + " is later then end time :  " + endTime1;
+        = "Start time : " + startTime + " is later then end time :  " + endTime;
 
-    String expectedMessage2
-        = "Start time : " + startTime2 + " is later then end time :  " + endTime2;
-
-    Exception e1 = assertThrows(InvalidTimePeriodBoundaries.class,
-        () -> TimePeriodValidator.checkTimePeriodWithoutWorkingHoursAndDurationMoreThanMin(period1)
+    Exception e = assertThrows(InvalidTimePeriodBoundaries.class,
+        () -> TimePeriodValidator.checkTimePeriodWithoutWorkingHoursAndDurationMoreThanMin(period)
     );
 
-    Exception e2 = assertThrows(InvalidTimePeriodBoundaries.class,
-        () -> TimePeriodValidator.checkTimePeriodWithoutWorkingHoursAndDurationMoreThanMin(period2)
-    );
-
-    assertEquals(expectedMessage1, e1.getMessage());
-    assertEquals(expectedMessage2, e2.getMessage());
+    assertEquals(expectedMessage1, e.getMessage());
   }
 
-  @Test
-  void checkTimePeriodWithoutWorkingHoursAndDurationMoreThanMinIfTimeNotRound() {
-    LocalTime startTime1 = LocalTime.of(12, 0);
-    LocalTime endTime1 = LocalTime.of(13, 35);
-    TimePeriod period1 = new TimePeriod(startTime1, endTime1);
-
-    LocalTime startTime2 = LocalTime.of(17, 5);
-    LocalTime endTime2 = LocalTime.of(19, 0);
-    TimePeriod period2 = new TimePeriod(startTime2, endTime2);
-
+  @ParameterizedTest
+  @CsvSource({"12:00, 13:35", "17:05, 19:00"})
+  void checkTimePeriodWithoutWorkingHoursAndDurationMoreThanMinIfTimeNotRound(
+      LocalTime startTime,
+      LocalTime endTime
+  ) {
+    TimePeriod period = new TimePeriod(startTime, endTime);
     String expectedMessage = "Time period has to be rounded to 30 minutes";
 
-    Exception e1 = assertThrows(InvalidTimePeriodBoundaries.class,
-        () -> TimePeriodValidator.checkTimePeriodWithoutWorkingHoursAndDurationMoreThanMin(period1)
+    Exception e = assertThrows(InvalidTimePeriodBoundaries.class,
+        () -> TimePeriodValidator.checkTimePeriodWithoutWorkingHoursAndDurationMoreThanMin(period)
     );
 
-    Exception e2 = assertThrows(InvalidTimePeriodBoundaries.class,
-        () -> TimePeriodValidator.checkTimePeriodWithoutWorkingHoursAndDurationMoreThanMin(period2)
-    );
-
-    assertEquals(expectedMessage, e1.getMessage());
-    assertEquals(expectedMessage, e2.getMessage());
+    assertEquals(expectedMessage, e.getMessage());
   }
 
-  @Test
-  void checkTimePeriodWithoutWorkingHoursAndDurationMoreThanMinIfPeriodDurationLessThanMin() {
-    LocalTime startTime = LocalTime.of(8, 0);
-    LocalTime endTime = LocalTime.of(9, 0);
+  @ParameterizedTest
+  @CsvSource({"08:00, 09:00", "17:00, 17:00"})
+  void checkTimePeriodWithoutWorkingHoursAndDurationMoreThanMinIfPeriodDurationLessThanMin(
+      LocalTime startTime,
+      LocalTime endTime
+  ) {
     TimePeriod period = new TimePeriod(startTime, endTime);
-
     String expectedMessage = "Slot has to be 1,5 hours or more";
 
     Exception e = assertThrows(InvalidTimePeriodBoundaries.class,
@@ -254,10 +197,12 @@ class TimePeriodValidatorTest {
     assertEquals(expectedMessage, e.getMessage());
   }
 
-  @Test
-  void checkTimePeriodWithoutWorkingHoursAndDurationMoreThanMinWorksProperly() {
-    LocalTime startTime = LocalTime.of(12, 0);
-    LocalTime endTime = LocalTime.of(14, 30);
+  @ParameterizedTest
+  @CsvSource({"12:00, 14:30", "14:30, 16:00"})
+  void checkTimePeriodWithoutWorkingHoursAndDurationMoreThanMinWorksProperly(
+      LocalTime startTime,
+      LocalTime endTime
+  ) {
     TimePeriod period = new TimePeriod(startTime, endTime);
 
     try {
