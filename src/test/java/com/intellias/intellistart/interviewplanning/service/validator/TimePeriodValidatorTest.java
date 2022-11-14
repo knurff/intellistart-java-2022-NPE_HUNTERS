@@ -211,4 +211,46 @@ class TimePeriodValidatorTest {
       fail("This method should not throw an exception on given input");
     }
   }
+
+  @ParameterizedTest
+  @CsvSource({
+    "12:00, 14:00, 13:00, 13:30",
+    "15:00, 16:30, 15:00, 16:30",
+    "15:00, 17:30, 15:00, 16:30",
+    "15:00, 16:30, 15:30, 16:30",
+    "15:00, 16:30, 16:00, 17:00",
+    "15:00, 16:30, 15:30, 17:00"
+  })
+  void isOverlappingReturnsTrue(
+      LocalTime startTime1,
+      LocalTime endTime1,
+      LocalTime startTime2,
+      LocalTime endTime2
+  ) {
+    TimePeriod period1 = new TimePeriod(startTime1, endTime1);
+    TimePeriod period2 = new TimePeriod(startTime2, endTime2);
+
+    boolean result = TimePeriodValidator.isOverlapping(period1, period2);
+    assertTrue(result);
+  }
+
+  @ParameterizedTest
+  @CsvSource({
+    "12:00, 13:00, 14:00, 15:00",
+    "14:00, 15:00, 12:00, 13:00",
+    "12:00, 13:00, 13:00, 14:00",
+    "14:00, 15:00, 13:00, 14:00"
+  })
+  void isOverlappingReturnsFalse(
+      LocalTime startTime1,
+      LocalTime endTime1,
+      LocalTime startTime2,
+      LocalTime endTime2
+  ) {
+    TimePeriod period1 = new TimePeriod(startTime1, endTime1);
+    TimePeriod period2 = new TimePeriod(startTime2, endTime2);
+
+    boolean result = TimePeriodValidator.isOverlapping(period1, period2);
+    assertFalse(result);
+  }
 }
