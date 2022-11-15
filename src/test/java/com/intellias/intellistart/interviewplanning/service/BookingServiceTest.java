@@ -379,12 +379,14 @@ class BookingServiceTest {
             .period(timePeriod)
             .build());
 
+    LocalDate localDate = LocalDate.now();
+
     when(candidateSlot.getBookings()).thenReturn(bookings);
-    when(candidateSlot.getDate()).thenReturn(LocalDate.now());
+    when(candidateSlot.getDate()).thenReturn(localDate);
     when(candidateSlot.getPeriod()).thenReturn(timePeriod);
 
     when(interviewerSlot.getBookings()).thenReturn(bookings);
-    when(interviewerSlot.getDate()).thenReturn(LocalDate.now());
+    when(interviewerSlot.getDate()).thenReturn(localDate);
     when(interviewerSlot.getPeriod()).thenReturn(timePeriod);
 
     when(candidateSlotRepository.findById(anyLong())).thenReturn(Optional.of(candidateSlot));
