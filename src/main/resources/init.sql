@@ -37,8 +37,8 @@ create table users (
         primary key (id)
     );
 
-insert into users(id,email,role) values(1, 'test@gmail.com','COORDINATOR');
-insert into users values(2, 'user1@gmail.com',6,7,'INTERVIEWER');
+insert into users(id,email,role) values(1, 'test_coordinator@test.com','COORDINATOR');
+insert into users values(2, 'test_interviewer@test.com',6,7,'INTERVIEWER');
 insert into users values(3 ,'user2@gmail.com',5,8,'INTERVIEWER');
 
 insert into interviewer_slots values(1,'MONDAY','11:30','9:00', 43,2);
