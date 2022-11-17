@@ -35,4 +35,13 @@ public class CandidateSlotFactory {
     return new CandidateSlot(TEST_EMAIL, LocalDate.now().plusDays(1),
         new TimePeriod(LocalTime.of(15, 0), LocalTime.of(19, 30)));
   }
+
+  public static CandidateSlot createSlotByDateAndTimePeriod(
+      LocalDate date,
+      LocalTime periodStartTime,
+      LocalTime periodEndTime
+  ) {
+    return new CandidateSlot(TEST_EMAIL, date, new TimePeriod(periodStartTime, periodEndTime));
+  }
+
 }

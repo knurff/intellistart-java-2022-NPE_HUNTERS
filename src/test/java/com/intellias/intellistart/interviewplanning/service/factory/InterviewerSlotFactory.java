@@ -72,4 +72,17 @@ public class InterviewerSlotFactory {
     return slot;
 
   }
+
+  public static InterviewerSlot createSlotByDateAndTimePeriod(
+      int week,
+      DayOfWeek dayOfWeek,
+      LocalTime periodStartTime,
+      LocalTime periodEndTime
+  ) {
+    InterviewerSlot result =
+        new InterviewerSlot(dayOfWeek, new TimePeriod(periodStartTime, periodEndTime));
+    result.setWeek(week);
+
+    return result;
+  }
 }

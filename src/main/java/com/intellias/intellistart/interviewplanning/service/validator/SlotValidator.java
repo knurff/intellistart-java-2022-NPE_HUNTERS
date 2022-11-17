@@ -82,7 +82,7 @@ public class SlotValidator {
   }
 
   private static boolean checkThatIdIsNullOrNotEqualWithAnotherSlotId(Long slotId,
-      Slot anotherSlots) {
-    return slotId == null || !slotId.equals(anotherSlots.getId());
+      Slot anotherSlot) {
+    return slotId == null || !slotId.equals(anotherSlot.getId());
   }
 }
