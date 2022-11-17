@@ -30,7 +30,6 @@ jobs:
       - name: Install Newman
         run: |
           npm install -g newman
-          npm install -g newman-reporter-htmlextra
 
       - name: Make directory for test results
         run: mkdir -p testResults
@@ -40,7 +39,7 @@ jobs:
           --env-var "CandidateToken=${{ secrets.CANDIDATE_TOKEN }}"
           --env-var "InterviewerToken=${{ secrets.INTERVIEWER_TOKEN }}"
           --env-var "CoordinatorToken=${{ secrets.COORDINATOR_TOKEN }}"
-          --verbose -r htmlextra --reporter-htmlextra-export testResults/htmlreport.html --reporter-htmlextra-darkTheme
+          --verbose
       
       - name: Remove API and DB containers
         run: |
