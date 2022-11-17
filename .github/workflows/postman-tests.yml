@@ -22,7 +22,7 @@ jobs:
 
       - name: Run docker compose on API and DB
         run: |
-          docker compose -f docker-compose.api-pull.yml up -d --wait
+          JWT_SECRET="${{ secrets.JWT_TOKEN_SECRET }}" docker compose -f docker-compose.api-pull.yml up
 
       - name: Wait for API to start
         run: sleep 15s
@@ -37,7 +37,11 @@ jobs:
 
       - name: Run Postman collection
         run: |
-          newman run ./src/test/postman/postman-tests.json -x -r htmlextra --reporter-htmlextra-export testResults/htmlreport.html --reporter-htmlextra-darkTheme
+          newman run ./src/test/postman/postman-tests.json \ 
+          --env-var "CandidateToken=${{ secrets.CANDIDATE_TOKEN }}" \
+          --env-var "InterviewerToken=${{ secrets.INTERVIEWER_TOKEN }}" \
+          --env-var "CoordinatorToken=${{ secrets.COORDINATOR_TOKEN }}" \
+          -x -r htmlextra --reporter-htmlextra-export testResults/htmlreport.html --reporter-htmlextra-darkTheme
       
       - name: Remove API and DB containers
         run: |

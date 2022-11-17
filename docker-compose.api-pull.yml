@@ -7,7 +7,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/localdb
       - SPRING_DATASOURCE_USERNAME=localdb
       - SPRING_DATASOURCE_PASSWORD=localdb
-      - JWT_TOKEN_SECRET=hnAeyZqZz55x0AhonbYhxRiG7NQjEduo
+      - JWT_TOKEN_SECRET="${JWT_SECRET}"
       - JWT_TOKEN_EXPIRATION_MILLIS=2592000000
     ports:
       - '8080:8080'
