@@ -1,14 +1,10 @@
 name: Postman Acceptance Tests
 
 on:
-  push:
-    branches:
-      - '71-implement-postman-integration-with-ci-pipeline'
   workflow_run:
-    workflows: ["Maven Docker Push"]
+    workflows: [Maven Docker Push]
+    types: [completed]
     branches: [main]
-    types: 
-      - completed
 
 jobs:
   testing:
@@ -31,9 +27,6 @@ jobs:
         run: |
           npm install -g newman
 
-      - name: Make directory for test results
-        run: mkdir -p testResults
-
       - name: Run Postman collection
         run: newman run ./src/test/postman/postman-tests.json
           --env-var "CandidateToken=${{ secrets.CANDIDATE_TOKEN }}"
@@ -43,11 +36,5 @@ jobs:
       
       - name: Remove API and DB containers
         run: |
-          docker compose -f docker-compose.api-pull.yml down
-
-      - name: Output the run details
-        uses: actions/upload-artifact@v2
-        with: 
-          name: RunReports
-          path: testResults        
+          docker compose -f docker-compose.api-pull.yml down    
     
