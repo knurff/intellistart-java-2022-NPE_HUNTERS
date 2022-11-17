@@ -70,7 +70,17 @@ public class InterviewerSlotFactory {
     slot.setPeriod(new TimePeriod(LocalTime.of(9, 0), LocalTime.of(17, 0)));
 
     return slot;
+  }
 
+  public static InterviewerSlot createInterviewerSlotForBookingValidator() {
+    int week = DateUtils.getCurrentWeek();
+
+    return createSlotByDateAndTimePeriod(
+        week,
+        DayOfWeek.FRIDAY,
+        LocalTime.of(12, 0),
+        LocalTime.of(15, 0)
+    );
   }
 
   public static InterviewerSlot createSlotByDateAndTimePeriod(
@@ -79,9 +89,10 @@ public class InterviewerSlotFactory {
       LocalTime periodStartTime,
       LocalTime periodEndTime
   ) {
-    InterviewerSlot result =
-        new InterviewerSlot(dayOfWeek, new TimePeriod(periodStartTime, periodEndTime));
+    InterviewerSlot result = new InterviewerSlot();
     result.setWeek(week);
+    result.setDayOfWeek(dayOfWeek);
+    result.setPeriod(new TimePeriod(periodStartTime, periodEndTime));
 
     return result;
   }
