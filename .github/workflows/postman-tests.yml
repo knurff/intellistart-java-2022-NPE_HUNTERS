@@ -36,10 +36,10 @@ jobs:
         run: mkdir -p testResults
 
       - name: Run Postman collection
-        run: newman run ./src/test/postman/postman-tests.json \
-          --env-var "CandidateToken=${{ secrets.CANDIDATE_TOKEN }}" \
-          --env-var "InterviewerToken=${{ secrets.INTERVIEWER_TOKEN }}" \
-          --env-var "CoordinatorToken=${{ secrets.COORDINATOR_TOKEN }}" \
+        run: newman run ./src/test/postman/postman-tests.json
+          --env-var "CandidateToken=${{ secrets.CANDIDATE_TOKEN }}"
+          --env-var "InterviewerToken=${{ secrets.INTERVIEWER_TOKEN }}"
+          --env-var "CoordinatorToken=${{ secrets.COORDINATOR_TOKEN }}"
           --verbose -r htmlextra --reporter-htmlextra-export testResults/htmlreport.html --reporter-htmlextra-darkTheme
       
       - name: Remove API and DB containers
