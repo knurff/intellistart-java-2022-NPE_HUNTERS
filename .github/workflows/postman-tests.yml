@@ -22,7 +22,7 @@ jobs:
 
       - name: Run docker compose on API and DB
         run: |
-          JWT_SECRET="${{ secrets.JWT_TOKEN_SECRET }}" docker compose -f docker-compose.api-pull.yml up
+          JWT_SECRET="${{ secrets.JWT_TOKEN_SECRET }}" docker compose -f docker-compose.api-pull.yml up -d
 
       - name: Wait for API to start
         run: sleep 15s
