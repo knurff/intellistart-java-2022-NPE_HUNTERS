@@ -37,11 +37,7 @@ jobs:
 
       - name: Run Postman collection
         run: |
-          newman run ./src/test/postman/postman-tests.json \ 
-          --env-var "CandidateToken=${{ secrets.CANDIDATE_TOKEN }}" \
-          --env-var "InterviewerToken=${{ secrets.INTERVIEWER_TOKEN }}" \
-          --env-var "CoordinatorToken=${{ secrets.COORDINATOR_TOKEN }}" \
-          -x -r htmlextra --reporter-htmlextra-export testResults/htmlreport.html --reporter-htmlextra-darkTheme
+          newman run ./src/test/postman/postman-tests.json --env-var "CandidateToken=${{ secrets.CANDIDATE_TOKEN }}" --env-var "InterviewerToken=${{ secrets.INTERVIEWER_TOKEN }}" --env-var "CoordinatorToken=${{ secrets.COORDINATOR_TOKEN }}" -x -r htmlextra --reporter-htmlextra-export testResults/htmlreport.html --reporter-htmlextra-darkTheme
       
       - name: Remove API and DB containers
         run: |
