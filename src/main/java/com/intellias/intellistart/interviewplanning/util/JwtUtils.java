@@ -1,12 +1,15 @@
 package com.intellias.intellistart.interviewplanning.util;
 
+import com.intellias.intellistart.interviewplanning.exception.SecurityExceptionHandler;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
-import lombok.AccessLevel;
+import java.io.IOException;
+import javax.servlet.http.HttpServletResponse;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -14,30 +17,33 @@ import org.springframework.stereotype.Component;
  * Util class with methods to process JWT token.
  */
 @Component
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor
 public class JwtUtils {
 
   @Value("${jwt.token.secret}")
   private String secret;
+  @Autowired
+  private SecurityExceptionHandler securityExceptionHandler;
 
   /**
    * Validates JWT token.
    */
-  public boolean validateToken(String token) {
+  public boolean validateToken(HttpServletResponse response, String token) throws IOException {
     try {
       Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
       return true;
     } catch (ExpiredJwtException ex) {
-      throw new SecurityException("Token expired");
+      securityExceptionHandler.handleExpiredJwtException(response);
     } catch (IllegalArgumentException ex) {
-      throw new SecurityException("Token is null,empty or only whitespace");
+      securityExceptionHandler.handleIllegalArgumentException(response);
     } catch (MalformedJwtException ex) {
-      throw new SecurityException("Token is invalid");
+      securityExceptionHandler.handleMalformedJwtException(response);
     } catch (UnsupportedJwtException ex) {
-      throw new SecurityException("JWT is not supported");
+      securityExceptionHandler.handleUnsupportedJwtException(response);
     } catch (SignatureException ex) {
-      throw new SecurityException("Signature validation failed");
+      securityExceptionHandler.handleSignatureException(response);
     }
+    return false;
   }
 
   public String getTokenSubject(String token) {
