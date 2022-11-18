@@ -159,17 +159,17 @@ class InterviewerServiceTest {
   @Test
   void editSlotWorkingProperly() {
     InterviewerSlot interviewerSlotToUpdate = InterviewerSlotFactory.createInterviewerSlot();
+    interviewerSlotToUpdate.setInterviewer(UserFactory.createInterviewer());
     InterviewerSlot interviewerSlot = InterviewerSlotFactory.createInterviewerSlot();
     interviewerSlot.setDayOfWeek(DayOfWeek.FRIDAY);
 
-    prepareInterviewerAndConfigureMockBehaviorForEditSlot(interviewerSlot);
+    prepareInterviewerAndConfigureMockBehaviorForEditSlot(interviewerSlotToUpdate);
     setValidDateIfNeeded();
     when(interviewerSlotRepository.save(interviewerSlot)).thenReturn(interviewerSlot);
-    when(interviewerSlotRepository.findById(1L)).thenReturn(Optional.of(interviewerSlotToUpdate)
-    );
 
     InterviewerSlot updatedInterviewerSlot =
         interviewerService.editSlot(interviewerSlot, 1L, 1L);
+
     assertNotNull(updatedInterviewerSlot);
     assertEquals(DayOfWeek.FRIDAY, updatedInterviewerSlot.getDayOfWeek());
     localDateMock.clearInvocations();
@@ -352,17 +352,19 @@ class InterviewerServiceTest {
   @Test
   void findSlotByIdAndInterviewerIdThrowsExceptionIfSlotDoesNotBelongToInterviewer() {
     final User interviewer = new User(UserRole.INTERVIEWER);
-    interviewer.setId(5561065892L);
+    long interviewerId = 5561065892L;
+    interviewer.setId(interviewerId);
 
     final InterviewerSlot interviewerSlot = new InterviewerSlot();
-    interviewerSlot.setId(32570782L);
+    long interviewerSlotId = 32570782L;
+    interviewerSlot.setId(interviewerSlotId);
     interviewerSlot.setInterviewer(interviewer);
 
     when(interviewerSlotRepository.findById(anyLong())).thenReturn(Optional.of(interviewerSlot));
 
     assertThrows(SlotNotFoundException.class,
         () -> interviewerService.findSlotByIdAndInterviewerId
-            (interviewerSlot.getId(), interviewer.getId() - 1));
+            (interviewerSlotId, interviewerId - 1));
   }
 
   @Test
@@ -412,8 +414,7 @@ class InterviewerServiceTest {
   }
 
   private void setInterviewerIntoSlotAndConfigureMock(InterviewerSlot interviewerSlot) {
-    User interviewer = new User();
-    interviewer.setRole(UserRole.INTERVIEWER);
+    User interviewer = UserFactory.createInterviewer();
     interviewerSlot.setInterviewer(interviewer);
 
     when(userRepository.findById(1L)).thenReturn(Optional.of(interviewer));

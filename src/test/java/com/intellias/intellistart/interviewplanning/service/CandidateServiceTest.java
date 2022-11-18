@@ -209,8 +209,8 @@ class CandidateServiceTest {
 
   @Test
   void editSlotThrowsAnExceptionIfSlotContainsBookings() {
-    CandidateSlot newSlot = new CandidateSlot();
-    CandidateSlot oldSlot = new CandidateSlot();
+    CandidateSlot newSlot = CandidateSlotFactory.createCandidateSlot();
+    CandidateSlot oldSlot = CandidateSlotFactory.createCandidateSlot();
     oldSlot.getBookings().add(new Booking());
 
     setIdForSlotAndConfigureMockBehaviorForEditMethod(oldSlot);
