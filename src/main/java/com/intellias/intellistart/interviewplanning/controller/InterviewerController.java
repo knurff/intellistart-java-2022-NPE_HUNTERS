@@ -43,6 +43,9 @@ public class InterviewerController {
     return interviewerSlotsMapper.mapToInterviewerSlotsDtoList(interviewerSlots);
   }
 
+  /**
+   * Handles POST requests and sets max bookings limit for interviewer with given ID.
+   */
   @PostMapping("/{interviewerId}/bookings")
   @RolesAllowed("ROLE_INTERVIEWER")
   public void setMaxBookings(@PathVariable Long interviewerId, int maxBooking) {
