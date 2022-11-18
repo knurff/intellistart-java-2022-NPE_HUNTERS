@@ -1,0 +1,40 @@
+name: Postman Acceptance Tests
+
+on:
+  workflow_run:
+    workflows: [Maven Docker Push]
+    types: [completed]
+    branches: [main]
+
+jobs:
+  testing:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install Docker Compose
+        uses: ndeloof/install-compose-action@v0.0.1
+
+      - name: Run docker compose on API and DB
+        run: |
+          JWT_SECRET="${{ secrets.JWT_TOKEN_SECRET }}" docker compose -f docker-compose.api-pull.yml up -d
+
+      - name: Wait for API to start
+        run: sleep 15s
+
+      - name: Install Newman
+        run: |
+          npm install -g newman
+
+      - name: Run Postman collection
+        run: newman run ./src/test/postman/postman-tests.json
+          --env-var "CandidateToken=${{ secrets.CANDIDATE_TOKEN }}"
+          --env-var "InterviewerToken=${{ secrets.INTERVIEWER_TOKEN }}"
+          --env-var "CoordinatorToken=${{ secrets.COORDINATOR_TOKEN }}"
+          --verbose
+      
+      - name: Remove API and DB containers
+        run: |
+          docker compose -f docker-compose.api-pull.yml down    
+    

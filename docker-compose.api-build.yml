@@ -1,0 +1,29 @@
+version: '3.8'
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: api
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/localdb
+      - SPRING_DATASOURCE_USERNAME=localdb
+      - SPRING_DATASOURCE_PASSWORD=localdb
+      - JWT_TOKEN_SECRET="${JWT_SECRET}"
+      - JWT_TOKEN_EXPIRATION_MILLIS=2592000000
+    ports:
+      - '8080:8080'
+    depends_on:
+      - db
+  db:
+    build: 
+      context: .
+      dockerfile: Dockerfile.db
+    container_name: db
+    environment:
+      - POSTGRES_DB=localdb
+      - POSTGRES_PASSWORD=localdb
+      - POSTGRES_USER=localdb
+    restart: always
+    ports:
+      - '5432:5432'
