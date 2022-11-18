@@ -190,19 +190,33 @@ class CandidateServiceTest {
     Mockito.when(candidateSlotRepository.findById(id)).thenReturn(Optional.empty());
 
     assertThrows(SlotNotFoundException.class,
-            () -> service.editSlot(newSlot, id));
+        () -> service.editSlot(newSlot, id));
+  }
+
+  @Test
+  void editSlotThrowsAnExceptionIfCandidateTryingToChangeNotHisOwnSlot() {
+    CandidateSlot candidateSlot1 = CandidateSlotFactory.createCandidateSlot();
+
+    CandidateSlot candidateSlot2 = CandidateSlotFactory.createCandidateSlot();
+    candidateSlot2.setId(2L);
+    candidateSlot2.setEmail("test2@gmail.com");
+    candidateSlot2.setDate(LocalDate.now().plusDays(5));
+
+    setIdForSlotAndConfigureMockBehaviorForEditMethod(candidateSlot1);
+
+    assertThrows(UserIsNotSlotOwnerException.class, () -> service.editSlot(candidateSlot2, 1L));
   }
 
   @Test
   void editSlotThrowsAnExceptionIfSlotContainsBookings() {
-    CandidateSlot newSlot = new CandidateSlot();
-    CandidateSlot oldSlot = new CandidateSlot();
+    CandidateSlot newSlot = CandidateSlotFactory.createCandidateSlot();
+    CandidateSlot oldSlot = CandidateSlotFactory.createCandidateSlot();
     oldSlot.getBookings().add(new Booking());
 
     setIdForSlotAndConfigureMockBehaviorForEditMethod(oldSlot);
 
     assertThrows(SlotContainsBookingsException.class,
-            () -> service.editSlot(newSlot, 1L));
+        () -> service.editSlot(newSlot, 1L));
   }
 
   @Test

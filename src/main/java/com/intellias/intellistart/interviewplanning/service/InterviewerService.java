@@ -1,5 +1,6 @@
 package com.intellias.intellistart.interviewplanning.service;
 
+import com.intellias.intellistart.interviewplanning.exception.IdentifierDoesNotBelongToUserException;
 import com.intellias.intellistart.interviewplanning.exception.InterviewerNotFoundException;
 import com.intellias.intellistart.interviewplanning.exception.SlotNotFoundException;
 import com.intellias.intellistart.interviewplanning.model.InterviewerSlot;
@@ -8,6 +9,7 @@ import com.intellias.intellistart.interviewplanning.model.role.UserRole;
 import com.intellias.intellistart.interviewplanning.repository.InterviewerSlotRepository;
 import com.intellias.intellistart.interviewplanning.repository.UserRepository;
 import com.intellias.intellistart.interviewplanning.service.validator.InterviewerSlotValidator;
+import com.intellias.intellistart.interviewplanning.service.validator.SlotOwnerValidator;
 import java.time.DayOfWeek;
 import java.util.HashMap;
 import java.util.List;
@@ -50,8 +52,14 @@ public class InterviewerService {
    */
   public InterviewerSlot editSlot(InterviewerSlot interviewerSlot, Long interviewerId,
       Long slotId) {
-    findSlotById(slotId);
+    InterviewerSlot interviewerSlotFromDb = findSlotById(slotId);
     findInterviewerAndSetIntoSlot(interviewerSlot, interviewerId);
+
+    String interviewerSlotFromDbOwnerEmail = interviewerSlotFromDb.getInterviewer().getEmail();
+    String givenInterviewerSlotOwnerEmail = interviewerSlot.getInterviewer().getEmail();
+    SlotOwnerValidator.validateSlotOwner(interviewerSlotFromDbOwnerEmail,
+        givenInterviewerSlotOwnerEmail);
+
     interviewerSlot.setId(slotId);
     return validateSlotAndSave(interviewerSlot);
   }
@@ -160,6 +168,19 @@ public class InterviewerService {
     return result;
   }
 
+  /**
+   * Verifies, that given id belongs to this user.
+   *
+   * @throws IdentifierDoesNotBelongToUserException if given id does not belong to this user
+   */
+  public void verifyThatIdBelongsToThisInterviewer(String email, Long interviewerId) {
+    User interviewer = getInterviewerOrThrowException(interviewerId);
+    if (!interviewer.getEmail().equals(email)) {
+      throw new IdentifierDoesNotBelongToUserException(
+          String.format("ID:%d does not belong to you", interviewerId));
+    }
+  }
+
   private void findInterviewerAndSetIntoSlot(InterviewerSlot interviewerSlot, Long interviewerId) {
     User interviewer = getInterviewerOrThrowException(interviewerId);
     interviewerSlot.setInterviewer(interviewer);
@@ -168,8 +189,10 @@ public class InterviewerService {
   private InterviewerSlot validateSlotAndSave(InterviewerSlot interviewerSlot) {
     List<InterviewerSlot> interviewerSlots = interviewerSlotRepository.getAllByInterviewer(
         interviewerSlot.getInterviewer());
+
     InterviewerSlotValidator.validateSlotForNextWeek(interviewerSlot, interviewerSlots,
         interviewerSlot.getId());
+
     return interviewerSlotRepository.save(interviewerSlot);
   }
 }

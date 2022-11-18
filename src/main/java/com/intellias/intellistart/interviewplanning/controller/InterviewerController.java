@@ -4,6 +4,7 @@ import com.intellias.intellistart.interviewplanning.controller.dto.InterviewerSl
 import com.intellias.intellistart.interviewplanning.controller.dto.mapper.InterviewerSlotsMapper;
 import com.intellias.intellistart.interviewplanning.model.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.service.InterviewerService;
+import com.intellias.intellistart.interviewplanning.util.RequestParser;
 import java.util.List;
 import javax.annotation.security.RolesAllowed;
 import lombok.AllArgsConstructor;
@@ -35,15 +36,21 @@ public class InterviewerController {
   @GetMapping("/{interviewerId}/slots")
   @RolesAllowed("ROLE_INTERVIEWER")
   public List<InterviewerSlotDto> getAllInterviewerSlots(@PathVariable Long interviewerId) {
+    verifyThatIdBelongsToRequester(interviewerId);
     List<InterviewerSlot> interviewerSlots =
         interviewerService.getAllInterviewerSlotsByInterviewerId(interviewerId);
 
     return interviewerSlotsMapper.mapToInterviewerSlotsDtoList(interviewerSlots);
   }
 
+  /**
+   * Handles POST requests and sets max bookings limit for interviewer with given ID.
+   */
   @PostMapping("/{interviewerId}/bookings")
   @RolesAllowed("ROLE_INTERVIEWER")
   public void setMaxBookings(@PathVariable Long interviewerId, int maxBooking) {
+    verifyThatIdBelongsToRequester(interviewerId);
+
     interviewerService.setMaxBookings(interviewerId, maxBooking);
   }
 
@@ -58,8 +65,11 @@ public class InterviewerController {
   @RolesAllowed("ROLE_INTERVIEWER")
   public InterviewerSlotDto createSlot(@PathVariable Long interviewerId,
       @RequestBody InterviewerSlotDto interviewerSlotDto) {
+    verifyThatIdBelongsToRequester(interviewerId);
+
     InterviewerSlot responseEntity = interviewerService.createSlot(
         interviewerSlotsMapper.mapToInterviewerSlotEntity(interviewerSlotDto), interviewerId);
+
     return interviewerSlotsMapper.mapToInterviewerSlotsDto(responseEntity);
   }
 
@@ -73,9 +83,17 @@ public class InterviewerController {
   @PutMapping("/{interviewerId}/slots/{slotId}")
   public InterviewerSlotDto editSlot(@PathVariable Long interviewerId, @PathVariable Long slotId,
       @RequestBody InterviewerSlotDto interviewerSlotDto) {
+    verifyThatIdBelongsToRequester(interviewerId);
+
     InterviewerSlot responseEntity = interviewerService.editSlot(
         interviewerSlotsMapper.mapToInterviewerSlotEntity(interviewerSlotDto), interviewerId,
         slotId);
+
     return interviewerSlotsMapper.mapToInterviewerSlotsDto(responseEntity);
+  }
+
+  private void verifyThatIdBelongsToRequester(Long interviewerId) {
+    String email = RequestParser.getUserEmailFromToken();
+    interviewerService.verifyThatIdBelongsToThisInterviewer(email, interviewerId);
   }
 }

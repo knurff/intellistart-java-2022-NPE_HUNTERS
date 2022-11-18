@@ -14,12 +14,14 @@ import com.intellias.intellistart.interviewplanning.exception.InvalidSlotDateExc
 import com.intellias.intellistart.interviewplanning.exception.InvalidTimePeriodBoundaries;
 import com.intellias.intellistart.interviewplanning.exception.SlotIsOverlappingException;
 import com.intellias.intellistart.interviewplanning.exception.SlotNotFoundException;
+import com.intellias.intellistart.interviewplanning.exception.UserIsNotSlotOwnerException;
 import com.intellias.intellistart.interviewplanning.model.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.model.User;
 import com.intellias.intellistart.interviewplanning.model.role.UserRole;
 import com.intellias.intellistart.interviewplanning.repository.InterviewerSlotRepository;
 import com.intellias.intellistart.interviewplanning.repository.UserRepository;
 import com.intellias.intellistart.interviewplanning.service.factory.InterviewerSlotFactory;
+import com.intellias.intellistart.interviewplanning.service.factory.UserFactory;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
@@ -36,6 +38,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class InterviewerServiceTest {
 
+  private static final String ANOTHER_EMAIL = "another@test.com";
   @Mock
   private InterviewerSlotRepository interviewerSlotRepository;
   @Mock
@@ -156,17 +159,17 @@ class InterviewerServiceTest {
   @Test
   void editSlotWorkingProperly() {
     InterviewerSlot interviewerSlotToUpdate = InterviewerSlotFactory.createInterviewerSlot();
+    interviewerSlotToUpdate.setInterviewer(UserFactory.createInterviewer());
     InterviewerSlot interviewerSlot = InterviewerSlotFactory.createInterviewerSlot();
     interviewerSlot.setDayOfWeek(DayOfWeek.FRIDAY);
 
-    prepareInterviewerAndConfigureMockBehaviorForEditSlot(interviewerSlot);
+    prepareInterviewerAndConfigureMockBehaviorForEditSlot(interviewerSlotToUpdate);
     setValidDateIfNeeded();
     when(interviewerSlotRepository.save(interviewerSlot)).thenReturn(interviewerSlot);
-    when(interviewerSlotRepository.findById(1L)).thenReturn(Optional.of(interviewerSlotToUpdate)
-    );
 
     InterviewerSlot updatedInterviewerSlot =
         interviewerService.editSlot(interviewerSlot, 1L, 1L);
+
     assertNotNull(updatedInterviewerSlot);
     assertEquals(DayOfWeek.FRIDAY, updatedInterviewerSlot.getDayOfWeek());
     localDateMock.clearInvocations();
@@ -189,6 +192,27 @@ class InterviewerServiceTest {
     assertThrows(InterviewerNotFoundException.class,
         () -> interviewerService.editSlot(interviewerSlot, 1L, 1L));
   }
+
+  @Test
+  void editSlotThrowsAnExceptionIfInterviewerTryingToChangeNotHisOwnSlot() {
+    InterviewerSlot interviewerSlot = InterviewerSlotFactory.createInterviewerSlot();
+    User interviewer = UserFactory.createInterviewer();
+
+    InterviewerSlot interviewerSlot2 = InterviewerSlotFactory.createInterviewerSlot();
+    User interviewer2 = UserFactory.createInterviewer();
+    interviewer2.setId(2L);
+    interviewer2.setEmail(ANOTHER_EMAIL);
+    interviewerSlot2.setInterviewer(interviewer2);
+
+    when(interviewerSlotRepository.findById(2L)).thenReturn(Optional.of(interviewerSlot2));
+    setValidDateIfNeeded();
+    when(userRepository.findById(1L)).thenReturn(Optional.of(interviewer));
+
+    assertThrows(UserIsNotSlotOwnerException.class,
+        () -> interviewerService.editSlot(interviewerSlot, 1L, 2L));
+    localDateMock.clearInvocations();
+  }
+
 
   @Test
   void editSlotThrowsAnExceptionIfDateIsNotInFuture() {
@@ -328,17 +352,19 @@ class InterviewerServiceTest {
   @Test
   void findSlotByIdAndInterviewerIdThrowsExceptionIfSlotDoesNotBelongToInterviewer() {
     final User interviewer = new User(UserRole.INTERVIEWER);
-    interviewer.setId(5561065892L);
+    long interviewerId = 5561065892L;
+    interviewer.setId(interviewerId);
 
     final InterviewerSlot interviewerSlot = new InterviewerSlot();
-    interviewerSlot.setId(32570782L);
+    long interviewerSlotId = 32570782L;
+    interviewerSlot.setId(interviewerSlotId);
     interviewerSlot.setInterviewer(interviewer);
 
     when(interviewerSlotRepository.findById(anyLong())).thenReturn(Optional.of(interviewerSlot));
 
     assertThrows(SlotNotFoundException.class,
         () -> interviewerService.findSlotByIdAndInterviewerId
-            (interviewerSlot.getId(), interviewer.getId() - 1));
+            (interviewerSlotId, interviewerId - 1));
   }
 
   @Test
@@ -388,8 +414,7 @@ class InterviewerServiceTest {
   }
 
   private void setInterviewerIntoSlotAndConfigureMock(InterviewerSlot interviewerSlot) {
-    User interviewer = new User();
-    interviewer.setRole(UserRole.INTERVIEWER);
+    User interviewer = UserFactory.createInterviewer();
     interviewerSlot.setInterviewer(interviewer);
 
     when(userRepository.findById(1L)).thenReturn(Optional.of(interviewer));
