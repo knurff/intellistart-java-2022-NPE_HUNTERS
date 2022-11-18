@@ -1,7 +1,5 @@
 package com.intellias.intellistart.interviewplanning.exception;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -26,12 +24,13 @@ public class ApplicationExceptionHandler {
   private static final String INVALID_BOOKING_DURATION = "invalid_booking_duration";
   private static final String BOOKING_IS_OVERLAPPING = "booking_is_overlapping";
   private static final String BOOKING_LIMIT_EXCEEDED = "booking_limit_exceeded";
-
   private static final String INVALID_DAY_FOR_SLOT_CREATION = "invalid_day_for_slot_creation";
-
   private static final String USER_ALREADY_HAS_ROLE = "user_already_has_role";
   private static final String NO_ROLE = "no_role";
   private static final String SELF_REVOKING = "self_revoking";
+  private static final String INVALID_FACEBOOK_TOKEN = "invalid_facebook_token";
+  private static final String USER_IS_NOT_SLOT_OWNER = "user_is_not_slot_owner";
+  private static final String ID_DOES_NOT_BELONG_TO_USER = "id_does_not_belong_to_user";
 
   /**
    * Exception handler for InterviewerNotFoundException.
@@ -194,17 +193,33 @@ public class ApplicationExceptionHandler {
         HttpStatus.BAD_REQUEST);
   }
 
-
   /**
-   * Custom response from exceptions.
+   * Exception handler for InvalidFacebookTokenException.
    */
-  @AllArgsConstructor
-  @Data
-  public static class ExceptionResponse {
-
-    private String errorCode;
-    private String errorMessage;
-
+  @ExceptionHandler
+  public ResponseEntity<ExceptionResponse> handleInvalidFacebookTokenException(
+      InvalidFacebookTokenException e) {
+    return new ResponseEntity<>(new ExceptionResponse(INVALID_FACEBOOK_TOKEN, e.getMessage()),
+        HttpStatus.UNAUTHORIZED);
   }
 
+  /**
+   * Exception handler for UserIsNotSlotOwnerException.
+   */
+  @ExceptionHandler
+  public ResponseEntity<ExceptionResponse> handleUserIsNotSlotOwnerException(
+      UserIsNotSlotOwnerException e) {
+    return new ResponseEntity<>(new ExceptionResponse(USER_IS_NOT_SLOT_OWNER, e.getMessage()),
+        HttpStatus.BAD_REQUEST);
+  }
+
+  /**
+   * Exception handler for IdentifierNotBelongsToUserException.
+   */
+  @ExceptionHandler
+  public ResponseEntity<ExceptionResponse> handleIdentifierDoesNotBelongToUserException(
+      IdentifierDoesNotBelongToUserException e) {
+    return new ResponseEntity<>(new ExceptionResponse(ID_DOES_NOT_BELONG_TO_USER, e.getMessage()),
+        HttpStatus.BAD_REQUEST);
+  }
 }

@@ -4,12 +4,12 @@ import com.intellias.intellistart.interviewplanning.exception.SlotContainsBookin
 import com.intellias.intellistart.interviewplanning.exception.SlotNotFoundException;
 import com.intellias.intellistart.interviewplanning.model.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.repository.CandidateSlotRepository;
+import com.intellias.intellistart.interviewplanning.service.validator.SlotOwnerValidator;
 import com.intellias.intellistart.interviewplanning.service.validator.SlotValidator;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -42,10 +42,19 @@ public class CandidateService {
   /**
    * Validates and updates existing CandidateSlot.
    */
-
   public CandidateSlot editSlot(CandidateSlot candidateSlot, Long id) {
-    checkThatCandidateSlotExistsWithNoBookings(id);
+    CandidateSlot candidateSlotFromDb = candidateSlotRepository.findById(id).orElseThrow(() ->
+        new SlotNotFoundException(
+            String.format("Candidate slot with id: %d does not exist", id)));
+
+    SlotOwnerValidator.validateSlotOwner(candidateSlotFromDb.getEmail(), candidateSlot.getEmail());
+
+    if (!candidateSlotFromDb.getBookings().isEmpty()) {
+      throw new SlotContainsBookingsException("This slot contains bookings, you cannot change it");
+    }
+
     candidateSlot.setId(id);
+
     return validateAndSaveCandidateSlot(candidateSlot);
   }
 
@@ -73,25 +82,13 @@ public class CandidateService {
     return result;
   }
 
-  private void checkThatCandidateSlotExistsWithNoBookings(Long id) {
-    Optional<CandidateSlot> candidateSlot = candidateSlotRepository.findById(id);
-    if (candidateSlot.isEmpty()) {
-      throw new SlotNotFoundException(
-          String.format("Candidate slot with id: %d does not exist", id));
-    } else if (candidateSlotContainsBookings(candidateSlot)) {
-      throw new SlotContainsBookingsException("This slot contains bookings, you cannot change it");
-    }
-  }
-
   private CandidateSlot validateAndSaveCandidateSlot(CandidateSlot candidateSlot) {
     List<CandidateSlot> anotherCandidateSlots = candidateSlotRepository.findAllByEmail(
         candidateSlot.getEmail());
+
     SlotValidator.validateCandidateSlot(candidateSlot, anotherCandidateSlots,
         candidateSlot.getId());
-    return candidateSlotRepository.save(candidateSlot);
-  }
 
-  private boolean candidateSlotContainsBookings(Optional<CandidateSlot> candidateSlot) {
-    return !candidateSlot.get().getBookings().isEmpty();
+    return candidateSlotRepository.save(candidateSlot);
   }
 }
