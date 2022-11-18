@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.intellias.intellistart.interviewplanning.exception.BookingIsOverlappingException;
@@ -14,11 +16,7 @@ import com.intellias.intellistart.interviewplanning.exception.InvalidBookingDura
 import com.intellias.intellistart.interviewplanning.exception.InvalidTimePeriodBoundaries;
 import com.intellias.intellistart.interviewplanning.exception.SlotDatesAreNotEqualException;
 import com.intellias.intellistart.interviewplanning.exception.SlotNotFoundException;
-import com.intellias.intellistart.interviewplanning.model.Booking;
-import com.intellias.intellistart.interviewplanning.model.CandidateSlot;
-import com.intellias.intellistart.interviewplanning.model.InterviewerSlot;
-import com.intellias.intellistart.interviewplanning.model.User;
-import com.intellias.intellistart.interviewplanning.model.WeekBooking;
+import com.intellias.intellistart.interviewplanning.model.*;
 import com.intellias.intellistart.interviewplanning.model.role.UserRole;
 import com.intellias.intellistart.interviewplanning.repository.BookingRepository;
 import com.intellias.intellistart.interviewplanning.repository.CandidateSlotRepository;
@@ -27,6 +25,8 @@ import com.intellias.intellistart.interviewplanning.repository.UserRepository;
 import com.intellias.intellistart.interviewplanning.service.factory.BookingFactory;
 import com.intellias.intellistart.interviewplanning.service.factory.CandidateSlotFactory;
 import com.intellias.intellistart.interviewplanning.service.factory.InterviewerSlotFactory;
+
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashMap;
@@ -35,6 +35,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+
+import com.intellias.intellistart.interviewplanning.util.DateUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -313,6 +315,85 @@ class BookingServiceTest {
 
     assertThrows(InvalidTimePeriodBoundaries.class, () -> bookingService.updateBooking(booking,
         1L, 1L, 1L));
+  }
+
+  @Test
+  void updateBookingThrowsAnExceptionIfSlotDatesAreNotEqual() {
+    CandidateSlot candidateSlot = CandidateSlotFactory.createCandidateSlot();
+    InterviewerSlot interviewerSlot = InterviewerSlotFactory.createInterviewerSlot();
+    Booking booking = BookingFactory.createBooking();
+
+    when(interviewerSlotRepository.findById(anyLong())).thenReturn(Optional.of(interviewerSlot));
+    when(candidateSlotRepository.findById(anyLong())).thenReturn(Optional.of(candidateSlot));
+
+    assertThrows(SlotDatesAreNotEqualException.class, () ->
+            bookingService.updateBooking(booking, 1L, 1L, 1L));
+  }
+
+  @Test
+  void updateBookingThrowsAnExceptionIfPeriodIsNotInBoundariesOfSlotPeriod() {
+    CandidateSlot candidateSlot = CandidateSlot
+            .builder()
+            .date(LocalDate.now())
+            .email("test@test.com")
+            .period(new TimePeriod(LocalTime.of(13,0), LocalTime.of(14,0)))
+            .build();
+    InterviewerSlot interviewerSlot = InterviewerSlot
+            .builder()
+            .dayOfWeek(LocalDate.now().getDayOfWeek())
+            .week(DateUtils.getCurrentWeek())
+            .period(new TimePeriod(LocalTime.of(13,0), LocalTime.of(14,0)))
+            .build();
+
+    Booking booking = Booking
+            .builder()
+            .interviewerSlot(interviewerSlot)
+            .candidateSlot(candidateSlot)
+            .period(new TimePeriod(LocalTime.of(13,0), LocalTime.of(15,0)))
+            .build();
+
+    when(interviewerSlotRepository.findById(anyLong())).thenReturn(Optional.of(interviewerSlot));
+    when(candidateSlotRepository.findById(anyLong())).thenReturn(Optional.of(candidateSlot));
+
+    assertThrows(InvalidTimePeriodBoundaries.class, () ->
+            bookingService.updateBooking(booking, 1L, 1L, 1L));
+  }
+
+  @Test
+  void updateBookingThrowsAnExceptionIfOverlappingBookingExists() {
+    CandidateSlot candidateSlot = mock(CandidateSlot.class);
+    InterviewerSlot interviewerSlot = mock(InterviewerSlot.class);
+
+    TimePeriod timePeriod = new TimePeriod(LocalTime.now(), LocalTime.now().plusHours(1));
+
+    Booking booking = Booking.builder()
+            .candidateSlot(candidateSlot)
+            .interviewerSlot(interviewerSlot)
+            .period(timePeriod)
+            .build();
+
+    Set<Booking> bookings = Set.of(Booking
+            .builder()
+            .interviewerSlot(interviewerSlot)
+            .candidateSlot(candidateSlot)
+            .period(timePeriod)
+            .build());
+
+    LocalDate localDate = LocalDate.now();
+
+    when(candidateSlot.getBookings()).thenReturn(bookings);
+    when(candidateSlot.getDate()).thenReturn(localDate);
+    when(candidateSlot.getPeriod()).thenReturn(timePeriod);
+
+    when(interviewerSlot.getBookings()).thenReturn(bookings);
+    when(interviewerSlot.getDate()).thenReturn(localDate);
+    when(interviewerSlot.getPeriod()).thenReturn(timePeriod);
+
+    when(candidateSlotRepository.findById(anyLong())).thenReturn(Optional.of(candidateSlot));
+    when(interviewerSlotRepository.findById(anyLong())).thenReturn(Optional.of(interviewerSlot));
+
+    assertThrows(BookingIsOverlappingException.class, () ->
+            bookingService.updateBooking(booking, 1L, 1L, 1L));
   }
 
   private void createSlotsAndConfigureMockBehaviorForCreateBooking(int bookingLimit) {
