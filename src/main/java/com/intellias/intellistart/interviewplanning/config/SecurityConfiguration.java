@@ -1,9 +1,11 @@
 package com.intellias.intellistart.interviewplanning.config;
 
+import com.intellias.intellistart.interviewplanning.exception.CustomAccessDeniedHandler;
+import com.intellias.intellistart.interviewplanning.exception.CustomAuthenticationEntryPoint;
 import com.intellias.intellistart.interviewplanning.security.JwtTokenFilter;
 import com.intellias.intellistart.interviewplanning.service.JwtUserDetailsService;
-import javax.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -24,6 +26,11 @@ public class SecurityConfiguration {
   private JwtUserDetailsService jwtService;
   private PasswordEncoder passwordEncoder;
   private JwtTokenFilter jwtTokenFilter;
+
+  @Qualifier("customAuthenticationEntryPoint")
+  private CustomAuthenticationEntryPoint authenticationEntryPoint;
+
+  private CustomAccessDeniedHandler accessDeniedHandler;
 
   /**
    * Configures AuthenticationManager bean.
@@ -51,13 +58,11 @@ public class SecurityConfiguration {
 
     httpSecurity.exceptionHandling()
         .authenticationEntryPoint(
-            (request, response, ex) -> response.sendError(
-                HttpServletResponse.SC_UNAUTHORIZED,
-                ex.getMessage()
-            )
-        );
+            authenticationEntryPoint
+        ).accessDeniedHandler(accessDeniedHandler);
 
     httpSecurity.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
+
     return httpSecurity.build();
   }
 
