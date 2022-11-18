@@ -2,6 +2,7 @@ package com.intellias.intellistart.interviewplanning.service.factory;
 
 import com.intellias.intellistart.interviewplanning.model.CandidateSlot;
 import com.intellias.intellistart.interviewplanning.model.TimePeriod;
+import com.intellias.intellistart.interviewplanning.util.DateUtils;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
@@ -35,4 +36,26 @@ public class CandidateSlotFactory {
     return new CandidateSlot(TEST_EMAIL, LocalDate.now().plusDays(1),
         new TimePeriod(LocalTime.of(15, 0), LocalTime.of(19, 30)));
   }
+
+  public static CandidateSlot createSlotForBookingValidator() {
+    int week = DateUtils.getCurrentWeek();
+    LocalDate candidateDate = LocalDate.of(2022, 1, 1)
+        .plusWeeks(week)
+        .minusDays(1L);
+
+    return createSlotByDateAndTimePeriod(
+        candidateDate,
+        LocalTime.of(12, 0),
+        LocalTime.of(15, 0)
+    );
+  }
+
+  public static CandidateSlot createSlotByDateAndTimePeriod(
+      LocalDate date,
+      LocalTime periodStartTime,
+      LocalTime periodEndTime
+  ) {
+    return new CandidateSlot(TEST_EMAIL, date, new TimePeriod(periodStartTime, periodEndTime));
+  }
+
 }

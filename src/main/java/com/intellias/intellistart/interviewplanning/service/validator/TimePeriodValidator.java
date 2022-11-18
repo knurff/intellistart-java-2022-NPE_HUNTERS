@@ -64,8 +64,8 @@ public class TimePeriodValidator {
   }
 
   public static boolean isOverlapping(TimePeriod period1, TimePeriod period2) {
-    return period1.getStartTime().compareTo(period2.getEndTime()) <= 0
-        && period1.getEndTime().compareTo(period2.getStartTime()) >= 0;
+    return period1.getStartTime().compareTo(period2.getEndTime()) < 0
+        && period1.getEndTime().compareTo(period2.getStartTime()) > 0;
   }
 
   private static void checkStartTimeIsBeforeEndTime(LocalTime startTime, LocalTime endTime) {
