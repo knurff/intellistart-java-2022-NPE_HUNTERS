@@ -4,18 +4,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.intellias.intellistart.interviewplanning.security.JwtUserDetails;
 import com.intellias.intellistart.interviewplanning.util.RoleParser;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 
 /**
  * Contains response information with authenticated user data.
  */
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
 public class AuthenticationResponse {
 
   /**
