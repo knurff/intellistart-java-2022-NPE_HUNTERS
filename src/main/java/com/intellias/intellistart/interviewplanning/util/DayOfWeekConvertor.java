@@ -16,7 +16,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class DayOfWeekConvertor {
 
-
   /**
    * Returns DayOfWeek enum of {@code day}.
    *
