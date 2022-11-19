@@ -31,12 +31,25 @@ public class JwtUserDetailsService implements UserDetailsService {
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
     Optional<User> user = userRepository.getUserByEmail(username);
     Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
+    JwtUserDetails jwtUserDetails = new JwtUserDetails(username, passwordEncoder.encode(username),
+        grantedAuthorities);
 
     if (user.isPresent()) {
       grantedAuthorities.add(new SimpleGrantedAuthority(ROLE_PREFIX + user.get().getRole()));
+      jwtUserDetails.setId(user.get().getId());
     } else {
       grantedAuthorities.add(new SimpleGrantedAuthority(ROLE_CANDIDATE));
     }
-    return new JwtUserDetails(username, passwordEncoder.encode(username), grantedAuthorities);
+    return jwtUserDetails;
+  }
+
+  /**
+   * Retrieves full information about user.
+   */
+  public UserDetails loadFullUserInfo(String email, String firstName, String lastName) {
+    JwtUserDetails jwtUserDetails = (JwtUserDetails) loadUserByUsername(email);
+    jwtUserDetails.setFirstName(firstName);
+    jwtUserDetails.setLastName(lastName);
+    return jwtUserDetails;
   }
 }

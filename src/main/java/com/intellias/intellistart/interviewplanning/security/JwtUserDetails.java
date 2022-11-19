@@ -1,16 +1,27 @@
 package com.intellias.intellistart.interviewplanning.security;
 
 import java.util.Collection;
-import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * Custom implementation of {@link UserDetails}.
  */
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class JwtUserDetails implements UserDetails {
 
+  @Getter
+  @Setter
+  private Long id;
+  @Getter
+  @Setter
+  private String firstName;
+  @Getter
+  @Setter
+  private String lastName;
   private final String email;
   private final String password;
   private final Collection<? extends GrantedAuthority> authorities;

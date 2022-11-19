@@ -14,7 +14,8 @@ import org.springframework.web.client.RestTemplate;
 @AllArgsConstructor
 public class FacebookTokenParser {
 
-  private static final String URL = "https://graph.facebook.com/me/?fields=email&access_token=%s";
+  private static final String URL =
+      "https://graph.facebook.com/me/?fields=first_name,last_name,email&access_token=%s";
   private final RestTemplate restTemplate;
 
   /**

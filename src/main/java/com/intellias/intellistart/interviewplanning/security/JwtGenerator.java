@@ -1,5 +1,6 @@
 package com.intellias.intellistart.interviewplanning.security;
 
+import com.intellias.intellistart.interviewplanning.util.RoleParser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -23,7 +24,10 @@ public class JwtGenerator {
    */
   public String generateToken(JwtUserDetails jwtUserDetails) {
     Claims claims = Jwts.claims().setSubject(jwtUserDetails.getUsername());
-    claims.put("role", jwtUserDetails.getAuthorities().stream().findFirst().get().toString());
+    claims.put("id", jwtUserDetails.getId());
+    claims.put("first_name", jwtUserDetails.getFirstName());
+    claims.put("last_name", jwtUserDetails.getLastName());
+    claims.put("role", RoleParser.parse(jwtUserDetails));
 
     Date currentDate = new Date();
     Date expiresAt = new Date(currentDate.getTime() + tokenExpirationMillis);
@@ -31,5 +35,4 @@ public class JwtGenerator {
     return Jwts.builder().setClaims(claims).setIssuedAt(currentDate).setExpiration(expiresAt)
         .signWith(SignatureAlgorithm.HS512, secret).compact();
   }
-
 }
