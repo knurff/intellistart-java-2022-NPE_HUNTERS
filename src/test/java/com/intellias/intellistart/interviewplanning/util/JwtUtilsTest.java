@@ -25,6 +25,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 class JwtUtilsTest {
 
   private static final String TEST_EMAIL = "test@test.com";
+  private static final String TEST_FIRST_NAME = "First_Name";
   @Value("${jwt.token.secret}")
   private static String secret;
   private static MockHttpServletResponse httpServletResponse;
@@ -102,5 +103,11 @@ class JwtUtilsTest {
     String email = jwtUtils.getTokenSubject(jwtTokenFactory.generateTestToken());
 
     assertEquals(TEST_EMAIL, email);
+  }
+
+  @Test
+  void getTokenClaimsWorkingProperly() {
+    String firstName = jwtUtils.getTokenClaims(jwtTokenFactory.generateTestToken(), "first_name");
+    assertEquals(TEST_FIRST_NAME, firstName);
   }
 }
