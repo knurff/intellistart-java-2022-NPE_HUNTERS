@@ -1,20 +1,12 @@
 package com.intellias.intellistart.interviewplanning.controller.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 
 /**
  * FacebookResponse dto, contains user data fields from Facebook.
  */
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
+@Data
 public class FacebookResponseDto {
 
   private Long facebookId;
