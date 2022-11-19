@@ -2,8 +2,8 @@ package com.intellias.intellistart.interviewplanning.controller;
 
 import com.intellias.intellistart.interviewplanning.controller.dto.BookingDto;
 import com.intellias.intellistart.interviewplanning.controller.dto.DashboardDto;
-import com.intellias.intellistart.interviewplanning.controller.dto.InterviewerSlotDto;
 import com.intellias.intellistart.interviewplanning.controller.dto.EmailDto;
+import com.intellias.intellistart.interviewplanning.controller.dto.InterviewerSlotDto;
 import com.intellias.intellistart.interviewplanning.controller.dto.mapper.BookingMapper;
 import com.intellias.intellistart.interviewplanning.controller.dto.mapper.InterviewerSlotsMapper;
 import com.intellias.intellistart.interviewplanning.model.Booking;
