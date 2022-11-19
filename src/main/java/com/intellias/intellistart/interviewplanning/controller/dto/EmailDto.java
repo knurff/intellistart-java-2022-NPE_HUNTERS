@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * User dto.
+ * Email dto.
  */
 
 @AllArgsConstructor
