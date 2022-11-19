@@ -7,7 +7,6 @@ import com.intellias.intellistart.interviewplanning.security.FacebookTokenParser
 import com.intellias.intellistart.interviewplanning.security.JwtGenerator;
 import com.intellias.intellistart.interviewplanning.security.JwtUserDetails;
 import com.intellias.intellistart.interviewplanning.service.JwtUserDetailsService;
-import com.intellias.intellistart.interviewplanning.util.RoleParser;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -48,7 +47,6 @@ public class AuthenticationController {
         email, firstname, lastName);
     String accessToken = jwtGenerator.generateToken(jwtUserDetails);
 
-    return new AuthenticationResponse(jwtUserDetails.getId(), firstname, lastName, email,
-        RoleParser.parse(jwtUserDetails), accessToken);
+    return new AuthenticationResponse(jwtUserDetails, accessToken);
   }
 }
