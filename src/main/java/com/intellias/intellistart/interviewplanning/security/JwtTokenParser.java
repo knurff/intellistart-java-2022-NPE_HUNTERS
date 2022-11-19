@@ -16,8 +16,13 @@ public class JwtTokenParser {
   private final JwtUserDetailsService jwtService;
   private final JwtUtils jwtUtils;
 
+  /**
+   * Retrieves JwtUserDetails from token.
+   */
   public JwtUserDetails parseUserDetailsFromToken(String token) {
     String email = jwtUtils.getTokenSubject(token);
-    return (JwtUserDetails) jwtService.loadUserByUsername(email);
+    String firstName = jwtUtils.getTokenClaims(token, "first_name");
+    String lastName = jwtUtils.getTokenClaims(token, "last_name");
+    return (JwtUserDetails) jwtService.loadFullUserInfo(email, firstName, lastName);
   }
 }

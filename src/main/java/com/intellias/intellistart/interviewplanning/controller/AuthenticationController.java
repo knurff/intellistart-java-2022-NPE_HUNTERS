@@ -7,6 +7,7 @@ import com.intellias.intellistart.interviewplanning.security.FacebookTokenParser
 import com.intellias.intellistart.interviewplanning.security.JwtGenerator;
 import com.intellias.intellistart.interviewplanning.security.JwtUserDetails;
 import com.intellias.intellistart.interviewplanning.service.JwtUserDetailsService;
+import com.intellias.intellistart.interviewplanning.util.RoleParser;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,7 +31,7 @@ public class AuthenticationController {
    * Handles POST requests and performs login.
    *
    * @param facebookTokenDto dto, that contains facebook token.
-   * @return response with user email and jwt token.
+   * @return response with user data.
    */
   @PostMapping("/auth/login")
   public AuthenticationResponse login(@RequestBody FacebookTokenDto facebookTokenDto) {
@@ -40,11 +41,14 @@ public class AuthenticationController {
     String email = facebookResponseDto.getEmail();
     authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, email));
 
-    JwtUserDetails jwtUserDetails = (JwtUserDetails) jwtService.loadUserByUsername(
-        email);
+    String firstname = facebookResponseDto.getFirstName();
+    String lastName = facebookResponseDto.getLastName();
+
+    JwtUserDetails jwtUserDetails = (JwtUserDetails) jwtService.loadFullUserInfo(
+        email, firstname, lastName);
     String accessToken = jwtGenerator.generateToken(jwtUserDetails);
 
-    return new AuthenticationResponse(email,
-        accessToken);
+    return new AuthenticationResponse(jwtUserDetails.getId(), firstname, lastName, email,
+        RoleParser.parse(jwtUserDetails), accessToken);
   }
 }

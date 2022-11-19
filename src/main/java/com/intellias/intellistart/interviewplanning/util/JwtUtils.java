@@ -46,7 +46,18 @@ public class JwtUtils {
     return false;
   }
 
+  /**
+   * Retrieves subject from token.
+   */
   public String getTokenSubject(String token) {
     return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getSubject();
+  }
+
+  /**
+   * Retrieves claim from token by name.
+   */
+  public String getTokenClaims(String token, String claimName) {
+    return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody()
+        .get(claimName, String.class);
   }
 }
