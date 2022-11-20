@@ -63,7 +63,6 @@ class InterviewerServiceTest {
     localDateMock.close();
   }
 
-
   @Test
   void createSlotWorkingProperly() {
     InterviewerSlot interviewerSlot = InterviewerSlotFactory.createInterviewerSlot();
