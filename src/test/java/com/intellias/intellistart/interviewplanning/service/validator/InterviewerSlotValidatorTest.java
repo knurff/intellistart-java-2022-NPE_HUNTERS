@@ -96,9 +96,9 @@ class InterviewerSlotValidatorTest {
           Collections.emptyList(), slotId);
     } catch (Exception e) {
       fail("This method should not throw an exception on given input");
-    } finally {
-      localDateMock.clearInvocations();
     }
+
+    localDateMock.clearInvocations();
   }
 
   @Test
