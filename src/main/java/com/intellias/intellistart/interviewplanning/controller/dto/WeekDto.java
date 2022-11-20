@@ -1,4 +1,4 @@
-package com.intellias.intellistart.interviewplanning.controller.response;
+package com.intellias.intellistart.interviewplanning.controller.dto;
 
 import com.intellias.intellistart.interviewplanning.controller.UserController;
 import lombok.AllArgsConstructor;
@@ -11,6 +11,6 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public class GetWeekResponse {
+public class WeekDto {
   private final int weekNum;
 }

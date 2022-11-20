@@ -27,6 +27,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -56,6 +57,11 @@ class InterviewerServiceTest {
     localDateMock = mockStatic(LocalDate.class,
         Mockito.CALLS_REAL_METHODS);
 
+  }
+
+  @AfterAll
+  static void closeResources() {
+    localDateMock.close();
   }
 
   @Test
