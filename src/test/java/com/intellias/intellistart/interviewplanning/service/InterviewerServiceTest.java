@@ -8,6 +8,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
+import com.intellias.intellistart.interviewplanning.exception.IdentifierDoesNotBelongToUserException;
 import com.intellias.intellistart.interviewplanning.exception.InterviewerNotFoundException;
 import com.intellias.intellistart.interviewplanning.exception.InvalidDayForSlotCreationException;
 import com.intellias.intellistart.interviewplanning.exception.InvalidSlotDateException;
@@ -402,6 +403,19 @@ class InterviewerServiceTest {
   void getAllSlotsWithRelatedBookingIdsUsingWeekAndDay() {
     assertNotNull(interviewerService.getAllSlotsWithRelatedBookingIdsUsingWeekAndDay(3333,
         DayOfWeek.MONDAY));
+  }
+
+  @Test
+  void verifyThatIdBelongsToThisInterviewerThrowsAnExceptionIfIdDoesNotBelongToInterviewer() {
+    User interviewer = UserFactory.createInterviewer();
+    Long id = interviewer.getId();
+
+    when(userRepository.findById(id)).thenReturn(Optional.of(interviewer));
+
+    assertThrows(IdentifierDoesNotBelongToUserException.class,
+        () -> interviewerService.verifyThatIdBelongsToThisInterviewer(ANOTHER_EMAIL,
+            id));
+
   }
 
   @Test

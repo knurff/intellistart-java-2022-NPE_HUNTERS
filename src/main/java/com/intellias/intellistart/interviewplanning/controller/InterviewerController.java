@@ -3,6 +3,7 @@ package com.intellias.intellistart.interviewplanning.controller;
 import com.intellias.intellistart.interviewplanning.controller.dto.InterviewerSlotDto;
 import com.intellias.intellistart.interviewplanning.controller.dto.mapper.InterviewerSlotsMapper;
 import com.intellias.intellistart.interviewplanning.model.InterviewerSlot;
+import com.intellias.intellistart.interviewplanning.service.CoordinatorService;
 import com.intellias.intellistart.interviewplanning.service.InterviewerService;
 import com.intellias.intellistart.interviewplanning.util.RequestParser;
 import java.util.List;
@@ -11,7 +12,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,7 +24,9 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 public class InterviewerController {
 
+  private static final String ROLE_COORDINATOR = "ROLE_COORDINATOR";
   private final InterviewerService interviewerService;
+  private final CoordinatorService coordinatorService;
   private final InterviewerSlotsMapper interviewerSlotsMapper;
 
   /**
@@ -80,15 +82,19 @@ public class InterviewerController {
    * @param interviewerSlotDto InterviewerSlotDto
    * @return InterviewerSlotDto
    */
-  @PutMapping("/{interviewerId}/slots/{slotId}")
+  @PostMapping("/{interviewerId}/slots/{slotId}")
+  @RolesAllowed(value = {"ROLE_INTERVIEWER", "ROLE_COORDINATOR"})
   public InterviewerSlotDto editSlot(@PathVariable Long interviewerId, @PathVariable Long slotId,
       @RequestBody InterviewerSlotDto interviewerSlotDto) {
-    verifyThatIdBelongsToRequester(interviewerId);
-
-    InterviewerSlot responseEntity = interviewerService.editSlot(
-        interviewerSlotsMapper.mapToInterviewerSlotEntity(interviewerSlotDto), interviewerId,
-        slotId);
-
+    InterviewerSlot entity = interviewerSlotsMapper.mapToInterviewerSlotEntity(interviewerSlotDto);
+    InterviewerSlot responseEntity;
+    if (RequestParser.getUserRoleFromToken().equals(ROLE_COORDINATOR)) {
+      responseEntity = coordinatorService.editSlot(interviewerId, slotId, entity);
+    } else {
+      verifyThatIdBelongsToRequester(interviewerId);
+      responseEntity = interviewerService.editSlot(entity, interviewerId,
+          slotId);
+    }
     return interviewerSlotsMapper.mapToInterviewerSlotsDto(responseEntity);
   }
 
