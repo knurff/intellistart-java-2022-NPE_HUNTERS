@@ -16,7 +16,12 @@ import com.intellias.intellistart.interviewplanning.exception.InvalidBookingDura
 import com.intellias.intellistart.interviewplanning.exception.InvalidTimePeriodBoundaries;
 import com.intellias.intellistart.interviewplanning.exception.SlotDatesAreNotEqualException;
 import com.intellias.intellistart.interviewplanning.exception.SlotNotFoundException;
-import com.intellias.intellistart.interviewplanning.model.*;
+import com.intellias.intellistart.interviewplanning.model.Booking;
+import com.intellias.intellistart.interviewplanning.model.CandidateSlot;
+import com.intellias.intellistart.interviewplanning.model.InterviewerSlot;
+import com.intellias.intellistart.interviewplanning.model.TimePeriod;
+import com.intellias.intellistart.interviewplanning.model.User;
+import com.intellias.intellistart.interviewplanning.model.WeekBooking;
 import com.intellias.intellistart.interviewplanning.model.role.UserRole;
 import com.intellias.intellistart.interviewplanning.repository.BookingRepository;
 import com.intellias.intellistart.interviewplanning.repository.CandidateSlotRepository;
@@ -25,8 +30,7 @@ import com.intellias.intellistart.interviewplanning.repository.UserRepository;
 import com.intellias.intellistart.interviewplanning.service.factory.BookingFactory;
 import com.intellias.intellistart.interviewplanning.service.factory.CandidateSlotFactory;
 import com.intellias.intellistart.interviewplanning.service.factory.InterviewerSlotFactory;
-
-import java.time.DayOfWeek;
+import com.intellias.intellistart.interviewplanning.util.DateUtils;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashMap;
@@ -35,8 +39,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-
-import com.intellias.intellistart.interviewplanning.util.DateUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -275,12 +277,11 @@ class BookingServiceTest {
     Long bookingId = 3536405697L;
     Long nonexistentSlotId = -1L;
 
-    assertThrows(SlotNotFoundException.class, () -> {
-        bookingService.updateBooking(
-            updatedBooking,
-            bookingId,
-            nonexistentSlotId,
-            nonexistentSlotId);}
+    assertThrows(SlotNotFoundException.class, () -> bookingService.updateBooking(
+        updatedBooking,
+        bookingId,
+        nonexistentSlotId,
+        nonexistentSlotId)
     );
   }
 
