@@ -16,7 +16,12 @@ import com.intellias.intellistart.interviewplanning.exception.InvalidBookingDura
 import com.intellias.intellistart.interviewplanning.exception.InvalidTimePeriodBoundaries;
 import com.intellias.intellistart.interviewplanning.exception.SlotDatesAreNotEqualException;
 import com.intellias.intellistart.interviewplanning.exception.SlotNotFoundException;
-import com.intellias.intellistart.interviewplanning.model.*;
+import com.intellias.intellistart.interviewplanning.model.Booking;
+import com.intellias.intellistart.interviewplanning.model.CandidateSlot;
+import com.intellias.intellistart.interviewplanning.model.InterviewerSlot;
+import com.intellias.intellistart.interviewplanning.model.TimePeriod;
+import com.intellias.intellistart.interviewplanning.model.User;
+import com.intellias.intellistart.interviewplanning.model.WeekBooking;
 import com.intellias.intellistart.interviewplanning.model.role.UserRole;
 import com.intellias.intellistart.interviewplanning.repository.BookingRepository;
 import com.intellias.intellistart.interviewplanning.repository.CandidateSlotRepository;
@@ -25,8 +30,7 @@ import com.intellias.intellistart.interviewplanning.repository.UserRepository;
 import com.intellias.intellistart.interviewplanning.service.factory.BookingFactory;
 import com.intellias.intellistart.interviewplanning.service.factory.CandidateSlotFactory;
 import com.intellias.intellistart.interviewplanning.service.factory.InterviewerSlotFactory;
-
-import java.time.DayOfWeek;
+import com.intellias.intellistart.interviewplanning.util.DateUtils;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashMap;
@@ -35,8 +39,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-
-import com.intellias.intellistart.interviewplanning.util.DateUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -266,7 +268,7 @@ class BookingServiceTest {
     createSlotsAndConfigureMockBehaviorForUpdateBooking(1);
     when(bookingRepository.save(booking)).thenReturn(booking);
 
-    assertNotNull(bookingService.updateBooking(booking, 1L,1L, 1L));
+    assertNotNull(bookingService.updateBooking(booking, 1L, 1L, 1L));
   }
 
   @Test
@@ -275,12 +277,11 @@ class BookingServiceTest {
     Long bookingId = 3536405697L;
     Long nonexistentSlotId = -1L;
 
-    assertThrows(SlotNotFoundException.class, () -> {
-        bookingService.updateBooking(
-            updatedBooking,
-            bookingId,
-            nonexistentSlotId,
-            nonexistentSlotId);}
+    assertThrows(SlotNotFoundException.class, () -> bookingService.updateBooking(
+        updatedBooking,
+        bookingId,
+        nonexistentSlotId,
+        nonexistentSlotId)
     );
   }
 
@@ -327,36 +328,36 @@ class BookingServiceTest {
     when(candidateSlotRepository.findById(anyLong())).thenReturn(Optional.of(candidateSlot));
 
     assertThrows(SlotDatesAreNotEqualException.class, () ->
-            bookingService.updateBooking(booking, 1L, 1L, 1L));
+        bookingService.updateBooking(booking, 1L, 1L, 1L));
   }
 
   @Test
   void updateBookingThrowsAnExceptionIfPeriodIsNotInBoundariesOfSlotPeriod() {
     CandidateSlot candidateSlot = CandidateSlot
-            .builder()
-            .date(LocalDate.now())
-            .email("test@test.com")
-            .period(new TimePeriod(LocalTime.of(13,0), LocalTime.of(14,0)))
-            .build();
+        .builder()
+        .date(LocalDate.now())
+        .email("test@test.com")
+        .period(new TimePeriod(LocalTime.of(13, 0), LocalTime.of(14, 0)))
+        .build();
     InterviewerSlot interviewerSlot = InterviewerSlot
-            .builder()
-            .dayOfWeek(LocalDate.now().getDayOfWeek())
-            .week(DateUtils.getCurrentWeek())
-            .period(new TimePeriod(LocalTime.of(13,0), LocalTime.of(14,0)))
-            .build();
+        .builder()
+        .dayOfWeek(LocalDate.now().getDayOfWeek())
+        .week(DateUtils.getCurrentWeek())
+        .period(new TimePeriod(LocalTime.of(13, 0), LocalTime.of(14, 0)))
+        .build();
 
     Booking booking = Booking
-            .builder()
-            .interviewerSlot(interviewerSlot)
-            .candidateSlot(candidateSlot)
-            .period(new TimePeriod(LocalTime.of(13,0), LocalTime.of(15,0)))
-            .build();
+        .builder()
+        .interviewerSlot(interviewerSlot)
+        .candidateSlot(candidateSlot)
+        .period(new TimePeriod(LocalTime.of(13, 0), LocalTime.of(15, 0)))
+        .build();
 
     when(interviewerSlotRepository.findById(anyLong())).thenReturn(Optional.of(interviewerSlot));
     when(candidateSlotRepository.findById(anyLong())).thenReturn(Optional.of(candidateSlot));
 
     assertThrows(InvalidTimePeriodBoundaries.class, () ->
-            bookingService.updateBooking(booking, 1L, 1L, 1L));
+        bookingService.updateBooking(booking, 1L, 1L, 1L));
   }
 
   @Test
@@ -364,20 +365,21 @@ class BookingServiceTest {
     CandidateSlot candidateSlot = mock(CandidateSlot.class);
     InterviewerSlot interviewerSlot = mock(InterviewerSlot.class);
 
-    TimePeriod timePeriod = new TimePeriod(LocalTime.now(), LocalTime.now().plusHours(1));
+    TimePeriod timePeriod = new TimePeriod(LocalTime.now().plusHours(1),
+        LocalTime.now().plusHours(3));
 
     Booking booking = Booking.builder()
-            .candidateSlot(candidateSlot)
-            .interviewerSlot(interviewerSlot)
-            .period(timePeriod)
-            .build();
+        .candidateSlot(candidateSlot)
+        .interviewerSlot(interviewerSlot)
+        .period(timePeriod)
+        .build();
 
     Set<Booking> bookings = Set.of(Booking
-            .builder()
-            .interviewerSlot(interviewerSlot)
-            .candidateSlot(candidateSlot)
-            .period(timePeriod)
-            .build());
+        .builder()
+        .interviewerSlot(interviewerSlot)
+        .candidateSlot(candidateSlot)
+        .period(timePeriod)
+        .build());
 
     LocalDate localDate = LocalDate.now();
 
@@ -393,7 +395,7 @@ class BookingServiceTest {
     when(interviewerSlotRepository.findById(anyLong())).thenReturn(Optional.of(interviewerSlot));
 
     assertThrows(BookingIsOverlappingException.class, () ->
-            bookingService.updateBooking(booking, 1L, 1L, 1L));
+        bookingService.updateBooking(booking, 1L, 1L, 1L));
   }
 
   private void createSlotsAndConfigureMockBehaviorForCreateBooking(int bookingLimit) {
@@ -415,7 +417,7 @@ class BookingServiceTest {
       bookingLimit) {
     User user = new User();
     user.setRole(UserRole.INTERVIEWER);
-    user.setMaxBookingsPerWeek(new WeekBooking(bookingLimit,0));
+    user.setMaxBookingsPerWeek(new WeekBooking(bookingLimit, 0));
     user.setId(1L);
     interviewerSlot.setInterviewer(user);
 
