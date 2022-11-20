@@ -2,12 +2,9 @@ package com.intellias.intellistart.interviewplanning.controller;
 
 import com.intellias.intellistart.interviewplanning.controller.dto.BookingDto;
 import com.intellias.intellistart.interviewplanning.controller.dto.DashboardDto;
-import com.intellias.intellistart.interviewplanning.controller.dto.InterviewerSlotDto;
-import com.intellias.intellistart.interviewplanning.controller.dto.UserDto;
+import com.intellias.intellistart.interviewplanning.controller.dto.EmailDto;
 import com.intellias.intellistart.interviewplanning.controller.dto.mapper.BookingMapper;
-import com.intellias.intellistart.interviewplanning.controller.dto.mapper.InterviewerSlotsMapper;
 import com.intellias.intellistart.interviewplanning.model.Booking;
-import com.intellias.intellistart.interviewplanning.model.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.model.User;
 import com.intellias.intellistart.interviewplanning.model.role.UserRole;
 import com.intellias.intellistart.interviewplanning.service.BookingService;
@@ -34,7 +31,6 @@ public class CoordinatorController {
 
   private final CoordinatorService coordinatorService;
   private final BookingService bookingService;
-  private final InterviewerSlotsMapper interviewerSlotsMapper;
   private final BookingMapper bookingMapper;
 
   @GetMapping("/users/interviewers")
@@ -50,23 +46,6 @@ public class CoordinatorController {
   @GetMapping("/weeks/{weekId}/dashboard")
   public DashboardDto getDashboardForWeek(@PathVariable int weekId) {
     return coordinatorService.getDashboardForWeek(weekId);
-  }
-
-  /**
-   * Returns InterviewerSlotDto relative to {@code slot}.
-   *
-   * @param interviewerId slot owner interviewerId
-   * @param slotId        id of interviewer slot
-   * @param slot          new interviewerSlot
-   * @return interviewerSlotDto as updated slot
-   */
-  @PostMapping("/interviewers/{interviewerId}/slots/{slotId}")
-  public InterviewerSlotDto editSlot(@PathVariable Long interviewerId, @PathVariable Long slotId,
-      @RequestBody InterviewerSlotDto slot) {
-    InterviewerSlot entity = interviewerSlotsMapper.mapToInterviewerSlotEntity(slot);
-
-    InterviewerSlot responseEntity = coordinatorService.editSlot(interviewerId, slotId, entity);
-    return interviewerSlotsMapper.mapToInterviewerSlotsDto(responseEntity);
   }
 
   /**
@@ -114,14 +93,14 @@ public class CoordinatorController {
 
   @PostMapping("/users/coordinators")
   @ResponseStatus(HttpStatus.CREATED)
-  public void grantCoordinatorRole(@RequestBody UserDto userDto) {
-    coordinatorService.grantRoleForUser(userDto.getEmail(), UserRole.COORDINATOR);
+  public void grantCoordinatorRole(@RequestBody EmailDto emailDto) {
+    coordinatorService.grantRoleForUser(emailDto.getEmail(), UserRole.COORDINATOR);
   }
 
   @PostMapping("/users/interviewers")
   @ResponseStatus(HttpStatus.CREATED)
-  public void grantInterviewerRole(@RequestBody UserDto userDto) {
-    coordinatorService.grantRoleForUser(userDto.getEmail(), UserRole.INTERVIEWER);
+  public void grantInterviewerRole(@RequestBody EmailDto emailDto) {
+    coordinatorService.grantRoleForUser(emailDto.getEmail(), UserRole.INTERVIEWER);
   }
 
   @DeleteMapping("/users/coordinators/{id}")
@@ -136,4 +115,3 @@ public class CoordinatorController {
     coordinatorService.revokeRoleFromUser(id, UserRole.INTERVIEWER);
   }
 }
-
