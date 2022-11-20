@@ -1,17 +1,37 @@
 package com.intellias.intellistart.interviewplanning.service.validator;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mockStatic;
 
+import com.intellias.intellistart.interviewplanning.exception.InvalidDayForSlotCreationException;
 import com.intellias.intellistart.interviewplanning.exception.InvalidSlotDateException;
 import com.intellias.intellistart.interviewplanning.model.InterviewerSlot;
 import com.intellias.intellistart.interviewplanning.service.factory.InterviewerSlotFactory;
 import com.intellias.intellistart.interviewplanning.util.DateUtils;
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Collections;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 class InterviewerSlotValidatorTest {
+  
+  private static MockedStatic<LocalDate> localDateMock;
+  
+  @BeforeAll
+  static void setUp() {
+    localDateMock = mockStatic(LocalDate.class,
+        Mockito.CALLS_REAL_METHODS);
+  }
+
+  @AfterAll
+  static void closeResources() {
+    localDateMock.close();
+  }
 
   @Test
   void validateSlotForNextWeekThrowsAnExceptionIfDateIsNotOnTheNextWeek() {
@@ -33,8 +53,37 @@ class InterviewerSlotValidatorTest {
   }
 
   @Test
+  void validateSlotForNextWeekThrowsAnExceptionIfSlotWasCreatedAfterFriday() {
+    Long slotId = 1L;
+    LocalDate todayDate = LocalDate.of(2022, 11, 19);
+
+    localDateMock.when(LocalDate::now).thenReturn(todayDate);
+
+    InterviewerSlot slot = InterviewerSlotFactory.createSlotByDateAndTimePeriod(
+        DateUtils.getNextWeek(),
+        DayOfWeek.MONDAY,
+        LocalTime.of(10, 0),
+        LocalTime.of(11, 30)
+    );
+
+    String expectedMessage =
+        "Interviewer slot can be created only until end of Friday of current week";
+
+    Exception e = assertThrows(InvalidDayForSlotCreationException.class,
+        () -> InterviewerSlotValidator.validateSlotForNextWeek(slot,
+            Collections.emptyList(), slotId));
+
+    assertEquals(expectedMessage, e.getMessage());
+    localDateMock.clearInvocations();
+  }
+
+  @Test
   void validateSlotForNextWeekWorksProperly() {
     Long slotId = 1L;
+    LocalDate todayDate = LocalDate.of(2022, 11, 18);
+
+    localDateMock.when(LocalDate::now).thenReturn(todayDate);
+
     InterviewerSlot slot = InterviewerSlotFactory.createSlotByDateAndTimePeriod(
         DateUtils.getNextWeek(),
         DayOfWeek.MONDAY,
@@ -48,6 +97,8 @@ class InterviewerSlotValidatorTest {
     } catch (Exception e) {
       fail("This method should not throw an exception on given input");
     }
+
+    localDateMock.clearInvocations();
   }
 
   @Test
