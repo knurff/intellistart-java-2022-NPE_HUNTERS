@@ -37,38 +37,46 @@ create table users (
         primary key (id)
     );
 
-insert into users(id,email,role) values(1, 'test_coordinator@test.com','COORDINATOR');
-insert into users values(2, 'test_interviewer@test.com',6,7,'INTERVIEWER');
-insert into users values(3 ,'user2@gmail.com',5,8,'INTERVIEWER');
+insert into users(id,email,role) values(3, 'test_coordinator@test.com','COORDINATOR');
+insert into users values(4, 'test_interviewer@test.com',6,7,'INTERVIEWER');
+insert into users values(5 ,'user2@gmail.com',5,8,'INTERVIEWER');
+insert into users(id,email) values(6 ,'test_user@gmail.com');
+insert into users(id,email,role) values(7, 'coordinator@test.com','COORDINATOR');
+insert into users values(8 ,'user3@gmail.com',5,8,'INTERVIEWER');
+insert into users(id,email) values(9 ,'test2_user@gmail.com');
 
-insert into interviewer_slots values(1,'MONDAY','11:30','9:00', 43,2);
-insert into interviewer_slots values(2,'TUESDAY','18:00','14:30', 43,2);
-insert into interviewer_slots values(3,'THURSDAY','19:30','10:30', 44,2);
-insert into interviewer_slots values(4,'MONDAY','15:00','8:00', 44,2);
+insert into interviewer_slots values(2,'MONDAY','11:30','9:00', 43,4);
+insert into interviewer_slots values(3,'TUESDAY','18:00','14:30', 43,4);
+insert into interviewer_slots values(4,'THURSDAY','19:30','10:30', 44,4);
+insert into interviewer_slots values(5,'MONDAY','15:00','8:00', 44,4);
 
-insert into interviewer_slots values(5,'TUESDAY','16:30','11:00',43,3);
-insert into interviewer_slots values(6,'FRIDAY','17:30','14:30', 43,3);
-insert into interviewer_slots values(7,'WEDNESDAY','19:30','16:30',44,3);
-insert into interviewer_slots values(8,'WEDNESDAY','15:00','8:00',44,3);
-
-
-insert into candidate_slots values(1,'2022-10-20','candidate3@gmail.com','11:30','9:00');
-insert into candidate_slots values(2,'2022-10-18','candidate1@gmail.com','13:00','10:00');
-insert into candidate_slots values(3,'2022-10-19','candidate2@gmail.com','20:00','16:30');
-insert into candidate_slots values(4,'2022-10-21','candidate4@gmail.com','17:00','15:00');
-
-insert into candidate_slots values(5,'2022-10-24','candidate5@gmail.com','19:00','11:30');
-insert into candidate_slots values(6,'2022-10-26','candidate6@gmail.com','17:30','14:30');
-insert into candidate_slots values(7,'2022-10-27','candidate7@gmail.com','12:00','9:30');
-insert into candidate_slots values(8,'2022-10-27','candidate8@gmail.com','16:00','13:00');
-insert into candidate_slots values(9,'2022-10-27','candidate9@gmail.com','18:00','15:30');
-insert into candidate_slots values(10,'2022-10-28','candidate10@gmail.com','12:00','9:00');
+insert into interviewer_slots values(6,'TUESDAY','16:30','11:00',43,5);
+insert into interviewer_slots values(7,'FRIDAY','17:30','14:30', 43,5);
+insert into interviewer_slots values(8,'WEDNESDAY','19:30','16:30',44,5);
+insert into interviewer_slots values(9,'WEDNESDAY','15:00','8:00',44,5);
+insert into interviewer_slots values(10,'THURSDAY','19:30','10:30', 47,4);
 
 
-insert into bookings values (1,'Test booking 1 - Interviewer 2, candidate 1','13:00','11:30','Interview Booking 1',2,5);
-insert into bookings values (2,'Test booking 2 - Interviewer 1, candidate 2','18:00','16:30','Interview Booking 2',3,2);
-insert into bookings values (3,'Test booking 3 - Interviewer 2, candidate 4','16:30','15:00','Interview Booking 3',4,6);
-insert into bookings values (4,'Test booking 4 - Interviewer 1, candidate 5','15:00','13:30','Interview Booking 4',5,4);
+insert into candidate_slots values(2,'2022-10-20','candidate3@gmail.com','11:30','9:00');
+insert into candidate_slots values(3,'2022-10-18','candidate1@gmail.com','13:00','10:00');
+insert into candidate_slots values(4,'2022-10-19','candidate2@gmail.com','20:00','16:30');
+insert into candidate_slots values(5,'2022-10-21','candidate4@gmail.com','17:00','15:00');
 
-insert into bookings values (5,'Test booking 5 - Interviewer 1, candidate 8','16:00','14:30','Interview Booking 5',8,3);
-insert into bookings values (6,'Test booking 6 - Interviewer 1, candidate 9','17:30','16:00','Interview Booking 6',9,3);
+insert into candidate_slots values(6,'2022-10-24','candidate5@gmail.com','19:00','11:30');
+insert into candidate_slots values(7,'2022-10-26','candidate6@gmail.com','17:30','14:30');
+insert into candidate_slots values(8,'2022-10-27','candidate7@gmail.com','12:00','9:30');
+insert into candidate_slots values(9,'2022-10-27','candidate8@gmail.com','16:00','13:00');
+insert into candidate_slots values(10,'2022-10-27','candidate9@gmail.com','18:00','15:30');
+insert into candidate_slots values(11,'2022-10-28','candidate10@gmail.com','12:00','9:00');
+insert into candidate_slots values(12,'2022-11-24','test_candidate@test.com','18:30','9:00');
+insert into candidate_slots values(13,'2022-10-27','candidate9@gmail.com','14:00','11:30');
+insert into candidate_slots values(14,'2022-11-25','test_candidate@test.com','14:30','9:00');
+
+
+insert into bookings values (2,'Test booking 1 - Interviewer 2, candidate 1','13:00','11:30','Interview Booking 1',3,6);
+insert into bookings values (3,'Test booking 2 - Interviewer 1, candidate 2','18:00','16:30','Interview Booking 2',4,3);
+insert into bookings values (4,'Test booking 3 - Interviewer 2, candidate 4','16:30','15:00','Interview Booking 3',5,7);
+insert into bookings values (5,'Test booking 4 - Interviewer 1, candidate 5','15:00','13:30','Interview Booking 4',6,5);
+
+insert into bookings values (6,'Test booking 5 - Interviewer 1, candidate 8','16:00','14:30','Interview Booking 5',9,4);
+insert into bookings values (7,'Test booking 6 - Interviewer 1, candidate 9','17:30','16:00','Interview Booking 6',10,4);

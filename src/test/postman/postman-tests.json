@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "6af90aa5-008f-4271-9ddc-11419e21a4ac",
+		"_postman_id": "e5506ce5-5deb-45a2-8b62-45a6d9e96f55",
 		"name": "Interview Planning App Collection",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "20934733"
+		"_exporter_id": "20787768"
 	},
 	"item": [
 		{
@@ -140,42 +140,6 @@
 					"response": []
 				},
 				{
-					"name": "Get all interviewer slots",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"response must be valid and have a body\", function () {\r",
-									"     pm.response.to.be.ok;\r",
-									"     pm.response.to.be.withBody;\r",
-									"     pm.response.to.be.json;\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:8080/interviewers/2/slots",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"interviewers",
-								"2",
-								"slots"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Get all interviewers",
 					"event": [
 						{
@@ -218,7 +182,7 @@
 							"script": {
 								"exec": [
 									"pm.test(\"response must be valid and have a body\", function () {\r",
-									"     pm.response.to.be.ok;\r",
+									"     pm.response.to.be.success;\r",
 									"     pm.response.to.be.withBody;\r",
 									"     pm.response.to.be.json;\r",
 									"});"
@@ -232,7 +196,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"interviewerSlotId\" : 3,\r\n    \"candidateSlotId\" : 10 ,\r\n    \"from\" : \"13:30\",\r\n    \"to\" : \"15:00\",\r\n     \"subject\" : \"Test subject\",\r\n    \"description\" : \"Test description\"\r\n}",
+							"raw": "{\r\n    \"interviewerSlotId\" : 10,\r\n    \"candidateSlotId\" : 12,\r\n    \"from\" : \"11:30\",\r\n    \"to\" : \"13:00\",\r\n     \"subject\" : \"Test subject\",\r\n    \"description\" : \"Test description\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -261,7 +225,7 @@
 							"script": {
 								"exec": [
 									"pm.test(\"response must be valid\", function () {\r",
-									"     pm.response.to.be.ok;\r",
+									"     pm.response.to.have.status(204);\r",
 									"});"
 								],
 								"type": "text/javascript"
@@ -272,6 +236,50 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
+							"raw": "http://localhost:8080/bookings/7",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"bookings",
+								"7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update booking",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response must be valid and have a body\", function () {\r",
+									"     pm.response.to.be.success;\r",
+									"     pm.response.to.be.withBody;\r",
+									"     pm.response.to.be.json;\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"interviewerSlotId\" : 10,\r\n    \"candidateSlotId\" : 12,\r\n    \"from\" : \"16:30\",\r\n    \"to\" : \"18:00\",\r\n     \"subject\" : \"Test subject\",\r\n    \"description\" : \"Test description\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
 							"raw": "http://localhost:8080/bookings/6",
 							"protocol": "http",
 							"host": [
@@ -281,6 +289,158 @@
 							"path": [
 								"bookings",
 								"6"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User to Interviewer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response must be valid and have a body\", function () {\r",
+									"     pm.response.to.be.success;\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\" : \"test41_user@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/users/interviewers",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								"interviewers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Interviewer delete",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response must be valid\", function () {\r",
+									"     pm.response.to.have.status(204);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/users/interviewers/8",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								"interviewers",
+								"8"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User to Coordinator",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response must be valid and have a body\", function () {\r",
+									"     pm.response.to.be.success;\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\" : \"test31_user@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/users/coordinators",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								"coordinators"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Coordinator delete",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response must be valid\", function () {\r",
+									"     pm.response.to.have.status(204);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/users/coordinators/7",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								"coordinators",
+								"7"
 							]
 						}
 					},
@@ -435,7 +595,7 @@
 							"script": {
 								"exec": [
 									"pm.test(\"response must be valid and have a body\", function () {\r",
-									"     pm.response.to.be.ok;\r",
+									"     pm.response.to.be.success;\r",
 									"     pm.response.to.be.withBody;\r",
 									"     pm.response.to.be.json;\r",
 									"});"
@@ -449,7 +609,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{ \r\n    \"date\" : \"2022-12-13\",\r\n    \"from\" : \"10:00\",\r\n    \"to\" : \"15:00\"\r\n    }",
+							"raw": "{\r\n    \"date\" : \"2022-12-13\",\r\n    \"from\" : \"10:00\",\r\n    \"to\" : \"15:00\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -494,7 +654,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{ \r\n\"date\" : \"2022-12-14\",\r\n\"from\" : \"10:00\",\r\n\"to\" : \"15:00\"\r\n}",
+							"raw": "{ \r\n\"date\" : \"2022-11-25\",\r\n\"from\" : \"10:00\",\r\n\"to\" : \"15:00\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -502,7 +662,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/candidates/current/slots/1",
+							"raw": "http://localhost:8080/candidates/current/slots/14",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -512,7 +672,41 @@
 								"candidates",
 								"current",
 								"slots",
-								"1"
+								"14"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get me",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response must be valid and have a body\", function () {\r",
+									"     pm.response.to.be.ok;\r",
+									"     pm.response.to.be.withBody;\r",
+									"     pm.response.to.be.json;\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/me",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"me"
 							]
 						}
 					},
@@ -549,22 +743,212 @@
 					}
 				}
 			]
+		},
+		{
+			"name": "Interviewer",
+			"item": [
+				{
+					"name": "Create interviewer slot",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response must be valid and have a body\", function () {\r",
+									"     pm.response.to.be.success;\r",
+									"     pm.response.to.be.withBody;\r",
+									"     pm.response.to.be.json;\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\r\n        \"weekNum\": 48,\r\n        \"dayOfWeek\": \"Wednesday\",\r\n        \"from\": \"09:00\",\r\n        \"to\": \"11:30\"\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/interviewers/4/slots",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"interviewers",
+								"4",
+								"slots"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all interviewer slots",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response must be valid and have a body\", function () {\r",
+									"     pm.response.to.be.ok;\r",
+									"     pm.response.to.be.withBody;\r",
+									"     pm.response.to.be.json;\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/interviewers/4/slots",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"interviewers",
+								"4",
+								"slots"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit slot",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response must be valid and have a body\", function () {\r",
+									"     pm.response.to.be.success;\r",
+									"     pm.response.to.be.withBody;\r",
+									"     pm.response.to.be.json;\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\r\n        \"weekNum\": 48,\r\n        \"dayOfWeek\": \"Thursday\",\r\n        \"from\": \"08:00\",\r\n        \"to\": \"11:30\"\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/interviewers/4/slots/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"interviewers",
+								"4",
+								"slots",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Set max bookings",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response must be valid\", function () {\r",
+									"     pm.response.to.be.success;\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/interviewers/4/bookings?maxBooking=5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"interviewers",
+								"4",
+								"bookings"
+							],
+							"query": [
+								{
+									"key": "maxBooking",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{InterviewerToken}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
 		}
 	],
 	"auth": {
-		"type": "basic",
-		"basic": [
-			{
-				"key": "password",
-				"value": "0897eaae-da6a-4c01-a76d-f21a101e5c4b",
-				"type": "string"
-			},
-			{
-				"key": "username",
-				"value": "user",
-				"type": "string"
-			}
-		]
+		"type": "bearer"
 	},
 	"event": [
 		{
