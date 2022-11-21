@@ -6,12 +6,12 @@ import com.intellias.intellistart.interviewplanning.model.InterviewerSlot;
 import java.util.Map;
 import java.util.Set;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 
 /**
  * A dto representing all bookings, coordinator and candidate slots for a particular day.
  */
-@Data
+@Getter
 @AllArgsConstructor
 public class DashboardDayDto {
   private final Map<InterviewerSlot, Set<Long>> bookingIdsByInterviewerSlot;

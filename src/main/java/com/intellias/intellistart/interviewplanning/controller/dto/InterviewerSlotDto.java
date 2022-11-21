@@ -7,16 +7,14 @@ import java.time.LocalTime;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
 /**
  * InterviewerSlot dto.
  */
-@Data
+@Getter
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
 public class InterviewerSlotDto {
 
   @JsonInclude(value = Include.NON_NULL)

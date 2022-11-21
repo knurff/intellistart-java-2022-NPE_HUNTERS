@@ -4,13 +4,15 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.time.LocalTime;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 
 /**
  * Booking dto.
  */
-@Data
+@Getter
+@AllArgsConstructor
 @Builder
 public class BookingDto {
 
