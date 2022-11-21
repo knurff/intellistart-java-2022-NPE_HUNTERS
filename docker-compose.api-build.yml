@@ -10,7 +10,6 @@ services:
       - SPRING_DATASOURCE_USERNAME=localdb
       - SPRING_DATASOURCE_PASSWORD=localdb
       - JWT_TOKEN_SECRET="${JWT_SECRET}"
-      - JWT_TOKEN_EXPIRATION_MILLIS=2592000000
     ports:
       - '8080:8080'
     depends_on:
