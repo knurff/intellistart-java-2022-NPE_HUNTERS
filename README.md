@@ -53,6 +53,7 @@ The application supports the following functionality:
 
 Setup a project in docker:
 In order to create a project image run:
+
 `docker build -t "NAME:Dockerfile"`
 
 The project perform two dockerfiles:
@@ -60,7 +61,8 @@ The project perform two dockerfiles:
 - `Dockerfile.db` - file to create an image of database based on PostgreSQL and filled with start sql datta 
 
 In order to run an application with docker compose, run the following:
-`docker-compose -f docker-compose.custom.yml up`
+
+`docker-compose -f docker-compose.yml up`
 
 The project perform three docker compose files:
 - `docker-compose.db-only` - docker compose for postgres db with test data
