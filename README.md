@@ -1,5 +1,5 @@
 # Interview Planning Application
-## NPE-Hunders team
+## NPE-Hunters team
 
 ### Overview
 * [About the project](#about-the-project)
@@ -8,63 +8,70 @@
 
 ### About the project
 
-The interview planning application is a RESTful service that performs communication and interview scheduling for interviewers and candidates via coordinators.
+The interview planning application is a RESTful service that provides communication and interview scheduling capabilities for interviewers and candidates via coordinators.
 
 The application supports the following functionality:
-- Create slots for Interviewer.
-- Create slots for  Candidate
+- Create slots for Interviewer
+- Create slots for Candidate
 - Create bookings for Interviewer and Candidate slots as Coordinator
 
+Clarification on terms used:
+- Guest is an authenticated person
+- User is a person who completed the authentication process
+- Candidate is a user without any auth role
+- Interviewer is a user with an auth role of INTERVIEWER
+- Coordinator is a user with an auth role of COORDINATOR
+
 ### API
-### All users
+### User
 - `GET /me` - return user info
+- `GET /weeks/next` - get next week number
+- `GET /weeks/current` - get current week number
 - `POST /auth/login` - authentication
 
-#### Guest (no authenticated user)
-- `GET /weeks/current` - get current week number
-- `GET /weeks/next` - get next week number
-- `POST /auth/login` - authentification
+#### Guest
+- `POST /auth/login` - authentication
 
-#### Interviewer (user with auth role: INTERVIEWER)
+#### Interviewer
 - `POST /interviewers/<interviewerId>/slots` - create interviewer slot
 - `POST /interviewers/<interviewerId>/slots/{slotId}` - update interviewer slot
-- `GET /interviewers/<interviewerId>/slots` - get all interviewer slot
-- `POST /interviewers/<interviewerId>/bookings` - set maximum booking quantity to next week
+- `GET /interviewers/<interviewerId>/slots` - get all interviewer slots
+- `POST /interviewers/<interviewerId>/bookings` - set the maximum booking quantity for the next week
 
-#### Candidate (user without auth role)
-- `POST /candidates/current/slots` - create candidate slot
-- `POST /candidates/current/slots/{slotId}` - update candidate slot
+#### Candidate
+- `POST /candidates/current/slots` - create a candidate slot
+- `POST /candidates/current/slots/{slotId}` - update a candidate slot
 - `GET /candidates/current/slots` - get all candidate slots
 
-#### Coordinator (user with auth role: COORDINATOR)
+#### Coordinator
 - `GET /weeks/{weekId}/dashboard` - get all interviewer and candidate slots
-- `POST /interviewers/{interviewerId}/slots/{slotId}` - update interviewer slot
-- `POST /bookings` - create booking
-- `POST /bookings/{bookingId}` - update booking
-- `DELETE /bookings/{bookingId}` - delete booking
-- `POST /users/interviewers` - grand Interviewer role
-- `GET /users/interviewers` - get list of interviewers 
-- `DELETE /users/interviewers/<interviewer-id>` - revoke interviewer role
-- `POST /users/coordinators` - grand Coordinator role
-- `GET /users/coordinators` - get list of coordinators
+- `POST /interviewers/{interviewerId}/slots/{slotId}` - update an interviewer slot
+- `POST /bookings` - create a booking
+- `POST /bookings/{bookingId}` - update a booking
+- `DELETE /bookings/{bookingId}` - delete a booking
+- `POST /users/interviewers` - grant Interviewer role to a user
+- `DELETE /users/interviewers/<interviewer-id>` - revoke Interviewer role from a user
+- `GET /users/interviewers` - get list of all interviewers 
+- `POST /users/coordinators` - grant Coordinator role to a user
 - `DELETE /users/coordinators/<coordinator-id>` - revoke coordinator role
+- `GET /users/coordinators` - get list of all coordinators
 
 ### Setting up the project
 
-Setup a project in docker:
-In order to create a project image run:
+Setting up a project with docker:
+In order to create a project image, run:
+- `docker build -t image_name:tag .` (dot character specifies current directory as path for Dockerfile)
 
-`docker build -t "NAME:Dockerfile"`
+The project utilizes two dockerfiles:
+- `Dockerfile` - main docker file for provisioning an API image 
+- `Dockerfile.db` - docker file to create an image of database based on PostgreSQL prefilled with data from src/main/resources/init.sql 
 
-The project perform two dockerfiles:
-- `Dockerfile` - basic file to create an image 
-- `Dockerfile.db` - file to create an image of database based on PostgreSQL and filled with start sql datta 
+In order to run an application with docker compose, use either:
+`docker-compose -f docker-compose.api-pull up`
+OR
+`docker-compose -f docker-compose.api-build up`
 
-In order to run an application with docker compose, run the following:
-
-`docker-compose -f docker-compose.yml up`
-
-The project perform three docker compose files:
-- `docker-compose.db-only` - docker compose for postgres db with test data
-- `docker-compose.api-build` - same as db-only, but also build api and create connection between api and db
-- `docker-compose.api-pull` - same as api-build, but exept building api image, pulls image from dockerhub repo
+The project utilizes three docker compose files:
+- `docker-compose.db-only` - docker compose to provision only a database based on Dockerfile.db docker file
+- `docker-compose.api-build` - same as docker-compose.db-only, but also build the api and create connection between it and a prefilled database
+- `docker-compose.api-pull` - same as docker-compose.api-build albeit we pull an API image from this project's Dockerhub repo instead of building it locally
