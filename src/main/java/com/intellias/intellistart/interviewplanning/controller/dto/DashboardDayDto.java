@@ -18,9 +18,9 @@ import lombok.Getter;
 @Getter
 public class DashboardDayDto {
     private final Set<InterviewerSlot> interviewerSlots;
-    private final Map<Long, Set<Long>> bookingIdsByInterviewerSlotId = new HashMap<>();
+    private final Map<Long, Set<Long>> bookingIdsByInterviewerSlotId;
     private final Set<CandidateSlot> candidateSlots;
-    private final Map<Long, Set<Long>> bookingIdsByCandidateSlotId = new HashMap<>();
+    private final Map<Long, Set<Long>> bookingIdsByCandidateSlotId;
     private final Map<Long, Booking> bookingsByIds;
 
     public DashboardDayDto(final Map<InterviewerSlot, Set<Long>> bookingIdsByInterviewerSlot,
@@ -32,12 +32,12 @@ public class DashboardDayDto {
         interviewerSlots = bookingIdsByInterviewerSlot.keySet();
         candidateSlots = bookingIdsByCandidateSlot.keySet();
 
-        interviewerSlots.stream()
+        bookingIdsByInterviewerSlotId = interviewerSlots.stream()
                 .collect(Collectors.toMap(InterviewerSlot::getId,
-                        slot -> bookingIdsByInterviewerSlot.get(slot.getId())));
+                        bookingIdsByInterviewerSlot::get));
 
-        candidateSlots.stream()
+        bookingIdsByCandidateSlotId = candidateSlots.stream()
                 .collect(Collectors.toMap(CandidateSlot::getId,
-                        slot -> bookingIdsByCandidateSlotId.get(slot.getId())));
+                        bookingIdsByCandidateSlot::get));
     }
 }
