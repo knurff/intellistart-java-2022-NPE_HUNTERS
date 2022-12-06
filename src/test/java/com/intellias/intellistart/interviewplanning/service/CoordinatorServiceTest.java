@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -119,9 +120,12 @@ class CoordinatorServiceTest {
     String email = "test@test.com";
 
     when(userRepository.getUserByEmail(email)).thenReturn(Optional.empty());
-    boolean result = coordinatorService.grantRoleForUser(email, UserRole.COORDINATOR);
 
-    assertTrue(result);
+    try {
+      User result = coordinatorService.grantRoleForUser(email, UserRole.COORDINATOR);
+    } catch (Exception e) {
+      fail("This method shouldn't throw an exception on given input");
+    }
   }
 
   @Test

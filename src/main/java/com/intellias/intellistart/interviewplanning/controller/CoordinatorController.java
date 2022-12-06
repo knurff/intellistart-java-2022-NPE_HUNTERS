@@ -3,6 +3,7 @@ package com.intellias.intellistart.interviewplanning.controller;
 import com.intellias.intellistart.interviewplanning.controller.dto.BookingDto;
 import com.intellias.intellistart.interviewplanning.controller.dto.DashboardDto;
 import com.intellias.intellistart.interviewplanning.controller.dto.EmailDto;
+import com.intellias.intellistart.interviewplanning.controller.dto.UserDto;
 import com.intellias.intellistart.interviewplanning.controller.dto.mapper.BookingMapper;
 import com.intellias.intellistart.interviewplanning.model.Booking;
 import com.intellias.intellistart.interviewplanning.model.User;
@@ -91,16 +92,34 @@ public class CoordinatorController {
     bookingService.deleteBooking(id);
   }
 
+
+  /**
+   * Handles POST request and grants COORDINATOR role for user by email.
+   */
   @PostMapping("/users/coordinators")
   @ResponseStatus(HttpStatus.CREATED)
-  public void grantCoordinatorRole(@RequestBody EmailDto emailDto) {
-    coordinatorService.grantRoleForUser(emailDto.getEmail(), UserRole.COORDINATOR);
+  public UserDto grantCoordinatorRole(@RequestBody EmailDto emailDto) {
+    User savedCoordinator =
+        coordinatorService.grantRoleForUser(emailDto.getEmail(), UserRole.COORDINATOR);
+
+    return new UserDto(savedCoordinator.getEmail(),
+        savedCoordinator.getRole(),
+        savedCoordinator.getId());
   }
 
+
+  /**
+   * Handles POST request and grants INTERVIEWER role for user by email.
+   */
   @PostMapping("/users/interviewers")
   @ResponseStatus(HttpStatus.CREATED)
-  public void grantInterviewerRole(@RequestBody EmailDto emailDto) {
-    coordinatorService.grantRoleForUser(emailDto.getEmail(), UserRole.INTERVIEWER);
+  public UserDto grantInterviewerRole(@RequestBody EmailDto emailDto) {
+    User savedInterviewer =
+        coordinatorService.grantRoleForUser(emailDto.getEmail(), UserRole.INTERVIEWER);
+
+    return new UserDto(savedInterviewer.getEmail(),
+        savedInterviewer.getRole(),
+        savedInterviewer.getId());
   }
 
   @DeleteMapping("/users/coordinators/{id}")
