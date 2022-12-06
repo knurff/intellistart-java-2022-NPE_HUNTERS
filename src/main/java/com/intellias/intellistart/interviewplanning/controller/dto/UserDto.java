@@ -2,6 +2,7 @@ package com.intellias.intellistart.interviewplanning.controller.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.intellias.intellistart.interviewplanning.model.role.UserRole;
 import com.intellias.intellistart.interviewplanning.security.JwtUserDetails;
 import com.intellias.intellistart.interviewplanning.util.RoleParser;
 import lombok.Getter;
@@ -11,8 +12,11 @@ import lombok.Getter;
  */
 @Getter
 public class UserDto {
-  private final String firstName;
-  private final String lastName;
+  @JsonInclude(value = Include.NON_NULL)
+  private String firstName;
+
+  @JsonInclude(value = Include.NON_NULL)
+  private String lastName;
   private final String email;
   private final String role;
   @JsonInclude(value = Include.NON_NULL)
@@ -29,5 +33,18 @@ public class UserDto {
     this.email = details.getUsername();
     this.role = RoleParser.parse(details).split("_")[1];
     this.id = details.getId();
+  }
+
+  /**
+   * Constructs DTO by email, role, id.
+   *
+   * @param email user's email
+   * @param role user's role
+   * @param id user's id
+   */
+  public UserDto(String email, UserRole role, Long id) {
+    this.email = email;
+    this.role = role.toString();
+    this.id = id;
   }
 }

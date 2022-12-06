@@ -78,11 +78,10 @@ public class CoordinatorService {
    * @return true if operation is successful
    * @throws UserAlreadyHasRoleException if user already has a role
    */
-  public boolean grantRoleForUser(String email, UserRole role) {
+  public User grantRoleForUser(String email, UserRole role) {
     validateRoleAbsence(email);
 
-    saveUserWithRole(email, role);
-    return true;
+    return saveUserWithRole(email, role);
   }
 
   private void validateRoleAbsence(String email) {
@@ -95,7 +94,7 @@ public class CoordinatorService {
     }
   }
 
-  private void saveUserWithRole(String email, UserRole role) {
+  private User saveUserWithRole(String email, UserRole role) {
     User toSave = new User(role);
     final int defaultMaxBookingsPerWeek = 5;
     WeekBooking weekBooking = new WeekBooking(defaultMaxBookingsPerWeek,
@@ -103,7 +102,7 @@ public class CoordinatorService {
 
     toSave.setEmail(email);
     toSave.setMaxBookingsPerWeek(weekBooking);
-    userRepository.save(toSave);
+    return userRepository.save(toSave);
   }
 
   /**
