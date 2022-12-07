@@ -4,7 +4,8 @@
 ### Overview
 * [About the project](#about-the-project)
 * [API](#api)
-* [Setting up the project](#setting-up-the-project)
+* [Running the project out of the box](#running-the-project-out-of-the-box)
+* [Setting up the project by yourself](#setting-up-the-project-on-your-own)
 
 ### About the project
 
@@ -64,24 +65,25 @@ Technologies used:
 - `DELETE /users/coordinators/<coordinator-id>` - revoke coordinator role
 - `GET /users/coordinators` - get list of all coordinators
 
-### Setting up the project
+### Running the project out of the box   
 
-Setting up a project with docker:
+There are two ways of running this application locally out of the box 
+If you want to run our release version, use:  
+- `docker-compose -f docker-compose.api-pull.yml up -d` to start  
+- `docker-compose -f docker-compose.api-pull.yml down` to stop  
+
+If you are making changes to the application, use:    
+- `docker-compose -f docker-compose.api-build.yml up -d` to start  
+- `docker-compose -f docker-compose.api-build.yml up -d` to stop  
+
+### Setting up the project on your own    
+
 In order to create a project image, run:
 - `docker build -t image_name:tag .` (dot character specifies current directory as path for Dockerfile)
 
 The project utilizes two dockerfiles:
 - `Dockerfile` - main docker file for provisioning an API image 
 - `Dockerfile.db` - docker file to create an image of database based on PostgreSQL prefilled with data from src/main/resources/init.sql 
-
-There are two ways of running this application locally:  
-If you want to run our release version  
-- `docker-compose -f docker-compose.api-pull.yml up -d` to start  
-- `docker-compose -f docker-compose.api-pull.yml down` to stop  
-
-If you are making changes to the application  
-- `docker-compose -f docker-compose.api-build.yml up -d` to start  
-- `docker-compose -f docker-compose.api-build.yml up -d` to stop  
 
 The project utilizes three docker compose files:
 - `docker-compose.db-only` - docker compose to provision only a database based on Dockerfile.db docker file
