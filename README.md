@@ -16,7 +16,7 @@ The application supports the following functionality:
 - Create bookings for Interviewer and Candidate slots as Coordinator
 
 Clarification on terms used:
-- Guest is an authenticated person
+- Guest is a non-authenticated person
 - User is a person who completed the authentication process
 - Candidate is a user without any auth role
 - Interviewer is a user with an auth role of INTERVIEWER
