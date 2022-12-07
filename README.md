@@ -78,6 +78,7 @@ There are two ways of running this application locally:
 If you want to run our release version  
 - `docker-compose -f docker-compose.api-pull.yml up -d` to start  
 - `docker-compose -f docker-compose.api-pull.yml down` to stop  
+
 If you are making changes to the application  
 - `docker-compose -f docker-compose.api-build.yml up -d` to start  
 - `docker-compose -f docker-compose.api-build.yml up -d` to stop  
