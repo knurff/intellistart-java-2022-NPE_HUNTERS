@@ -22,6 +22,14 @@ Clarification on terms used:
 - Interviewer is a user with an auth role of INTERVIEWER
 - Coordinator is a user with an auth role of COORDINATOR
 
+Technologies used:
+* Java 11
+* PostgreSQL
+* Spring Boot
+* Spring Data
+* Spring Security
+* OAuth 2.0 with Facebook API
+
 ### API
 ### User
 - `GET /me` - return user info
@@ -67,9 +75,9 @@ The project utilizes two dockerfiles:
 - `Dockerfile.db` - docker file to create an image of database based on PostgreSQL prefilled with data from src/main/resources/init.sql 
 
 In order to run an application with docker compose, use either:
-`docker-compose -f docker-compose.api-pull up`
+`docker-compose -f docker-compose.api-pull up -d`
 OR
-`docker-compose -f docker-compose.api-build up`
+`docker-compose -f docker-compose.api-build up -d`
 
 The project utilizes three docker compose files:
 - `docker-compose.db-only` - docker compose to provision only a database based on Dockerfile.db docker file
