@@ -42,10 +42,10 @@ Technologies used:
 - `POST /auth/login` - authentication
 
 #### Interviewer
-- `POST /interviewers/<interviewerId>/slots` - create interviewer slot
-- `POST /interviewers/<interviewerId>/slots/{slotId}` - update interviewer slot
-- `GET /interviewers/<interviewerId>/slots` - get all interviewer slots
-- `POST /interviewers/<interviewerId>/bookings` - set the maximum booking quantity for the next week
+- `POST /interviewers/{interviewerId}/slots` - create interviewer slot
+- `POST /interviewers/{interviewerId}/slots/{slotId}` - update interviewer slot
+- `GET /interviewers/{interviewerId}/slots` - get all interviewer slots
+- `POST /interviewers/{interviewerId}/bookings` - set the maximum booking quantity for the next week
 
 #### Candidate
 - `POST /candidates/current/slots` - create a candidate slot
@@ -59,10 +59,10 @@ Technologies used:
 - `POST /bookings/{bookingId}` - update a booking
 - `DELETE /bookings/{bookingId}` - delete a booking
 - `POST /users/interviewers` - grant Interviewer role to a user
-- `DELETE /users/interviewers/<interviewer-id>` - revoke Interviewer role from a user
+- `DELETE /users/interviewers/{interviewer-id}` - revoke Interviewer role from a user
 - `GET /users/interviewers` - get list of all interviewers 
 - `POST /users/coordinators` - grant Coordinator role to a user
-- `DELETE /users/coordinators/<coordinator-id>` - revoke coordinator role
+- `DELETE /users/coordinators/{coordinator-id}` - revoke coordinator role
 - `GET /users/coordinators` - get list of all coordinators
 
 ### Running the project out of the box   
