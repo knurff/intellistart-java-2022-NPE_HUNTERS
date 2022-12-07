@@ -67,12 +67,12 @@ Technologies used:
 
 ### Running the project out of the box   
 
-There are two ways of running this application locally out of the box 
-If you want to run our release version, use:  
-- `docker-compose -f docker-compose.api-pull.yml up -d` to start  
-- `docker-compose -f docker-compose.api-pull.yml down` to stop  
+This application has everything needed for hosting it, though commands below require Docker.  
+If you want to run latest version of this API:  
+- `docker compose -f docker-compose.api-pull.yml up -d` to start  
+- `docker compose -f docker-compose.api-pull.yml down` to stop  
 
-If you are making changes to the application, use:    
+If you are making changes to the code:  
 - `docker-compose -f docker-compose.api-build.yml up -d` to start  
 - `docker-compose -f docker-compose.api-build.yml up -d` to stop  
 
