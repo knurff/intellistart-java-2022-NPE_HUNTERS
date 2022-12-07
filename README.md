@@ -74,7 +74,7 @@ If you want to run latest version of this API:
 
 If you are making changes to the code:  
 - `docker compose -f docker-compose.api-build.yml up -d` to start  
-- `docker compose -f docker-compose.api-build.yml up -d` to stop  
+- `docker compose -f docker-compose.api-build.yml down` to stop  
 
 ### Setting up the project on your own    
 
