@@ -244,8 +244,6 @@ class CoordinatorServiceTest {
     final DashboardDto result = coordinatorService.getDashboardForWeek(1);
 
     assertNotNull(result);
-    assertEquals(result.getMonday().getBookingIdsByInterviewerSlot(), expectedInterviewerSlotsMap);
-    assertEquals(result.getMonday().getBookingIdsByCandidateSlot(), expectedCandidateSlotsMap);
     assertEquals(result.getMonday().getBookingsByIds(), expectedBookingsMap);
   }
 }
